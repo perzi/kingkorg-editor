@@ -1,37 +1,37 @@
-import React from 'react';
-import connectToStores from 'alt/utils/connectToStores';
-import DummyStore from 'stores/dummyStore';
-import DummyActions from 'actions/dummyActions';
+//import React from 'react';
+import React                    from 'react/addons';
+import ProgramStore            from 'stores/program_store';
+import ProgramActions            from 'actions/program_actions';
 
-@connectToStores
 class Example extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      name: props.name
-    }
+
+    let { shouldComponentUpdate } = React.addons.PureRenderMixin;
+
+    this.shouldComponentUpdate    = shouldComponentUpdate.bind(this);
+    this.state                    = { program: ProgramStore.getState() };
+    this.programChanged           = this.programChanged.bind(this);
   }
 
-  static getStores(props) {
-    return [DummyStore];
-  }
+  componentDidMount()    { ProgramStore.listen(this.programChanged); }
+  componentWillUnmount() { ProgramStore.unlisten(this.programChanged); }
 
-  static getPropsFromStores(props) {
-    return DummyStore.getState();
+  programChanged(program)  { this.setState({ program: program }); }
+
+  onChange = evt => {
+    ProgramActions.setName(evt.target.value);
   }
 
   render() {
+    let {program} = this.state;
+
     return (
       <div>
-        <input type="text" value={this.state.name} onChange={this.onChange}/>
-        <h1>It works: {this.props.name}</h1>
+          <h1>Program: {program.get("name")}</h1>
+          <input type="text" value={this.state.name} onChange={this.onChange}/>
       </div>
     );
-  }
-
-  onChange = evt => {
-    this.setState({name: evt.target.value});
-    DummyActions.updateName(evt.target.value);
   }
 }
 
