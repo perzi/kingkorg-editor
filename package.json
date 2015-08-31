@@ -24,6 +24,7 @@
   "dependencies": {
     "alt": "0.17.1",
     "babel-runtime": "5.8.20",
+    "immutable": "^3.7.4",
     "react": "0.13.3",
     "react-router": "0.13.3"
   },
