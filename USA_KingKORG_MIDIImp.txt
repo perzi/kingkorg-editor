@@ -1,0 +1,1667 @@
+KORG KingKORG MIDI Implementation          Revision 1.00 (2013.01.15)
+
+1.TRANSMITTED DATA
+
+1-1 CHANNEL MESSAGES            [H]:Hex,  [D]:Decimal
+
++--------+----------+-------------+-----------------------------------------------------------+-----+
+| Status |  Second  |   Third     |      Description                 (Transmitted by ... )    | ENA |
+|  [Hex] | [H]  [D] |  [H]   [D]  |                                                           |     |
++--------+----------+-------------+-----------------------------------------------------------+-----+
+|   8n   | kk  (kk) | 40    (64)  | Note Off                                                *1|  A  |
+|   9n   | kk  (kk) | vv    (vv)  | Note On  vv=1~127                                       *1|  A  |
+|   Bn   | 00  (00) | mm    (mm)  | Bank Select (MSB)                (Program Change)       *2|  K  |
+|   Bn   | 01  (01) | vv    (vv)  | Modulation1                      (Joystick +Y, Pdl)       |  C  |
+|   Bn   | 02  (02) | vv    (vv)  | Modulation2                      (Joystick -Y, Pdl)       |  C  |
+|   Bn   | 04  (04) | vv    (vv)  | Foot Pedal                       (Pdl)                    |  C  |
+|   Bn   | 06  (06) | vv    (vv)  | Data Entry (MSB)                 (P.C.)                 *3|  C  |
+|   Bn   | 07  (07) | vv    (vv)  | Volume                           (Pdl)                    |  C  |
+|   Bn   | 0A  (10) | vv    (vv)  | Panpot                           (Pdl)                    |  C  |
+|   Bn   | 0B  (11) | vv    (vv)  | Expression                       (Pdl)                    |  C  |
+|   Bn   | 20  (32) | bb    (bb)  | Bank Select (LSB)                (Program Change)       *2|  K  |
+|   Bn   | 40  (64) | vv    (vv)  | Sustain Off/On                   (Damper, ASW)            |  C  |
+|   Bn   | 41  (65) | vv    (vv)  | Portamento SW                    (ASW)                    |  C  |
+|   Bn   | 52  (82) | vv    (vv)  | Foot SW                          (ASW)                    |  C  |
+|   Bn   | 62  (98) | vv    (vv)  | NRPN (LSB)                       (P.C.)                 *3|  C  |
+|   Bn   | 63  (99) | vv    (vv)  | NRPN (MSB)                       (P.C.)                 *3|  C  |
+|   Bn   | cc  (cc) | vv    (vv)  | Control Change  cc=00~95,102~119 (P.C.)                 *4|  C  |
+|   Cn   | pp  (pp) | --     --   | Program Change                   (Program Change)       *2|  P  |
+|   Dn   | vv  (vv) | --     --   | Channel Pressure (After Touch)   (Pdl)                    |  C  |
+|   En   | bb  (bb) | bb    (bb)  | Pitch Bender Change              (Joystick X)             |  B  |
++--------+----------+-------------+-----------------------------------------------------------+-----+
+
+ n  : MIDI Channel = 0 ~ F
+ vv : Value
+
+ Pdl : Assignable Pedal
+ ASW : Assignable Switch
+ P.C.: Panel Control
+
+ ENA = A : Always Enable
+       K : Enabled when Global BankChg is enabled.
+       C : Enabled when Global CtrlChg is enabled.
+       P : Enabled when Global ProgChg is enabled.
+       B : Enabled when Global P.Bend is enabled.
+
+ *1 : kk =  0 ~ 127 (61Keys + OCT + Transpose , Position = Post KBD)
+
+ *2 : Program              MIDI Out    [Hex]           [Dec]
+
+      Program 001 - 100    mm,bb,pp  : 00,00,01~64  /  00,00,001~100
+      Program 101 - 200                00,01,01~64  /  00,01,001~100
+      Program 201 - 300                00,02,01~64  /  00,02,001~100
+
+ *3 : Non Registered Parameter Number (NRPN)
++---------+----------------------+-------------------------+
+| MSB LSB | Parameter            | Data Entry(MSB) Value   |
+| [H] [H] |                      |                         |
++---------+----------------------+-------------------------+
+| 00  02  | Arpeggio On/Off      | 00/7F:OFF/ON            |
+| 05  00  | Voice Mode           | *3-1                    |
+| 05  04  | Vocoder SW           | 00/7F:OFF/ON            |
++---------+----------------------+-------------------------+
+
+ *3-1 : 00 : Single
+        2B : Layer
+        55 : Split
+
+ *4 :Control Change (assignable)
++-----------------------+----------------------------------+
+|    Synth              | Value  Synth                     |
++-----------------------+----------------------------------+
+| Portamento Time       | 00~7F:0~127                      |
+| Portamento SW         | 00/7F:OFF/ON                     |
+| Unison SW             | *4-1                             |
+| OSC1 Type             | *4-2                             |
+| OSC1 Control1         | *4-3                             |
+| OSC1 Control2         | *4-4                             |
+| OSC2 Type             | *4-2                             |
+| OSC2 Control1         | *4-3                             |
+| OSC2 Control2         | *4-4                             |
+| OSC3 Type             | *4-2                             |
+| OSC3 Control1         | *4-3                             |
+| OSC3 Control2         | *4-4                             |
+| OSC1 Level            | 00~7F:0~127                      |
+| OSC2 Level            | 00~7F:0~127                      |
+| OSC3 Level            | 00~7F:0~127                      |
+| Filter Cutoff         | 00~7F:0~127                      |
+| Filter Resonance      | 00~7F:0~127                      |
+| Filter EG1 Int        | *4-5                             |
+| Filter KeyTrack       | *4-6                             |
+| Amp Level             | 00~7F:0~127                      |
+| EG1 Attack            | 00~7F:0~127                      |
+| EG1 Decay             | 00~7F:0~127                      |
+| EG1 Sustain           | 00~7F:0~127                      |
+| EG1 Release           | 00~7F:0~127                      |
+| EG2 Attack            | 00~7F:0~127                      |
+| EG2 Decay             | 00~7F:0~127                      |
+| EG2 Sustain           | 00~7F:0~127                      |
+| EG2 Release           | 00~7F:0~127                      |
+| LFO1 Intensity        | *4-5                             |
+| LFO1 Frequency        | *4-7                             |
+| LFO2 Intensity        | *4-5                             |
+| LFO2 Frequency        | *4-7                             |
+| EQ Hi.Gain            | *4-8                             |
+| EQ Low.Gain           | *4-8                             |
+| PRE FX Drive/Freq     | *4-9                             |
+| MOD FX Depth          | 00~7F:0~127                      |
+| MOD FX Speed          | 00~7F:0~127                      |
+| Rev/Delay Depth       | 00~7F:0~127                      |
+| Rev/Delay Time        | *4-10                            |
+| PRE FX SW             | *4-11                            |
+| MOD FX SW             | *4-11                            |
+| Rev/Delay SW          | *4-11                            |
++-----------------------+----------------------------------+
+
+ *4-1 : 00 : Unison Off
+        20 : 2Voice
+        40 : 3Voice
+        60 : 4Voice
+
+ *4-2 : 00    : Off
+        01~20 : Analog
+        21~60 : DWGS
+        61~7E : PCM
+        7F    : Mic In
+
+ *4-3 : When OSCType is "Saw,Triangle,Sine"   00~7F : Waveform
+        When OSCType is "Pluse"               00~7F : PulseWidth
+        When OSCType is "WH.NOISE"            00~7F : Decimator Fc
+        When OSCType is "PK.NOISE"            00~7F : LPF Cutoff
+        When OSCType is "BL.NOISE"            00~7F : HPF Cutoff
+        When OSCType is "RES.NOISE"           00~7F : Resonance
+        When OSCType is "DUAL,UNI,DWGS"       00~7F : Detune
+        When OSCType is "SYNC,RING"           00~7F : Mod Pitch
+        When OSCType is "XMOD,VPM"            00~7F : Mod Depth
+        When OSCType is "MicIn"               00~7F : Gain
+
+ *4-4 : When OSCType is "NOISE"               00~7F : Noise Decay
+        When OSCType is "XMOD"                00~7F : Mod Pitch
+        When OSCType is "VPM"                 00~7F : Mod Harm
+        When OSCType is "DWGS"                00~7F : Mod Depth
+
+ *4-5 : 00,01~7F : -63,-63~+63
+
+        00~07 : -63,-63,-62,-61,-60,-59,-58,-57
+        08~0F : -56,-55,-54,-53,-52,-51,-50,-49
+        10~17 : -48,-47,-46,-45,-44,-43,-42,-41
+        18~1F : -40,-39,-38,-37,-36,-35,-34,-33
+        20~27 : -32,-31,-30,-29,-28,-27,-26,-25
+        28~2F : -24,-23,-22,-21,-20,-19,-18,-17
+        30~37 : -16,-15,-14,-13,-12,-11,-10,- 9
+        38~3F : - 8,- 7,- 6,- 5,- 4,- 3,- 2,- 1
+        40~47 :   0,+ 1,+ 2,+ 3,+ 4,+ 5,+ 6,+ 7
+        48~4F : + 8,+ 9,+10,+11,+12,+13,+14,+15
+        50~57 : +16,+17,+18,+19,+20,+21,+22,+23
+        58~5F : +24,+25,+26,+27,+28,+29,+30,+31
+        60~67 : +32,+33,+34,+35,+36,+37,+38,+39
+        68~6F : +40,+41,+42,+43,+44,+45,+46,+47
+        70~77 : +48,+49,+50,+51,+52,+53,+54,+55
+        78~7F : +56,+57,+58,+59,+60,+61,+62,+63
+
+ *4-6 : 00,01~40~7F : -2.00,-2.00~0.00~+2.00
+
+        00~07 : -2.00,-2.00,-1.93,-1.86,-1.80,-1.73,-1.66,-1.60,
+        08~0F : -1.53,-1.46,-1.40,-1.33,-1.26,-1.20,-1.13,-1.06,
+        10~17 : -1.00,-0.97,-0.95,-0.93,-0.91,-0.89,-0.87,-0.85,
+        18~1F : -0.83,-0.81,-0.79,-0.77,-0.75,-0.72,-0.70,-0.68,
+        20~27 : -0.66,-0.64,-0.62,-0.60,-0.58,-0.56,-0.54,-0.52,
+        28~2F : -0.50,-0.47,-0.45,-0.43,-0.41,-0.39,-0.37,-0.35,
+        30~37 : -0.33,-0.31,-0.29,-0.27,-0.25,-0.22,-0.20,-0.18,
+        38~3F : -0.16,-0.14,-0.12,-0.10,-0.08,-0.06,-0.04,-0.02,
+        40~47 :  0.00, 0.02, 0.04, 0.06, 0.08, 0.10, 0.12, 0.14,
+        48~4F :  0.16, 0.18, 0.20, 0.22, 0.25, 0.27, 0.29, 0.31,
+        50~57 :  0.33, 0.35, 0.37, 0.39, 0.41, 0.43, 0.45, 0.47,
+        58~5F :  0.50, 0.52, 0.54, 0.56, 0.58, 0.60, 0.62, 0.64,
+        60~67 :  0.66, 0.68, 0.70, 0.72, 0.75, 0.77, 0.79, 0.81,
+        68~6F :  0.83, 0.85, 0.87, 0.89, 0.91, 0.93, 0.95, 0.97,
+        70~77 :  1.00, 1.06, 1.13, 1.20, 1.26, 1.33, 1.40, 1.46,
+        78~7F :  1.53, 1.60, 1.66, 1.73, 1.80, 1.86, 1.93, 2.00
+
+ *4-7: When TempoSync is "OFF".
+
+        00~07 : 0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08,
+        08~0F : 0.09, 0.10, 0.11, 0.12, 0.13, 0.14, 0.15, 0.16,
+        10~17 : 0.17, 0.18, 0.19, 0.20, 0.21, 0.22, 0.23, 0.24,
+        18~1F : 0.25, 0.29, 0.33, 0.42, 0.50, 0.58, 0.67, 0.75,
+        20~27 : 0.83, 0.92, 1.00, 1.13, 1.25, 1.38, 1.50, 1.63,
+        28~2F : 1.75, 1.88, 2.00, 2.13, 2.25, 2.38, 2.50, 2.63,
+        30~37 : 2.75, 2.88, 3.00, 3.13, 3.25, 3.38, 3.50, 3.63,
+        38~3F : 3.75, 3.88, 4.00, 4.13, 4.25, 4.38, 4.50, 4.63,
+        40~47 : 4.75, 4.88, 5.00, 5.25, 5.50, 5.75, 6.00, 6.25,
+        48~4F : 6.50, 6.75, 7.00, 7.25, 7.50, 7.75, 8.00, 8.25,
+        50~57 : 8.50, 8.75, 9.00, 9.25, 9.50, 9.75, 10.0, 10.5,
+        58~5F : 11.0, 11.5, 12.0, 12.5, 13.0, 13.5, 14.0, 14.5,
+        60~67 : 15.0, 16.0, 17.0, 18.0, 19.0, 20.0, 21.5, 23.0,
+        68~6F : 24.5, 26.0, 27.5, 29.0, 31.0, 33.0, 35.0, 37.0,
+        70~77 : 39.0, 41.0, 44.0, 47.0, 50.0, 53.0, 57.0, 61.0,
+        78~7F : 65.0, 70.0, 75.0, 80.0, 85.0, 90.0, 95.0, 100.0
+
+        When TempoSync is "ON".
+
+        00~07 : 8meas   26~2C : 1/2     4B~52 : 1/6     71~77 : 1/32
+        08~0E : 4meas   2D~34 : 3/8     53~59 : 1/8     78~7F : 1/64
+        0F~16 : 2meas   35~3B : 1/3     5A~61 : 1/12
+        17~1D : 1/1     3C~43 : 1/4     62~68 : 1/16
+        1E~25 : 3/4     44~4A : 3/16    69~70 : 1/24
+
+ *4-8 : 00~07 : -15.0, -15.0, -15.0, -14.5, -14.5, -14.0, -14.0, -13.5,
+        08~0F : -13.5, -13.0, -13.0, -12.5, -12.5, -12.0, -12.0, -11.5,
+        10~17 : -11.5, -11.0, -11.0, -10.5, -10.5, -10.0, -10.0, -10.0,
+        18~1F : -09.5, -09.5, -09.0, -09.0, -08.5, -08.5, -08.0, -08.0,
+        20~27 : -07.5, -07.5, -07.0, -07.0, -06.5, -06.5, -06.0, -06.0,
+        28~2F : -05.5, -05.5, -05.0, -05.0, -05.0, -04.5, -04.5, -04.0,
+        30~37 : -04.0, -03.5, -03.5, -03.0, -03.0, -02.5, -02.5, -02.0,
+        38~3F : -02.0, -01.5, -01.5, -01.0, -01.0, -00.5, -00.5, +00.0,
+        40~47 : +00.0, +00.0, +00.5, +00.5, +01.0, +01.0, +01.5, +01.5,
+        48~4F : +02.0, +02.0, +02.5, +02.5, +03.0, +03.0, +03.5, +03.5,
+        50~57 : +04.0, +04.0, +04.5, +04.5, +05.0, +05.0, +05.0, +05.5,
+        58~5F : +05.5, +06.0, +06.0, +06.5, +06.5, +07.0, +07.0, +07.5,
+        60~67 : +07.5, +08.0, +08.0, +08.5, +08.5, +09.0, +09.0, +09.5,
+        68~6F : +09.5, +10.0, +10.0, +10.0, +10.5, +10.5, +11.0, +11.0,
+        70~77 : +11.5, +11.5, +12.0, +12.0, +12.5, +12.5, +13.0, +13.0,
+        78~7F : +13.5, +13.5, +14.0, +14.0, +14.5, +14.5, +15.0, +15.0
+
+ *4-9 : When PREFX Type is "Distortion" "EP.AMP" "GT.AMP"
+        Drive 00~7F:0~127
+
+        When PREFX Type is "Decimator" "Ring Mod"
+        Freq 00~7F:0~127
+
+        When PREFX Type is "Tone"
+        Drive 00,01~40~7F:L63,L63~Flat~R63
+              00~07 : L63,L63,L62,L61,L60,L59,L58,L57
+              08~0F : L56,L55,L54,L53,L52,L51,L50,L49
+              10~17 : L48,L47,L46,L45,L44,L43,L42,L41
+              18~1F : L40,L39,L38,L37,L36,L35,L34,L33
+              20~27 : L32,L31,L30,L29,L28,L27,L26,L25
+              28~2F : L24,L23,L22,L21,L20,L19,L18,L17
+              30~37 : L16,L15,L14,L13,L12,L11,L10,L09
+              38~3F : L08,L07,L06,L05,L04,L03,L02,L01
+              40~47 : Flat,R01,R02,R03,R04,R05,R06,R07
+              48~4F : R08,R09,R10,R11,R12,R13,R14,R15
+              50~57 : R16,R17,R18,R19,R20,R21,R22,R23
+              58~5F : R24,R25,R26,R27,R28,R29,R30,R31
+              60~67 : R32,R33,R34,R35,R36,R37,R38,R39
+              68~6F : R40,R41,R42,R43,R44,R45,R46,R47
+              70~77 : R48,R49,R50,R51,R52,R53,R54,R55
+              78~7F : R56,R57,R58,R59,R60,R61,R62,R63
+
+ *4-10: When Rev/Dly Type is "Hall" "Room" "Plate" "Tape Echo"
+        Time 00~7F:0~127
+
+        When Rev/Delay Type is "Mod Delay" "BPM Delay"
+        Time 00~7F:1/32~1/2
+             00~09 : 1/32
+             0A~1B : 1/16
+             1C~2D : 1/8
+             2E~3F : 1/6
+             40~51 : 3/16
+             52~63 : 1/4
+             64~75 : 3/8
+             76~7F : 1/2
+
+ *4-11: 00 : Off
+        20 : TimbreA
+        40 : TimbreB
+        60 : TimbreA+B
+
+
+1-2 SYSTEM REALTIME MESSAGES
+
++-----------+----------------------------------------------+
+| Status[H] | Description                                  |
++-----------+----------------------------------------------+
+|    F8     | Timing Clock                              *5 |
+|    FE     | Active Sensing                               |
++-----------+----------------------------------------------+
+
+ *5 :This message is transmitted when the "Clock" is set to "Internal".
+
+
+1-3 UNIVERSAL SYSTEM EXCLUSIVE MESSAGES
+
+ DEVICE INQUIRY REPLY
++---------+------------------------------------------------+
+| Byte[H] |                Description                     |
++---------+------------------------------------------------+
+|   F0    | Exclusive Status                               |
+|   7E    | Non Realtime Message                           |
+|   0g    | Global MIDI Channel  ( Device ID )             |
+|   06    | General Information                            |
+|   02    | Identity Reply                                 |
+|   42    | KORG ID              ( Manufacturers ID )      |
+|   18    | KingKORG ID          ( Family ID   (LSB))      |
+|   01    |                      ( Family ID   (MSB))      |
+|   01    |                      ( Member ID   (LSB))      |
+|   00    |                      ( Member ID   (MSB))      |
+|   xx    |                      ( Major Ver.       )      |
+|   xx    |                      ( Minor Ver.       )      |
+|   xx    |                      ( Release Ver.     )      |
+|   xx    |                      ( reserved         )      |
+|   F7    | End Of Exclusive                               |
++---------+------------------------------------------------+
+
+  This message is transmitted whenever a INQUIRY MESSAGE REQUEST is received.
+
+
+1-4 SYSTEM EXCLUSIVE MESSAGES
+
++-------------+-------------------------------------+------+
+| Function ID |    Description/Function             |      |
+|    [Hex]    |                                     | *6   |
++-------------+-------------------------------------+------+
+|     40      | CURRENT PROGRAM DATA DUMP           | R,D  |
+|     4C      | PROGRAM DATA DUMP (1 PROG)          | R    |
+|     51      | GLOBAL DATA DUMP                    | R,D  |
+|             |                                     |      |
+|     41      | PROGRAM PARAMETER CHANGE            | C    |
+|             |                                     |      |
+|     26      | DATA FORMAT ERROR                   | E    |
+|     23      | DATA LOAD COMPLETED                 | E    |
+|     24      | DATA LOAD ERROR                     | E    |
+|     21      | WRITE COMPLETED                     | E    |
+|     22      | WRITE ERROR                         | E    |
++-------------+-------------------------------------+------+
+
+ *6 : Transmitted when
+      R  : Request message is received.
+      D  : Data dump from MIDI dump page.
+           (Doesn't respond to MIDI FILTER "SysEx" parameter.)
+      E  : Exclusive message is received.
+      C  : Parameter is changed.
+
+
+1-5 SEARCH DEVICE REPLY
+
++-----------+----------------------------------------------+
+| Byte[H]   |                Description                   |
++-----------+----------------------------------------------+
+|    F0     | Exclusive Status                             |
+|    42     | KORG ID              ( Manufacturers ID )    |
+|    50     | Search Device                                |
+|    01     | Reply                                        |
+|    fg     | gggg:MIDI Global Channel  ( Device ID )      |
+| (00fgggg) | f   :MIDI FILTER "SysEx" parameter ENA/DIS   |
+|    dd     | Echo Back ID                                 |
+|    18     | KingKORG ID          ( Family ID   (LSB))    |
+|    01     |                      ( Family ID   (MSB))    |
+|    01     |                      ( Member ID   (LSB))    |
+|    00     |                      ( Member ID   (MSB))    |
+|    xx     |                      ( Major Ver.       )    |
+|    xx     |                      ( Minor Ver.       )    |
+|    xx     |                      ( Release Ver.     )    |
+|    xx     |                      ( reserved         )    |
+|    F7     | END OF EXCLUSIVE                             |
++-----------+----------------------------------------------+
+
+  g : MIDI Channel = 0 ~ F :Global Channel
+  f : MIDI FILTER "SysEx" parameter ENA/DIS = 0/1
+  dd : Echo Back ID = copy from SEARCH DEVICE REQUEST message.
+
+  This message is transmitted whenever a SEARCH DEVICE REQUEST is received.
+
+
+2.RECOGNIZED RECEIVE DATA
+
+2-1 CHANNEL MESSAGES
+
++--------+----------+-------------+-----------------------------------------------------------+
+| Status |  Second  |   Third     |           Description                                     |
+| [Hex]  | [H]  [D] | [H]   [D]   |                                                           |
++--------+----------+-------------+-----------------------------------------------------------+
+|   8n   | kk  (kk) | vv    (vv)  | Note Off  vv=0~127                                        |
+|   9n   | kk  (kk) | 00    (00)  | Note Off                                                  |
+|   9n   | kk  (kk) | vv    (vv)  | Note On  vv=1~127                                         |
+|   Bn   | 00  (00) | mm    (mm)  | Bank Select (MSB)              (Program/Timbre Change)  *7|
+|   Bn   | 01  (01) | vv    (vv)  | Modulation1                                               |
+|   Bn   | 02  (02) | vv    (vv)  | Modulation2                                               |
+|   Bn   | 06  (06) | vv    (vv)  | Data Entry (MSB)                                        *8|
+|   Bn   | 0B  (11) | vv    (vv)  | Expression                                                |
+|   Bn   | 20  (32) | bb    (bb)  | Bank Select (LSB)              (Program/Timbre Change)  *7|
+|   Bn   | 40  (64) | vv    (vv)  | Sustain Off/On                                            |
+|   Bn   | 62  (98) | nl    (nl)  | NRPN LSB                                                *8|
+|   Bn   | 63  (99) | nm    (nm)  | NRPN MSB                                                *8|
+|   Bn   | 78 (120) | 00    (0)   | All Sound Off                                             |
+|   Bn   | 79 (121) | 00    (0)   | Reset All Controllers                                     |
+|   Bn   | 7B (123) | 00    (0)   | All Note Off                                              |
+|   Bn   | 7C (124) | 00    (0)   | Omni Mode Off                                             |
+|   Bn   | 7D (125) | 00    (0)   | Omni Mode On                                              |
+|   Bn   | cc  (cc) | vv    (vv)  | Control Data  cc=00~95,102~119                          *9|
+|   Cn   | pp  (pp) | --     --   | Program Change                 (Program/Timbre Change)  *7|
+|   Dn   | vv  (vv) | --     --   | Channel Pressure (After Touch)                            |
+|   En   | bb  (bb) | bb    (bb)  | Pitch Bender Change                                       |
++--------+----------+-------------+-----------------------------------------------------------+
+
+ n  : MIDI Channel = 0 ~ F
+ vv : Value
+
+ *7 : Program/Timbre              MIDI In     [Hex]           [Dec]
+
+      Program
+              001 - 100           mm,bb,pp  : 00,00,01-64  /  00,00,001-100
+              101 - 200                       00,01,01-64  /  00,01,001-100
+              201 - 300                       00,02,01-64  /  00,02,001-100
+
+      Source Program &amp; Timbre
+              001 - 100 TimbreA               20,20,01-64  /  32,32,001-100
+              101 - 200 TimbreA               20,21,01-64  /  32,33,001-100
+              201 - 300 TimbreA               20,22,01-64  /  32,34,001-100
+              001 - 100 TimbreB               20,23,01-64  /  32,35,001-100
+              101 - 200 TimbreB               20,24,01-64  /  32,36,001-100
+              201 - 300 TimbreB               20,25,01-64  /  32,37,001-100
+
+ *8 : Non Registered Parameter Number (NRPN)
++---------+-----------------------+------------------------+
+| MSB LSB | Parameter             | Data Entry(MSB) Value  |
+| [H] [H] |                       |                        |
++---------+-----------------------+------------------------+
+| 00  02  | Arpeggio On/Off       | 00~3F/40~7F:OFF/ON     |
+| 05  00  | Voice Mode            | *8-1                   |
+| 05  04  | Vocoder SW            | 00~3F/40~7F:OFF/ON     |
++---------+-----------------------+------------------------+
+
+  All these parameters can be changed by "Data Entry(MSB)".
+
+ *8-1 : 00~2A : Single
+        2B~54 : Layer
+        55~7F : Split
+
+ *9 : Control Data (assignable)
++------------------------+---------------------------------+
+|    Synth               | Value Synth                     |
++------------------------+---------------------------------+
+| Portamento Time        | 00~7F:0~127                     |
+| Portamento SW          | 00~3F/40~7F:OFF/ON              |
+| Unison SW              | *9-1                            |
+| OSC1 Type              | *4-2                            |
+| OSC1 Control1          | *4-3                            |
+| OSC1 Control2          | *4-4                            |
+| OSC2 Type              | *4-2                            |
+| OSC2 Control1          | *4-3                            |
+| OSC2 Control2          | *4-4                            |
+| OSC3 Type              | *4-2                            |
+| OSC3 Control1          | *4-3                            |
+| OSC3 Control2          | *4-4                            |
+| OSC1 Level             | 00~7F:0~127                     |
+| OSC2 Level             | 00~7F:0~127                     |
+| OSC3 Level             | 00~7F:0~127                     |
+| Filter Cutoff          | 00~7F:0~127                     |
+| Filter Resonance       | 00~7F:0~127                     |
+| Filter EG1 Int         | *4-5                            |
+| Filter KeyTrack        | *4-6                            |
+| Amp Level              | 00~7F:0~127                     |
+| Panpot                 | *9-2                            |
+| EG1 Attack             | 00~7F:0~127                     |
+| EG1 Decay              | 00~7F:0~127                     |
+| EG1 Sustain            | 00~7F:0~127                     |
+| EG1 Release            | 00~7F:0~127                     |
+| EG2 Attack             | 00~7F:0~127                     |
+| EG2 Decay              | 00~7F:0~127                     |
+| EG2 Sustain            | 00~7F:0~127                     |
+| EG2 Release            | 00~7F:0~127                     |
+| LFO1 Intensity         | *4-5                            |
+| LFO1 Frequency         | *4-7                            |
+| LFO2 Intensity         | *4-5                            |
+| LFO2 Frequency         | *4-7                            |
+| Patch1 Intensity       | *4-5                            |
+| Patch2 Intensity       | *4-5                            |
+| Patch3 Intensity       | *4-5                            |
+| Patch4 Intensity       | *4-5                            |
+| Patch5 Intensity       | *4-5                            |
+| Patch6 Intensity       | *4-5                            |
+| EQ Hi.Gain             | *4-8                            |
+| EQ Low.Gain            | *4-8                            |
+| PRE FX Drive/Freq      | *4-9                            |
+| MOD FX Depth           | 00~7F:0~127                     |
+| MOD FX Speed           | 00~7F:0~127                     |
+| Rev/Delay Depth        | 00~7F:0~127                     |
+| Rev/Delay Time         | *4-10                           |
+| PRE FX SW              | *9-3                            |
+| MOD FX SW              | *9-3                            |
+| Rev/Delay SW           | *9-3                            |
++------------------------+---------------------------------+
+|    Vocoder             | Value Vocoder                   |
++------------------------+---------------------------------+
+| Threshold              | 00~7F:0~127                     |
+| HPF Level              | 00~7F:0~127                     |
+| HPF Gate               | 00~3F/40~7F:Disable/Enable      |
+| Direct Level           | 00~7F:0~127                     |
+| TimbreA Level          | 00~7F:0~127                     |
+| TimbreB Level          | 00~7F:0~127                     |
+| Vocoder Level          | 00~7F:0~127                     |
+| Formant Shift          | *9-4                            |
+| FC Offset              | *4-5                            |
+| Resonance              | 00~7F:0~127                     |
+| FC Mod.Int             | *4-5                            |
+| E.F.Sens               | 00~7F:0~127                     |
++------------------------+---------------------------------+
+
+ *9-1 : 00~1F : Unison Off
+        20~3F : 2Voice
+        40~5F : 3Voice
+        60~7F : 4Voice
+
+ *9-2 : 00,01~40~7F : L63,L63~Center~R63
+
+        00~07 : L63,L63,L62,L61,L60,L59,L58,L57
+        08~0F : L56,L55,L54,L53,L52,L51,L50,L49
+        10~17 : L48,L47,L46,L45,L44,L43,L42,L41
+        18~1F : L40,L39,L38,L37,L36,L35,L34,L33
+        20~27 : L32,L31,L30,L29,L28,L27,L26,L25
+        28~2F : L24,L23,L22,L21,L20,L19,L18,L17
+        30~37 : L16,L15,L14,L13,L12,L11,L10,L09
+        38~3F : L08,L07,L06,L05,L04,L03,L02,L01
+        40~47 : Center,R01,R02,R03,R04,R05,R06,R07
+        48~4F : R08,R09,R10,R11,R12,R13,R14,R15
+        50~57 : R16,R17,R18,R19,R20,R21,R22,R23
+        58~5F : R24,R25,R26,R27,R28,R29,R30,R31
+        60~67 : R32,R33,R34,R35,R36,R37,R38,R39
+        68~6F : R40,R41,R42,R43,R44,R45,R46,R47
+        70~77 : R48,R49,R50,R51,R52,R53,R54,R55
+        78~7F : R56,R57,R58,R59,R60,R61,R62,R63
+
+ *9-3 : 00~1F : Off
+        20~3F : TimbreA
+        40~5F : TimbreB
+        60~7F : TimbreA+B
+
+ *9-4 : 00~19 : -2
+        1A~32 : -1
+        33~4C :  0
+        4D~65 :  2
+        66~7F : +2
+
+
+2-2 SYSTEM REALTIME MESSAGES
+
++-----------+----------------------------------------------+
+| Status[H] | Description                                  |
++-----------+----------------------------------------------+
+|    F8     | Timing Clock                              *10|
+|    FA     | Start                                     *10|
+|    FC     | Stop  (Arpeggiator stop)                  *10|
+|    FE     | Active Sensing                               |
++-----------+----------------------------------------------+
+
+ *10 : This message is recognized when the "Clock" is set to "Ext-USB" or "Ext-MIDI" or "Auto".
+
+
+2-3 UNIVERSAL SYSTEM EXCLUSIVE MESSAGE ( NON REALTIME )
+
+ DEVICE INQUIRY MESSAGE REQUEST
++---------+------------------------------------------------+
+| Byte[H] |    Description                                 |
++---------+------------------------------------------------+
+|   F0    | Exclusive Status                               |
+|   7E    | Non Realtime Message                           |
+|   nn    | MIDI Channel (Device ID)                       |
+|   06    | General Information                            |
+|   01    | Identity Request                               |
+|   F7    | END OF EXCLUSIVE                               |
++---------+------------------------------------------------+
+
+ nn : MIDI Channel = 0 ~ F : Global Channel
+                   = 7F    : Any Channel
+
+
+2-4 UNIVERSAL SYSTEM EXCLUSIVE MESSAGE ( REALTIME )
+
+ (1) MASTER VOLUME
++---------+------------------------------------------------+
+| Byte[H] |    Description                                 |
++---------+------------------------------------------------+
+|   F0    | Exclusive Status                               |
+|   7F    | Realtime Message                               |
+|   nn    | MIDI Channel (Device ID)                       |
+|   04    | Device Control                                 |
+|   01    | Master Volume                                  |
+|   vv    | Value (LSB)                                    |
+|   mm    | Value (MSB)                                    |
+|   F7    | END OF EXCLUSIVE                               |
++---------+------------------------------------------------+
+
+ nn : MIDI Channel = 0~F : Global Channel
+                   = 7F  : Any Channel
+ mm,vv : 00,00~7F,7F     : Min~Max
+
+
+ (2) MASTER FINE TUNE
++---------+------------------------------------------------+
+| Byte[H] |    Description                                 |
++---------+------------------------------------------------+
+|   F0    | Exclusive Status                               |
+|   7F    | Realtime Message                               |
+|   nn    | MIDI Channel (Device ID)                       |
+|   04    | Device Control                                 |
+|   03    | Master Fine Tune                               |
+|   vv    | Value (LSB)                                    |
+|   mm    | Value (MSB)                                    |
+|   F7    | END OF EXCLUSIVE                               |
++---------+------------------------------------------------+
+
+ nn : MIDI Channel = 0~F   : Global Channel
+                   = 7F    : Any Channel
+ mm,vv : 00,00~40,00~7F,7F : -100~0~+100
+
+
+2-5 SYSTEM EXCLUSIVE MESSAGE
+
++-------------+--------------------------------------------+
+| Function ID |               Function                     |
+|    [Hex]    |                                            |
++-------------+--------------------------------------------+
+|     10      | CURRENT PROGRAM DATA DUMP REQUEST          |
+|     1C      | PROGRAM DATA DUMP REQUEST (1 PROG)         |
+|     0E      | GLOBAL DATA DUMP REQUEST                   |
+|     11      | PROGRAM WRITE REQUEST                      |
+|             |                                            |
+|     40      | CURRENT PROGRAM DATA DUMP                  |
+|     4C      | PROGRAM DATA DUMP (1 PROG)                 |
+|     51      | GLOBAL DATA DUMP                           |
+|             |                                            |
+|     41      | PARAMETER CHANGE                           |
++-------------+--------------------------------------------+
+
+ When the "SysEx" parameter is set to "Enable", these messages are recognized.
+
+
+2-6 SEARCH DEVICE REQUEST
+
++---------+------------------------------------------------+
+| Byte[H] |                Description                     |
++---------+------------------------------------------------+
+|   F0    | Exclusive Status                               |
+|   42    | KORG ID  ( Manufacturers ID )                  |
+|   50    | Search Device                                  |
+|   00    | Request                                        |
+|   dd    | Echo Back ID                                   |
+|   F7    | END OF EXCLUSIVE                               |
++---------+------------------------------------------------+
+
+ Receive this message, and transmits SEARCH DEVICE REPLY message
+ including copied Echo Back ID.
+
+
+
+
+MIDI EXCLUSIVE FORMAT   (R:Receive, T:Transmit)
+
+(1) CURRENT PROGRAM DATA DUMP REQUEST                              R
++----------------+--------------------------------------------------+
+|     Byte       |             Description                          |
++----------------+--------------------------------------------------+
+| F0,42,3g,      | EXCLUSIVE HEADER                                 |
+| 00,01,18,      | ProductID (KingKORG)                             |
+| 0001 0000 (10) | CURRENT PROGRAM DATA DUMP REQUEST      10H       |
+| 1111 0111 (F7) | EOX                                              |
++----------------+--------------------------------------------------+
+
+ Receive this message, and transmits Func=40 or Func=24 message.
+
+
+(2) PROGRAM DATA DUMP REQUEST (1 PROG)                             R
++----------------+--------------------------------------------------+
+|     Byte       |             Description                          |
++----------------+--------------------------------------------------+
+| F0,42,3g,      | EXCLUSIVE HEADER                                 |
+| 00,01,18,      | ProductID (KingKORG)                             |
+| 0001 1100 (1C) | PROGRAM DATA DUMP REQUEST              1CH       |
+| 0ppp pppp (pp) | Source Program No.(LSB bit  6~0)                 |
+| 0ppp pppp (PP) | Source Program No.(MSB bit 13~7)                 |
+| 1111 0111 (F7) | EOX                                              |
++----------------+--------------------------------------------------+
+
+ PPpp : 0~12B = Program No. 001-300
+
+ Receive this message, and transmits Func=4C or Func=24 message.
+
+
+(3) GLOBAL DATA DUMP REQUEST                                       R
++----------------+--------------------------------------------------+
+|     Byte       |             Description                          |
++----------------+--------------------------------------------------+
+| F0,42,3g,      | EXCLUSIVE HEADER                                 |
+| 00,01,18,      | ProductID (KingKORG)                             |
+| 0000 1110 (0E) | GLOBAL DATA DUMP REQUEST               0EH       |
+| 1111 0111 (F7) | EOX                                              |
++----------------+--------------------------------------------------+
+
+ Receive this message, and transmits Func=51 or Func=24 message.
+
+
+(4) PROGRAM WRITE REQUEST                                          R
++----------------+--------------------------------------------------+
+|     Byte       |            Description                           |
++----------------+--------------------------------------------------+
+| F0,42,3g,      | EXCLUSIVE HEADER                                 |
+| 00,01,18,      | ProductID (KingKORG)                             |
+| 0001 0001 (11) | PROGRAM WRITE REQUEST                  11H       |
+| 0ppp pppp (pp) | Destination Program No.(LSB bit  6~0)            |
+| 0ppp pppp (PP) | Destination Program No.(MSB bit 13~7)            |
+| 1111 0111 (F7) | EOX                                              |
++----------------+--------------------------------------------------+
+
+ PPpp : 0~12B = Program No. 001-300
+
+ Receive this message, and transmits Func=21 or Func=22 message.
+
+
+(5) CURRENT PROGRAM DATA DUMP                                    R/T
++----------------+--------------------------------------------------+
+|     Byte       |             Description                          |
++----------------+--------------------------------------------------+
+| F0,42,3g,      | EXCLUSIVE HEADER                                 |
+| 00,01,18,      | ProductID (KingKORG)                             |
+| 0100 0000 (40) | CURRENT PROGRAM DATA DUMP              40H       |
+| 0ddd dddd (dd) | Data                                  (NOTE 1,3) |
+|     :          |  :                                               |
+| 1111 0111 (F7) | EOX                                              |
++----------------+--------------------------------------------------+
+
+ Receive this message &amp; data, save them to Edit Buffer and transmits Func=23 or Func=24 message.
+ Receive Func=10 message, and transmits this message &amp; data from Edit Buffer.
+
+
+(6) PROGRAM DATA DUMP (1 PROG)                                   R/T
++----------------+--------------------------------------------------+
+|     Byte       |             Description                          |
++----------------+--------------------------------------------------+
+| F0,42,3g,      | EXCLUSIVE HEADER                                 |
+| 00,01,18,      | ProductID (KingKORG)                             |
+| 0100 1100 (4C) | PROGRAM DATA DUMP                      4CH       |
+| 0ppp pppp (pp) | Program No.(LSB bit  6~0)                        |
+| 0ppp pppp (PP) | Program No.(MSB bit 13~7)                        |
+| 0ddd dddd (dd) | Data                                  (NOTE 1,3) |
+|     :          |  :                                               |
+| 1111 0111 (F7) | EOX                                              |
++----------------+--------------------------------------------------+
+
+ PPpp : 0~12B = Program No. 001-300
+
+ Receive this message &amp; data, save them to Internal Memory and transmits Func=23 or Func=24 message.
+ Receive Func=1C message, and transmits this message &amp; data from Internal Memory.
+ When DATA DUMP is executed, transmit this message &amp; data from Internal Memory.
+
+
+(7) GLOBAL DATA DUMP                                             R/T
++----------------+--------------------------------------------------+
+|     Byte       |             Description                          |
++----------------+--------------------------------------------------+
+| F0,42,3g,      | EXCLUSIVE HEADER                                 |
+| 00,01,18,      | ProductID (KingKORG)                             |
+| 0101 0001 (51) | GLOBAL DATA DUMP                       51H       |
+| 0ddd dddd (dd) | Data                                  (NOTE 2,3) |
+|     :          |  :                                               |
+| 1111 0111 (F7) | EOX                                              |
++----------------+--------------------------------------------------+
+
+ Receive this message &amp; data, save them to Internal Memory and transmits Func=23 or Func=24 message.
+ Receive Func=0E message, and transmits this message &amp; data from Edit Buffer.
+ When DATA DUMP is executed, transmit this message &amp; data from Edit Buffer.
+
+
+(8) PARAMETER CHANGE                                             R/T
++----------------+--------------------------------------------------+
+|     Byte       |             Description                          |
++----------------+--------------------------------------------------+
+| F0,42,3g,      | EXCLUSIVE HEADER                                 |
+| 00,01,18,      | ProductID (KingKORG)                             |
+| 0100 0001 (41) | PARAMETER CHANGE                       41H       |
+| 0ppp pppp (pp) | Parameter ID     (LSB bit 6~0)        (NOTE 4)   |
+| 0ppp pppp (PP) | Parameter ID     (MSB bit13~7)        (NOTE 4)   |
+| 0qqq qqqq (qq) | Parameter Sub ID (LSB bit 6~0)        (NOTE 4)   |
+| 0qqq qqqq (QQ) | Parameter Sub ID (MSB bit13~7)        (NOTE 4)   |
+| 0vvv vvvv (vvl)| Value            (LSB bit 6~0)        (NOTE 4)   |
+| 0vvv vvvv (vvm)| Value            (    bit13~7)        (NOTE 4)   |
+| 0vvv vvvv (vvh)| Value            (MSB bit20~14)       (NOTE 4)   |
+| 1111 0111 (F7) | EOX                                              |
++----------------+--------------------------------------------------+
+
+ Receive this message &amp; data, select &amp; change a Parameter and transmits Func=23 or Func=24 message.
+ When the Parameter is changed, transmit this message &amp; data.
+
+
+(9) RECEIVE DATA FORMAT ERROR                                      T
++----------------+--------------------------------------------------+
+|     Byte       |             Description                          |
++----------------+--------------------------------------------------+
+| F0,42,3g,      | EXCLUSIVE HEADER                                 |
+| 00,01,18,      | ProductID (KingKORG)                             |
+| 0010 0110 (26) | DATA FORMAT ERROR                      26H       |
+| 1111 0111 (F7) | EOX                                              |
++----------------+--------------------------------------------------+
+
+ When found an error in the received message (ex.data length), transmits this message.
+
+
+(10) DATA LOAD COMPLETED (ACK)                                     T
++----------------+--------------------------------------------------+
+|     Byte       |             Description                          |
++----------------+--------------------------------------------------+
+| F0,42,3g,      | EXCLUSIVE HEADER                                 |
+| 00,01,18,      | ProductID (KingKORG)                             |
+| 0010 0011 (23) | DATA LOAD COMPLETED                    23H       |
+| 1111 0111 (F7) | EOX                                              |
++----------------+--------------------------------------------------+
+
+ When DATA LOAD,PROCESSING have been completed, transmits this message.
+
+
+(11) DATA LOAD ERROR (NAK)                                         T
++----------------+--------------------------------------------------+
+|     Byte       |             Description                          |
++----------------+--------------------------------------------------+
+| F0,42,3g,      | EXCLUSIVE HEADER                                 |
+| 00,01,18,      | ProductID (KingKORG)                             |
+| 0010 0100 (24) | DATA LOAD ERROR                        24H       |
+| 1111 0111 (F7) | EOX                                              |
++----------------+--------------------------------------------------+
+
+ When DATA LOAD,PROCESSING have not been completed (ex.protect), transmits this message.
+
+
+(12) WRITE COMPLETED                                               T
++----------------+--------------------------------------------------+
+|     Byte       |             Description                          |
++----------------+--------------------------------------------------+
+| F0,42,3g,      | EXCLUSIVE HEADER                                 |
+| 00,01,18,      | ProductID (KingKORG)                             |
+| 0010 0001 (21) | WRITE COMPLETED                        21H       |
+| 1111 0111 (F7) | EOX                                              |
++----------------+--------------------------------------------------+
+
+ When DATA WRITE MIDI has been completed, transmits this message.
+
+
+(13) WRITE ERROR                                                   T
++----------------+--------------------------------------------------+
+|     Byte       |             Description                          |
++----------------+--------------------------------------------------+
+| F0,42,3g,      | EXCLUSIVE HEADER                                 |
+| 00,01,18,      | ProductID (KingKORG)                             |
+| 0010 0010 (22) | WRITE ERROR                            22H       |
+| 1111 0111 (F7) | EOX                                              |
++----------------+--------------------------------------------------+
+
+ When DATA WRITE MIDI has not been completed, transmits this message.
+
+
+ NOTE 1: CURRENT PROGRAM DATA (IN CURRENT BUFFER) DUMP FORMAT
+         &amp; PROGRAM DATA (IN INTERNAL MEMORY) DUMP FORMAT
+         316Bytes       = 7*45+1    -&gt; 8*45+(1+1)   =&gt; 362Bytes
+         (Refer TABLE 1)
+
+ NOTE 2: GLOBAL DATA (IN INTERNAL MEMORY) DUMP FORMAT
+         176Bytes       = 7*25+1    -&gt; 8*25+(1+1)   =&gt; 202Bytes
+         (Refer TABLE 10)
+
+ NOTE 3: The dump data conversion
+
+   DATA ( 1set = 8bit x 7Byte )
+   b7     ~      b0   b7     ~      b0   b7   ~~    b0   b7     ~      b0
+   +-+-+-+-+-+-+-+-+  +-+-+-+-+-+-+-+-+  +-+-+-~~-+-+-+  +-+-+-+-+-+-+-+-+
+   | | | | | | | | |  | | | | | | | | |  | | |    | | |  | | | | | | | | |
+   +-+-+-+-+-+-+-+-+  +-+-+-+-+-+-+-+-+  +-+-+-~~-+-+-+  +-+-+-+-+-+-+-+-+
+         7n+0               7n+1          7n+2 ~~ 7n+5         7n+6
+
+    MIDI DATA ( 1set = 7bit x 8Byte )
+      b7b7b7b7b7b7b7     b6    ~     b0     b6 ~~    b0     b6    ~     b0
+   +-+-+-+-+-+-+-+-+  +-+-+-+-+-+-+-+-+  +-+-+-~~-+-+-+  +-+-+-+-+-+-+-+-+
+   |0| | | | | | | |  |0| | | | | | | |  |0| |    | | |  |0| | | | | | | |
+   +-+-+-+-+-+-+-+-+  +-+-+-+-+-+-+-+-+  +-+-+-~~-+-+-+  +-+-+-+-+-+-+-+-+
+   7n+6,5,4,3,2,1,0         7n+0          7n+1 ~~ 7n+5         7n+6
+
+ NOTE 4: MIDI Parameter Change Message Format
+
+         F0,42,3n,00,01,18,41,pp,PP,qq,QQ,vvl,vvm,vvh
+         n : Global MIDI Ch.
+         00,01,18 : KingKORG ID
+
+         parameter ID     : PPpp = 0~3FFF
+         parameter sub ID : QQqq = 0~3FFF
+         parameter value  : vvh,vvm,vvl = signed value
+
+         vvh:0HHHHHHH
+         vvm:0MMMMMMM
+         vvl:0LLLLLLL
+         value:HHHHH HHMMMMMM MLLLLLLL
+
+         (Refer TABLE 1)
+
+
+
+
+ TABLE 1 : PROGRAM PARAMETER ( 1 PROG, CURRENT PROG )
+  No. : No. in the PROGRAM DUMP DATA.
+  Parameter ID &amp; SUB ID [Hex]: for PARAMETER CHANGE.
++-----------+-------------------+--------------------------------------+----------+
+|  No.      |    PARAMETER      |  VALUE        DESCRIPTION            | ID:SubID |
++-----------+-------------------+--------------------------------------+----------+
+| 0~11      | program name      | ASCII code [0]~[11]:Head~Tail        | 00:00~0B |
++-----------+-------------------+--------------------------------------+----------+
+| 12        | category          | 0~8:Synth~User                *T01-1 | 00:0C    |
++-----------+-------------------+--------------------------------------+----------+
+| 13        | Voice Mode        | 0~2:Single,Layer,Split               | 00:0D    |
++-----------+-------------------+--------------------------------------+----------+
+| 14        | TimbreB MIDI Ch.  | 0~15,16~:1~16,Global                 | 00:0E    |
++-----------+-------------------+--------------------------------------+----------+
+| 15        | Split Key         | 0~127:C-1~G9                         | 00:0F    |
++-----------+-------------------+--------------------------------------+----------+
+|  Timbre parameter                                                               |
++-----------+-------------------+--------------------------------------+----------+
+| 16~99     | TIMBRE A DATA     | Timbre parameter [84]      (TABLE 2) | 02:00~   |
++-----------+                   +--------------------------------------+----------+
+| 100~123   |                   | V.Patch Parameter [24]     (TABLE 3) | 03:00~   |
++-----------+-------------------+--------------------------------------+----------+
+| 124~207   | TIMBRE B DATA     | Timbre parameter [84]      (TABLE 2) | 04:00~   |
++-----------+                   +--------------------------------------+----------+
+| 208~231   |                   | V.Patch Parameter [24]     (TABLE 3) | 05:00~   |
++-----------+-------------------+--------------------------------------+----------+
+|  FX parameter                                                                   |
++-----------+-------------------+--------------------------------------+----------+
+| 232~243   | EFFECT DATA       | Effect parameter [12]      (TABLE 4) | 06:00~   |
++-----------+-------------------+--------------------------------------+----------+
+|  Vocoder parameter                                                              |
++-----------+-------------------+--------------------------------------+----------+
+| 244~295   | VOCODER DATA      | Vocoder parameter [52]     (TABLE 5) | 07:00~   |
++-----------+-------------------+--------------------------------------+----------+
+|  Arpeggio parameter                                                             |
++-----------+-------------------+--------------------------------------+----------+
+| 296~311   | ARPEGGIO DATA     | Arpeggio parameter [16]    (TABLE 6) | 08:00~   |
++-----------+-------------------+--------------------------------------+----------+
+| 312       | Key Response      | 0~2:Normal,Shallow,Deep              | 01:00    |
++-----------+-------------------+--------------------------------------+----------+
+| 313~315   | (dummy byte)                                             | --:--    |
++-----------+----------------------------------------------------------+----------+
+
+ *T01-1 : Category
+       0: Synth        3: Brass        6: Key
+       1: Lead         4: Strings      7: SE/Voc
+       2: Bass         5: Piano        8: User
+
+
+ TABLE 2 : TIMBRE PARAMETER ( 1 TIMBRE )
+  OFFSET : Offset in the Timbre Parameter
+  Parameter ID &amp; SUB ID [Hex]: for PARAMETER CHANGE.
++-----------+-------------------+--------------------------------------+----------+
+|  OFFSET   |    PARAMETER      |  VALUE        DESCRIPTION            | ID:SubID |
++-----------+-------------------+--------------------------------------+----------+
+|  Voice                                                                          |
++-----------+-------------------+--------------------------------------+----------+
+| +0        | Voice Assign      | 0~2:Mono1,Mono2,Poly                 | +0:00    |
++-----------+-------------------+--------------------------------------+----------+
+| +1        | Unison SW         | 0,1~3:OFF,2Voice~4Voice              | +0:01    |
++-----------+-------------------+--------------------------------------+----------+
+| +2        | Unison Detune     | 0~99:0~99[cent]                      | +0:02    |
++-----------+-------------------+--------------------------------------+----------+
+| +3        | Unison Spread     | 0~127                                | +0:03    |
++-----------+-------------------+--------------------------------------+----------+
+|  Pitch                                                                          |
++-----------+-------------------+--------------------------------------+----------+
+| +4        | Transpose         | -48~0~48[note]                       | +0:04    |
++-----------+-------------------+--------------------------------------+----------+
+| +5        | Detune            | -50~0~50[cent]                       | +0:05    |
++-----------+-------------------+--------------------------------------+----------+
+| +6        | LFO2ModInt        | -63~0~63                             | +0:06    |
++-----------+-------------------+--------------------------------------+----------+
+| +7        | LFO2 &amp; JS+Y       | -63~0~63:-2400~0~2400[cent]   *T02-1 | +0:07    |
++-----------+-------------------+--------------------------------------+----------+
+| +8        | Bend Range        | -12~0~12[note]                       | +0:08    |
++-----------+-------------------+--------------------------------------+----------+
+| +9        | Portamento SW     | 0,1:Off,On                           | +0:09    |
++-----------+-------------------+--------------------------------------+----------+
+| +10       | Portamento Time   | 0~127                                | +0:0A    |
++-----------+-------------------+--------------------------------------+----------+
+| +11       | Analog Tuning     | 0~127                                | +0:0B    |
++-----------+-------------------+--------------------------------------+----------+
+|  Osc                                                                            |
++-----------+-------------------+--------------------------------------+----------+
+| +12~19    | OSC 1 DATA        | Osc Parameter[8]           (TABLE 7) | +0:0C~10 |
++-----------+-------------------+--------------------------------------+----------+
+| +20~27    | OSC 2 DATA        | Osc Parameter[8]           (TABLE 7) | +0:11~15 |
++-----------+-------------------+--------------------------------------+----------+
+| +28~35    | OSC 3 DATA        | Osc Parameter[8]           (TABLE 7) | +0:16~1A |
++-----------+-------------------+--------------------------------------+----------+
+|  Mixer                                                                          |
++-----------+-------------------+--------------------------------------+----------+
+| +36       | Osc1 Level        | 0~127                                | +0:1B    |
++-----------+-------------------+--------------------------------------+----------+
+| +37       | Osc2 Level        | 0~127                                | +0:1C    |
++-----------+-------------------+--------------------------------------+----------+
+| +38       | Osc3 Level        | 0~127                                | +0:1D    |
++-----------+-------------------+--------------------------------------+----------+
+|  Filter                                                                         |
++-----------+-------------------+--------------------------------------+----------+
+| +39       | Type              | 0~17                          *T02-2 | +0:1E    |
++-----------+-------------------+--------------------------------------+----------+
+| +40       | Cutoff            | 0~127                                | +0:1F    |
++-----------+-------------------+--------------------------------------+----------+
+| +41       | Resonance         | 0~127                                | +0:20    |
++-----------+-------------------+--------------------------------------+----------+
+| +42       | EG1 Intensity     | -63~0~63                             | +0:21    |
++-----------+-------------------+--------------------------------------+----------+
+| +43       | LFO1 Mod Int.     | -63~0~63                             | +0:22    |
++-----------+-------------------+--------------------------------------+----------+
+| +44       | LFO1 &amp; JS-Y       | -63~0~63                             | +0:23    |
++-----------+-------------------+--------------------------------------+----------+
+| +45       | Keyboard Track    | -63~0~63:-2.00~0~2.00         *T02-3 | +0:24    |
++-----------+-------------------+--------------------------------------+----------+
+| +46       | Velocity Sens     | -63~0~63                             | +0:25    |
++-----------+-------------------+--------------------------------------+----------+
+|  Amp                                                                            |
++-----------+-------------------+--------------------------------------+----------+
+| +47       | Level             | 0~127                                | +0:26    |
++-----------+-------------------+--------------------------------------+----------+
+| +48       | Panpot            | 0,1~64~127:L63,L63~CNT~R63           | +0:27    |
++-----------+-------------------+--------------------------------------+----------+
+| +49       | Punch Level       | 0~127                                | +0:28    |
++-----------+-------------------+--------------------------------------+----------+
+| +50       | Key Track         | -63~0~63                             | +0:29    |
++-----------+-------------------+--------------------------------------+----------+
+| +51       | (dummy byte)                                             | --:--    |
++-----------+----------------------------------------------------------+----------+
+|  EG                                                                             |
++-----------+-------------------+--------------------------------------+----------+
+| +52~59    | EG1 DATA          | EG Parameter[8]            (TABLE 8) | +0:2A~2E |
++-----------+-------------------+--------------------------------------+----------+
+| +60~67    | EG2 DATA          | EG Parameter[8]            (TABLE 8) | +0:2F~33 |
++-----------+-------------------+--------------------------------------+----------+
+|  LFO1                                                                           |
++-----------+-------------------+--------------------------------------+----------+
+| +68       | Wave              | 0~4:Saw,Square,Triangle,S/H,Random   | +0:34    |
++-----------+-------------------+--------------------------------------+----------+
+| +69       | Frequency         | 0~127:0.01~100[kHz]           *T02-4 | +0:35    |
++-----------+-------------------+--------------------------------------+----------+
+| +70       | Key Sync          | 0~2:Off,Timbre,Voice                 | +0:36    |
++-----------+-------------------+--------------------------------------+----------+
+| +71       | Tempo Sync        | 0,1:Off,On                           | +0:37    |
++-----------+-------------------+--------------------------------------+----------+
+| +72       | Sync Note         | 0~16:8/1~1/64                 *T02-5 | +0:38    |
++-----------+-------------------+--------------------------------------+----------+
+| +73~75    | (dummy byte)                                             | --:--    |
++-----------+----------------------------------------------------------+----------+
+|  LFO2                                                                           |
++-----------+-------------------+--------------------------------------+----------+
+| +76       | Wave              | 0~4:Saw,Square+,Sine,S/H,Random      | +0:39    |
++-----------+-------------------+--------------------------------------+----------+
+| +77       | Frequency         | 0~127:0.01~100[kHz]           *T02-4 | +0:3A    |
++-----------+-------------------+--------------------------------------+----------+
+| +78       | Key Sync          | 0~2:Off,Timbre,Voice                 | +0:3B    |
++-----------+-------------------+--------------------------------------+----------+
+| +79       | Tempo Sync        | 0,1:Off,On                           | +0:3C    |
++-----------+-------------------+--------------------------------------+----------+
+| +80       | Sync Note         | 0~16:8/1~1/64                 *T02-5 | +0:3D    |
++-----------+-------------------+--------------------------------------+----------+
+| +81~83    | (dummy byte)                                             | --:--    |
++-----------+----------------------------------------------------------+----------+
+
+ *T02-1 : Vibrato Int
+                  -48: +1200   -32: -0800,  -16: -0160,    0: +0000,  +16: +0160,  +32: +0800,  +48: +1200,
+     -63: -2400,  -47: -1175,  -31: -0775,  -15: -0120,   +1: +0001,  +17: +0200,  +33: +0825,  +49: +1280,
+     -62: -2320,  -46: -1150,  -30: -0750,  -14: -0100,   +2: +0002,  +18: +0260,  +34: +0850,  +50: +1360,
+     -61: -2240,  -45: -1125,  -29: -0725,  -13: -0080,   +3: +0003,  +19: +0320,  +35: +0875,  +51: +1440,
+     -60: -2160,  -44: -1100,  -28: -0700,  -12: -0060,   +4: +0004,  +20: +0380,  +36: +0900,  +52: +1520,
+     -59: -2080,  -43: -1075,  -27: -0675,  -11: -0040,   +5: +0005,  +21: +0440,  +37: +0925,  +53: +1600,
+     -58: -2000,  -42: -1050,  -26: -0650,  -10: -0030,   +6: +0010,  +22: +0500,  +38: +0950,  +54: +1680,
+     -57: -1920,  -41: -1025,  -25: -0625,   -9: -0025,   +7: +0015,  +23: +0550,  +39: +0975,  +55: +1760,
+     -56: -1840,  -40: -1000,  -24: -0600,   -8: -0020,   +8: +0020,  +24: +0600,  +40: +1000,  +56: +1840,
+     -55: -1760,  -39: -0975,  -23: -0550,   -7: -0015,   +9: +0025,  +25: +0625,  +41: +1025,  +57: +1920,
+     -54: -1680,  -38: -0950,  -22: -0500,   -6: -0010,  +10: +0030,  +26: +0650,  +42: +1050,  +58: +2000,
+     -53: -1600,  -37: -0925,  -21: -0440,   -5: -0005,  +11: +0040,  +27: +0675,  +43: +1075,  +59: +2080,
+     -52: -1520,  -36: -0900,  -20: -0380,   -4: -0004,  +12: +0060,  +28: +0700,  +44: +1100,  +60: +2160,
+     -51: -1440,  -35: -0875,  -19: -0320,   -3: -0003,  +13: +0080,  +29: +0725,  +45: +1125,  +61: +2240,
+     -50: -1360,  -34: -0850,  -18: -0260,   -2: -0002,  +14: +0100,  +30: +0750,  +46: +1150,  +62: +2320,
+     -49: -1280,  -33: -0825,  -17: -0200,   -1: -0001,  +15: +0120,  +31: +0775,  +47: +1175,  +63: +2400
+
+ *T02-2 : Filter Type
+       0: LPF King 1   5: LPF MS-20    10: HPF MS-20   15: BPF MS-20
+       1: LPF King 2   6: LPF Acid     11: HPF Acid    16: BPF Acid
+       2: LPF MG       7: HPF King     12: BPF King    17: BPF King
+       3: LPF P5       8: HPF P5       13: BPF P5
+       4: LPF OB       9: HPF OB       14: BPF OB
+
+ *T02-3 : Filter Keyboard Track
+                  -48: -1.00,  -32: -0.66,  -16: -0.33,    0: +0.00,  +16: +0.33,  +32: +0.66,  +48: +1.00,
+     -63: -2.00,  -47: -0.97,  -31: -0.64,  -15: -0.31,   +1: +0.02,  +17: +0.35,  +33: +0.68,  +49: +1.06,
+     -62: -1.93,  -46: -0.95,  -30: -0.62,  -14: -0.29,   +2: +0.04,  +18: +0.37,  +34: +0.70,  +50: +1.13,
+     -61: -1.86,  -45: -0.93,  -29: -0.60,  -13: -0.27,   +3: +0.06,  +19: +0.39,  +35: +0.72,  +51: +1.20,
+     -60: -1.80,  -44: -0.91,  -28: -0.58,  -12: -0.25,   +4: +0.08,  +20: +0.41,  +36: +0.75,  +52: +1.26,
+     -59: -1.73,  -43: -0.89,  -27: -0.56,  -11: -0.22,   +5: +0.10,  +21: +0.43,  +37: +0.77,  +53: +1.33,
+     -58: -1.66,  -42: -0.87,  -26: -0.54,  -10: -0.20,   +6: +0.12,  +22: +0.45,  +38: +0.79,  +54: +1.40,
+     -57: -1.60,  -41: -0.85,  -25: -0.52,   -9: -0.18,   +7: +0.14,  +23: +0.47,  +39: +0.81,  +55: +1.46,
+     -56: -1.53,  -40: -0.83,  -24: -0.50,   -8: -0.16,   +8: +0.16,  +24: +0.50,  +40: +0.83,  +56: +1.53,
+     -55: -1.46,  -39: -0.81,  -23: -0.47,   -7: -0.14,   +9: +0.18,  +25: +0.52,  +41: +0.85,  +57: +1.60,
+     -54: -1.40,  -38: -0.79,  -22: -0.45,   -6: -0.12,  +10: +0.20,  +26: +0.54,  +42: +0.87,  +58: +1.66,
+     -53: -1.33,  -37: -0.77,  -21: -0.43,   -5: -0.10,  +11: +0.22,  +27: +0.56,  +43: +0.89,  +59: +1.73,
+     -52: -1.26,  -36: -0.75,  -20: -0.41,   -4: -0.08,  +12: +0.25,  +28: +0.58,  +44: +0.91,  +60: +1.80,
+     -51: -1.20,  -35: -0.72,  -19: -0.39,   -3: -0.06,  +13: +0.27,  +29: +0.60,  +45: +0.93,  +61: +1.86,
+     -50: -1.13,  -34: -0.70,  -18: -0.37,   -2: -0.04,  +14: +0.29,  +30: +0.62,  +46: +0.95,  +62: +1.93,
+     -49: -1.06,  -33: -0.68,  -17: -0.35,   -1: -0.02,  +15: +0.31,  +31: +0.64,  +47: +0.97,  +63: +2.00
+
+ *T02-4 : [kHz]
+       0: 0.01     16: 0.17     32: 0.83     48: 2.75     64: 4.75     80: 8.50     96: 15.0    112: 39.0
+       1: 0.02     17: 0.18     33: 0.92     49: 2.88     65: 4.88     81: 8.75     97: 16.0    113: 41.0
+       2: 0.03     18: 0.19     34: 1.00     50: 3.00     66: 5.00     82: 9.00     98: 17.0    114: 44.0
+       3: 0.04     19: 0.20     35: 1.13     51: 3.13     67: 5.25     83: 9.25     99: 18.0    115: 47.0
+       4: 0.05     20: 0.21     36: 1.25     52: 3.25     68: 5.50     84: 9.50    100: 19.0    116: 50.0
+       5: 0.06     21: 0.22     37: 1.38     53: 3.38     69: 5.75     85: 9.75    101: 20.0    117: 53.0
+       6: 0.07     22: 0.23     38: 1.50     54: 3.50     70: 6.00     86: 10.0    102: 21.5    118: 57.0
+       7: 0.08     23: 0.24     39: 1.63     55: 3.63     71: 6.25     87: 10.5    103: 23.0    119: 61.0
+       8: 0.09     24: 0.25     40: 1.75     56: 3.75     72: 6.50     88: 11.0    104: 24.5    120: 65.0
+       9: 0.10     25: 0.29     41: 1.88     57: 3.88     73: 6.75     89: 11.5    105: 26.0    121: 70.0
+      10: 0.11     26: 0.33     42: 2.00     58: 4.00     74: 7.00     90: 12.0    106: 27.5    122: 75.0
+      11: 0.12     27: 0.42     43: 2.13     59: 4.13     75: 7.25     91: 12.5    107: 29.0    123: 80.0
+      12: 0.13     28: 0.50     44: 2.25     60: 4.25     76: 7.50     92: 13.0    108: 31.0    124: 85.0
+      13: 0.14     29: 0.58     45: 2.38     61: 4.38     77: 7.75     93: 13.5    109: 33.0    125: 90.0
+      14: 0.15     30: 0.67     46: 2.50     62: 4.50     78: 8.00     94: 14.0    110: 35.0    126: 95.0
+      15: 0.16     31: 0.75     47: 2.63     63: 4.63     79: 8.25     95: 14.5    111: 37.0    127: 100
+
+ *T02-5 :
+       0: 8/1       4: 3/4       8: 1/4      12: 1/12     16: 1/64
+       1: 4/1       5: 1/2       9: 3/16     13: 1/16
+       2: 2/1       6: 3/8      10: 1/6      14: 1/24
+       3: 1/1       7: 1/3      11: 1/8      15: 1/32
+
+
+ TABLE 3 : VIRTUAL PATCH PARAMETER
+  OFFSET : Offset in the Virtual Patch Parameter
+  Parameter ID &amp; SUB ID [Hex]: for PARAMETER CHANGE.
++-----------+-------------------+--------------------------------------+----------+
+|  OFFSET   |    PARAMETER      |  VALUE        DESCRIPTION            | ID:SubID |
++-----------+-------------------+--------------------------------------+----------+
+| +0~3      | V.PATCH 1 DATA    | V.Patch Parameter[4]       (TABLE 9) | +0:00~02 |
++-----------+-------------------+--------------------------------------+----------+
+| +4~7      | V.PATCH 2 DATA    | same as V.PATCH 1                    | +0:03~05 |
++-----------+-------------------+--------------------------------------+----------+
+| +8~11     | V.PATCH 3 DATA    | same as V.PATCH 1                    | +0:06~08 |
++-----------+-------------------+--------------------------------------+----------+
+| +12~15    | V.PATCH 4 DATA    | same as V.PATCH 1                    | +0:09~0B |
++-----------+-------------------+--------------------------------------+----------+
+| +16~19    | V.PATCH 5 DATA    | same as V.PATCH 1                    | +0:0C~0E |
++-----------+-------------------+--------------------------------------+----------+
+| +20~23    | V.PATCH 6 DATA    | same as V.PATCH 1                    | +0:0F~11 |
++-----------+-------------------+--------------------------------------+----------+
+
+
+ TABLE 4 : EFFECT PARAMETER
+  OFFSET : Offset in the Effect Parameter
+  Parameter ID &amp; SUB ID [Hex]: for PARAMETER CHANGE.
++-----------+-------------------+--------------------------------------+----------+
+|  OFFSET   |    PARAMETER      |  VALUE        DESCRIPTION            | ID:SubID |
++-----------+-------------------+--------------------------------------+----------+
+| +0        | PreFX Type        | 0~5:DISTORTION~TONE           *T04-1 | 06:00    |
++-----------+-------------------+--------------------------------------+----------+
+| +1        | PreFX SW          | 0~3:Off,TimbreA,TimbreB,TimbreA+B    | 06:01    |
++-----------+-------------------+--------------------------------------+----------+
+| +2        | PreFX Drive/Freq  | 0~127                           *4-9 | 06:02    |
++-----------+-------------------+--------------------------------------+----------+
+| +3        | ModFX Type        | 0~5:FLANGER~ROTARY            *T04-2 | 06:03    |
++-----------+-------------------+--------------------------------------+----------+
+| +4        | ModFX SW          | 0~3:Off,TimbreA,TimbreB,TimbreA+B    | 06:04    |
++-----------+-------------------+--------------------------------------+----------+
+| +5        | ModFX Depth       | 0~127                                | 06:05    |
++-----------+-------------------+--------------------------------------+----------+
+| +6        | ModFX Speed       | 0~127                                | 06:06    |
++-----------+-------------------+--------------------------------------+----------+
+| +7        | Rev/Dly Type      | 0~5:HALL~BPM DELAY            *T04-3 | 06:07    |
++-----------+-------------------+--------------------------------------+----------+
+| +8        | Rev/Dly SW        | 0~3:Off,TimbreA,TimbreB,TimbreA+B    | 06:08    |
++-----------+-------------------+--------------------------------------+----------+
+| +9        | Rev/Dly Depth     | 0~127                                | 06:09    |
++-----------+-------------------+--------------------------------------+----------+
+| +10       | Rev/Dly Time      | 0~127                          *4-10 | 06:0A    |
++-----------+-------------------+--------------------------------------+----------+
+| +11       | (dummy byte)                                             | --:--    |
++-----------+----------------------------------------------------------+----------+
+
+ *T04-1 : PRE FX TYPE
+       0: DISTORTION   3: EP.AMP
+       1: DECIMATOR    4: GT.AMP
+       2: RING MOD     5: TONE
+
+ *T04-2 : MOD FX TYPE
+       0: FLANGER      3: TREMOLO
+       1: CHORUS       4: PHASER
+       2: U-VIBE       5: ROTARY
+
+ *T04-3 : REV/DELAY TYPE
+       0: HALL         3: TAPE ECHO
+       1: ROOM         4: MOD DELAY
+       2: PLATE        5: BPM DELAY
+
+
+ TABLE 5 : VOCODER PARAMETER
+  OFFSET : Offset in the Vocoder Parameter
+  Parameter ID &amp; SUB ID [Hex]: for PARAMETER CHANGE.
++-----------+-------------------+--------------------------------------+----------+
+|  OFFSET   |    PARAMETER      |  VALUE        DESCRIPTION            | ID:SubID |
++-----------+-------------------+--------------------------------------+----------+
+| +0        | SW                | 0,1:Dis,Ena                          | 07:00    |
++-----------+-------------------+--------------------------------------+----------+
+|  Carrier                                                                        |
++-----------+-------------------+--------------------------------------+----------+
+| +1        | TimbreA Level     | 0~127                                | 07:01    |
++-----------+-------------------+--------------------------------------+----------+
+| +2        | TimbreB Level     | 0~127                                | 07:02    |
++-----------+-------------------+--------------------------------------+----------+
+|  Modulator                                                                      |
++-----------+-------------------+--------------------------------------+----------+
+| +3        | Audio Source      | 0,1:Input,TimbreB                    | 07:03    |
++-----------+-------------------+--------------------------------------+----------+
+| +4        | Gate Sens         | 0~127                                | 07:04    |
++-----------+-------------------+--------------------------------------+----------+
+| +5        | Threshold         | 0~127                                | 07:05    |
++-----------+-------------------+--------------------------------------+----------+
+| +6        | HPF Level         | 0~127                                | 07:06    |
++-----------+-------------------+--------------------------------------+----------+
+| +7        | HPF Gate          | 0,1:Dis,Ena                          | 07:07    |
++-----------+-------------------+--------------------------------------+----------+
+|  Filter                                                                         |
++-----------+-------------------+--------------------------------------+----------+
+| +8        | Formanto Shift    | 0~2~4:-2~0~2                         | 07:08    |
++-----------+-------------------+--------------------------------------+----------+
+| +9        | Fc offset         | -63~0~63                             | 07:09    |
++-----------+-------------------+--------------------------------------+----------+
+| +10       | Resonance         | 0~127                                | 07:0A    |
++-----------+-------------------+--------------------------------------+----------+
+| +11       | Fc Mod Source     | 0~11:EG1~MIDI3                *T05-1 | 07:0B    |
++-----------+-------------------+--------------------------------------+----------+
+| +12       | Fc Mod Intensity  | -63~0~63                             | 07:0C    |
++-----------+-------------------+--------------------------------------+----------+
+| +13       | E.F.Sens          | 0~127:0~126,Hold                     | 07:0D    |
++-----------+-------------------+--------------------------------------+----------+
+| +14~15    | (dummy byte)                                             | --:--    |
++-----------+----------------------------------------------------------+----------+
+|  Formant Hold Data                                                              |
++-----------+-------------------+--------------------------------------+----------+
+| +16       | Band1 (LSB)       | 0~32767                              | 07:0E    |
+| +17       |       (MSB)       |                                      |          |
++-----------+-------------------+--------------------------------------+----------+
+| +18,19    | Band2  parameter  | same as Band1                        | 07:0F    |
++-----------+-------------------+--------------------------------------+----------+
+| +20,21    | Band3  parameter  | same as Band1                        | 07:10    |
++-----------+-------------------+--------------------------------------+----------+
+| +22,23    | Band4  parameter  | same as Band1                        | 07:11    |
++-----------+-------------------+--------------------------------------+----------+
+| +24,25    | Band5  parameter  | same as Band1                        | 07:12    |
++-----------+-------------------+--------------------------------------+----------+
+| +26,27    | Band6  parameter  | same as Band1                        | 07:13    |
++-----------+-------------------+--------------------------------------+----------+
+| +28,29    | Band7  parameter  | same as Band1                        | 07:14    |
++-----------+-------------------+--------------------------------------+----------+
+| +30,31    | Band8  parameter  | same as Band1                        | 07:15    |
++-----------+-------------------+--------------------------------------+----------+
+| +32,33    | Band9  parameter  | same as Band1                        | 07:16    |
++-----------+-------------------+--------------------------------------+----------+
+| +34,35    | Band10 parameter  | same as Band1                        | 07:17    |
++-----------+-------------------+--------------------------------------+----------+
+| +36,37    | Band11 parameter  | same as Band1                        | 07:18    |
++-----------+-------------------+--------------------------------------+----------+
+| +38,39    | Band12 parameter  | same as Band1                        | 07:19    |
++-----------+-------------------+--------------------------------------+----------+
+| +40,41    | Band13 parameter  | same as Band1                        | 07:1A    |
++-----------+-------------------+--------------------------------------+----------+
+| +42,43    | Band14 parameter  | same as Band1                        | 07:1B    |
++-----------+-------------------+--------------------------------------+----------+
+| +44,45    | Band15 parameter  | same as Band1                        | 07:1C    |
++-----------+-------------------+--------------------------------------+----------+
+| +46,47    | Band16 parameter  | same as Band1                        | 07:1D    |
++-----------+-------------------+--------------------------------------+----------+
+|  Amp                                                                            |
++-----------+-------------------+--------------------------------------+----------+
+| +48       | Vocoder Level     | 0~127                                | 07:1E    |
++-----------+-------------------+--------------------------------------+----------+
+| +49       | Direct Level      | 0~127                                | 07:1F    |
++-----------+-------------------+--------------------------------------+----------+
+| +50       | Wet Spread        | 0~127                                | 07:20    |
++-----------+-------------------+--------------------------------------+----------+
+| +51       | Wet Level         | 0~127                                | 07:21    |
++-----------+-------------------+--------------------------------------+----------+
+
+ *T05-1 : Fc Mod Source, Virtual Patch1~6 Source
+       0: EG1          4: Velocity     8: Key Track
+       1: EG2          5: Pitch Bend   9: MIDI1
+       2: LFO1         6: JS+Y        10: MIDI2
+       3: LFO2         7: JS-Y        11: MIDI3
+
+
+ TABLE 6 : ARPEGGIO PARAMETER
+  OFS. : Offset in the Arpeggio Parameter
+  Parameter ID &amp; SUB ID [Hex]: for PARAMETER CHANGE.
++-----------+-------------------+--------------------------------------+----------+
+| OFS. (bit)|    PARAMETER      |  VALUE        DESCRIPTION            | ID:SubID |
++-----------+-------------------+--------------------------------------+----------+
+| +0        | tempo (LSB)       | 20~300                               | 08:01    |
+| +1        |       (MSB)       |                                      |          |
++-----------+-------------------+--------------------------------------+----------+
+| +2        | Arp SW            | 0,1:Off,On                           | 08:00    |
++-----------+-------------------+--------------------------------------+----------+
+| +3        | Latch             | 0,1:Off,On                           | 08:02    |
++-----------+-------------------+--------------------------------------+----------+
+| +4        | Key Sync          | 0,1:Off,On                           | 08:03    |
++-----------+-------------------+--------------------------------------+----------+
+| +5        | Timbre Assign     |                                      | 08:04    |
++-----------+-------------------+--------------------------------------+----------+
+| +6        | Type              | 0~5:Up~Trigger                *T06-1 | 08:05    |
++-----------+-------------------+--------------------------------------+----------+
+| +7        | Resolution        | 0~8:1/32~1/1                  *T06-2 | 08:06    |
++-----------+-------------------+--------------------------------------+----------+
+| +8        | gate time         | 0~100:0~100[%]                       | 08:07    |
++-----------+-------------------+--------------------------------------+----------+
+| +9        | Swing             | -100~0~100[%]                        | 08:08    |
++-----------+-------------------+--------------------------------------+----------+
+| +10       | Last step         | 1~8:1~8 step                         | 08:09    |
++-----------+-------------------+--------------------------------------+----------+
+| +11       | Octave Range      | 1~4:1~4 Octave                       | 08:0A    |
++-----------+-------------------+--------------------------------------+----------+
+|  Step                                                                           |
++-----------+-------------------+--------------------------------------+----------+
+| +12  B0   | Step1    SW       | 0,1:Off,On                           | 08:0B    |
+|    -------+-------------------+--------------------------------------+----------+
+|      B1   | Step2    SW       | 0,1:Off,On                           | 08:0C    |
+|    -------+-------------------+--------------------------------------+----------+
+|      B2   | Step3    SW       | 0,1:Off,On                           | 08:0D    |
+|    -------+-------------------+--------------------------------------+----------+
+|      B3   | Step4    SW       | 0,1:Off,On                           | 08:0E    |
+|    -------+-------------------+--------------------------------------+----------+
+|      B4   | Step5    SW       | 0,1:Off,On                           | 08:0F    |
+|    -------+-------------------+--------------------------------------+----------+
+|      B5   | Step6    SW       | 0,1:Off,On                           | 08:10    |
+|    -------+-------------------+--------------------------------------+----------+
+|      B6   | Step7    SW       | 0,1:Off,On                           | 08:11    |
+|    -------+-------------------+--------------------------------------+----------+
+|      B7   | Step8    SW       | 0,1:Off,On                           | 08:12    |
++-----------+-------------------+--------------------------------------+----------+
+| +13~15    | (dummy bytes)                                            | --:--    |
++-----------+----------------------------------------------------------+----------+
+
+ *T06-1 : Arp Type
+       0: Up
+       1: Down
+       2: Alt1
+       3: Alt2
+       4: Random
+       5: Trigger
+
+ *T06-2 : Arp Resolution
+       0: 1/32      3: 1/12      6: 1/4
+       1: 1/24      4: 1/8       7: 1/2
+       2: 1/16      5: 1/6       8: 1/1
+
+
+ TABLE 7 : OSC PARAMETER ( 1 OSC )
+  OFFSET : Offset in the Osc Parameter
+  Parameter ID &amp; SUB ID [Hex]: for PARAMETER CHANGE.
++-----------+-------------------+--------------------------------------+----------+
+|  OFFSET   |    PARAMETER      |  VALUE        DESCRIPTION            | ID:SubID |
++-----------+-------------------+--------------------------------------+----------+
+| +0        | OSC Type          | 0~127                           *4-1 | +0:+0    |
++-----------+-------------------+--------------------------------------+----------+
+| +1        | Semitone          | -24~0~24[note]                       | +0:+1    |
++-----------+-------------------+--------------------------------------+----------+
+| +2        | Tune              | -63~0~63                             | +0:+2    |
++-----------+-------------------+--------------------------------------+----------+
+| +3        | CTRL1             |                               *T07-1 | +0:+3    |
++-----------+-------------------+--------------------------------------+----------+
+| +4        | CTRL2             |                               *T07-2 | +0:+4    |
++-----------+-------------------+--------------------------------------+----------+
+| +5~7      | (dummy byte)                                             | --:--    |
++-----------+----------------------------------------------------------+----------+
+
+ *T07-1 : OSC CONTROL1
+       When OSCType is "Saw,Triangle,Sine"   0~127 :    Waveform
+       When OSCType is "Pluse"               0~127 :    PulseWidth
+       When OSCType is "WH.NOISE"            0~127 :    Decimator Fc
+       When OSCType is "PK.NOISE"            0~127 :    LPF Cutoff
+       When OSCType is "BL.NOISE"            0~127 :    HPF Cutoff
+       When OSCType is "RES.NOISE"           0~127 :    Resonance
+       When OSCType is "DUAL,UNI,DWGS"       -63~0~63 : Detune
+       When OSCType is "SYNC"                0~127 :    Mod Pitch
+       When OSCType is "RING"                -63~0~63 : Mod Pitch
+       When OSCType is "XMOD,VPM"            0~127 :    Mod Depth
+       When OSCType is "MicIn"               -63~0~63 : Gain
+
+ *T07-2 : OSC CONTROL2
+       When OSCType is "NOISE"               0~127 :    Noise Decay
+       When OSCType is "XMOD"                -63~0~63 : Mod Pitch
+       When OSCType is "VPM"                 0~32 :     Mod Harm
+       When OSCType is "DWGS"                0~127 :    Mod Depth
+
+
+ TABLE 8 : EG PARAMETER ( 1 EG )
+  OFFSET : Offset in the EG Parameter
+  Parameter ID &amp; SUB ID [Hex]: for PARAMETER CHANGE.
++-----------+-------------------+--------------------------------------+----------+
+|  OFFSET   |    PARAMETER      |  VALUE        DESCRIPTION            | ID:SubID |
++-----------+-------------------+--------------------------------------+----------+
+| +0        | Attack Time       | 0~127                                | +0:+0    |
++-----------+-------------------+--------------------------------------+----------+
+| +1        | Decay Time        | 0~127                                | +0:+1    |
++-----------+-------------------+--------------------------------------+----------+
+| +2        | Sustain Level     | 0~127                                | +0:+2    |
++-----------+-------------------+--------------------------------------+----------+
+| +3        | Release Time      | 0~127                                | +0:+3    |
++-----------+-------------------+--------------------------------------+----------+
+| +4        | Level Velo Int.   | -63~0~63                             | +0:+4    |
++-----------+-------------------+--------------------------------------+----------+
+| +5~7      | (dummy byte)                                             | --:--    |
++-----------+----------------------------------------------------------+----------+
+
+
+ TABLE 9 : VIRTUAL PATCH PARAMETER ( 1 VIRTUAL PATCH )
+  OFFSET : Offset in the Virtual Patch Parameter
+  Parameter ID &amp; SUB ID [Hex]: for PARAMETER CHANGE.
++-----------+-------------------+--------------------------------------+----------+
+|  OFFSET   |    PARAMETER      |  VALUE        DESCRIPTION            | ID:SubID |
++-----------+-------------------+--------------------------------------+----------+
+| +0        | Patch Source      | 0~11:EG1~MIDI3                *T05-1 | +0:+0    |
++-----------+-------------------+--------------------------------------+----------+
+| +1        | Patch Destination | 0~41:Off~Rev/Delay Time       *T09-1 | +0:+1    |
++-----------+-------------------+--------------------------------------+----------+
+| +2        | Patch Intensity   | -63~0~63                             | +0:+2    |
++-----------+-------------------+--------------------------------------+----------+
+| +3        | (dummy byte)                                             | --:--    |
++-----------+----------------------------------------------------------+----------+
+
+ *T09-1 : Patch1~6 Destination
+       0: 0ff              10: OSC2 Control2   20: EG2 Decay       30: Panpot          40: Rev/Delay Depth
+       1: Pitch            11: OSC3 Control2   21: EG2 Sustain     31: Patch1 Int.     41: Rev/Delay Time
+       2: Portamento       12: OSC1 Level      22: EG2 Release     32: Patch2 Int.
+       3: OSC1 Tune        13: OSC2 Level      23: EG2 Attack      33: Patch3 Int.
+       4: OSC2 Tune        14: OSC3 Level      24: EG2 Decay       34: Patch4 Int.
+       5: OSC3 Tune        15: Filt Cutoff     25: EG2 Sustain     35: Patch5 Int.
+       6: OSC1 Control1    16: Filt Reso       26: EG2 Release     36: Patch6 Int.
+       7: OSC2 Control1    17: Filt EG1Int     27: LFO1 Freq.      37: PreFx Drive
+       8: OSC3 Control1    18: Filt KeyTrack   28: LFO2 Freq.      38: ModFx Depth
+       9: OSC1 Control2    19: EG1 Attack      29: Amp Level       39: ModFx Speed
+
+
+ TABLE 10 : GLOBAL PARAMETER
+  No. : No. in the GLOBAL DUMP DATA.
++-----------+-----------------------------+---------------------------------------+
+|  No.      |    PARAMETER                |  VALUE        DESCRIPTION             |
++-----------+-----------------------------+---------------------------------------+
+|  Common                                                                         |
++-----------+-----------------------------+---------------------------------------+
+| 0         | Master Tune                 | -100~0~100:430.0~440.0~450.0[Hz]      |
++-----------+-----------------------------+---------------------------------------+
+| 1         | Transpose                   | -12~0~12                              |
++-----------+-----------------------------+---------------------------------------+
+| 2         | Position                    | 0,1:PostKBD,PreTG                     |
++-----------+-----------------------------+---------------------------------------+
+| 3         | Velocity Curve              | 0~7,8:1~8,const64                     |
++-----------+-----------------------------+---------------------------------------+
+| 4         | Scale                       | 0~9:EqualTemp~UserKeyTune      *T09-1 |
++-----------+-----------------------------+---------------------------------------+
+| 5         | Scale Key                   | 0~11:C,C#~B                           |
++-----------+-----------------------------+---------------------------------------+
+| 6         | Power Save Mode             | 0~2:DisLow,DispOff,Disp&amp;LEDOff        |
++-----------+-----------------------------+---------------------------------------+
+| 7         | Power Save Time             | 0~3:30sec,1min,5min,15min             |
++-----------+-----------------------------+---------------------------------------+
+| 8         | Main Display Brightness     | 1~10                                  |
++-----------+-----------------------------+---------------------------------------+
+| 9         | OSC Display Brightness      | 1~10                                  |
++-----------+-----------------------------+---------------------------------------+
+| 10        | Flt Display Brightness      | 1~10                                  |
++-----------+-----------------------------+---------------------------------------+
+| 11        | Page Jump                   | 0,1:Off,On                            |
++-----------+-----------------------------+---------------------------------------+
+| 12        | Knob Mode                   | 0~2:Jump,Catch,ValueScale             |
++-----------+-----------------------------+---------------------------------------+
+| 13        | Auto Power Off              | 0,1:Disable,4hours                    |
++-----------+-----------------------------+---------------------------------------+
+| 14        | Memory Protect              | 0,1:Off,On                            |
++-----------+-----------------------------+---------------------------------------+
+| 15        | Illuminate Mode             | 0~8:Off~Fickle                 *T09-2 |
++-----------+-----------------------------+---------------------------------------+
+|  MIDI                                                                           |
++-----------+-----------------------------+---------------------------------------+
+| 16        | Global MIDI Ch.             | 0~15:1~16                             |
++-----------+-----------------------------+---------------------------------------+
+| 17        | Local Control               | 0,1:Off,On                            |
++-----------+-----------------------------+---------------------------------------+
+| 18        | MIDI Routing                | 0~2:MIDI+USB,USB,MIDI                 |
++-----------+-----------------------------+---------------------------------------+
+| 19        | Clock                       | 0~3:Auto,Int,Ext USB,Ext MIDI         |
++-----------+-----------------------------+---------------------------------------+
+| 20        | MIDI1 Ctrl Source           | 0~120:P.Bend~CC#21+/-          *T09-3 |
++-----------+-----------------------------+---------------------------------------+
+| 21        | MIDI2 Ctrl Source           | 0~120:P.Bend~CC#21+/-          *T09-3 |
++-----------+-----------------------------+---------------------------------------+
+| 22        | MIDI3 Ctrl Source           | 0~120:P.Bend~CC#21+/-          *T09-3 |
++-----------+-----------------------------+---------------------------------------+
+| 23        | Program Change Filter       | 0,1:Dis,Ena                           |
++-----------+-----------------------------+---------------------------------------+
+| 24        | Bank Change Filter          | 0,1:Dis,Ena                           |
++-----------+-----------------------------+---------------------------------------+
+| 25        | Ctrl Change Filter          | 0,1:Dis,Ena                           |
++-----------+-----------------------------+---------------------------------------+
+| 26        | P.Bend Filter               | 0,1:Dis,Ena                           |
++-----------+-----------------------------+---------------------------------------+
+| 27        | SysEx Filter                | 0,1:Dis,Ena                           |
++-----------+-----------------------------+---------------------------------------+
+|  Ctrl Change No. Map                                                            |
++-----------+-----------------------------+---------------------------------------+
+| 28~88     | [00]~[60]:Ctrl Change Type  | -1,0~95,102~119                       |
+|           | Portamento                  | :OFF,CC#00~95,#102~119                |
+|           | ~Vocoder E.F.Sens           |                                       |
+|           |                      *T09-4 |                                       |
++-----------+-----------------------------+---------------------------------------+
+| 89~91     | (dummy bytes)                                                       |
++-----------+---------------------------------------------------------------------+
+|  Damper &amp; Foot Control                                                          |
++-----------+-----------------------------+---------------------------------------+
+| 92        | Damper Polarity             | 0,1:+,-/KORG                          |
++-----------+-----------------------------+---------------------------------------+
+| 93        | Assignable Type             | 0,1:Pedal,Switch                      |
++-----------+-----------------------------+---------------------------------------+
+| 94        | Assignable Pedal Func.      | 0~6:Volume~Foot Pedal          *T09-5 |
++-----------+-----------------------------+---------------------------------------+
+| 95        | Assignable SW Func.         | 0~10:Prog.Up~JS Lock XY        *T09-6 |
++-----------+-----------------------------+---------------------------------------+
+| 96        | Assignable SW Polarity      | 0,1:+,-/KORG                          |
++-----------+-----------------------------+---------------------------------------+
+| 97        | Assignable SW Mode          | 0,1:Momentary,Latch                   |
++-----------+-----------------------------+---------------------------------------+
+| 98~99     | (dummy bytes)                                                       |
++-----------+---------------------------------------------------------------------+
+|  UserKeyTune Parameter                                                          |
++-----------+-----------------------------+---------------------------------------+
+| 100~111   | UserKeyTune[C]~[B]          | -99~0~99[cent]                        |
++-----------+-----------------------------+---------------------------------------+
+|  EQ                                                                             |
++-----------+-----------------------------+---------------------------------------+
+| 112       | Low Freq                    | 0~33:20~1000[Hz]               *T09-7 |
++-----------+-----------------------------+---------------------------------------+
+| 113       | (dummy byte)                                                        |
++-----------+-----------------------------+---------------------------------------+
+| 114       | Hi Freq                     | 0~25:1.00~20.0[kHz]            *T09-8 |
++-----------+-----------------------------+---------------------------------------+
+| 115       | (dummy byte)                                                        |
++-----------+---------------------------------------------------------------------+
+|  Tube                                                                           |
++-----------+-----------------------------+---------------------------------------+
+| 116       | Tube SW                     | 0,1:Off,On                            |
++-----------+-----------------------------+---------------------------------------+
+| 117       | Boost SW                    | 0,1:Off,On                            |
++-----------+-----------------------------+---------------------------------------+
+| 118~119   | (dummy bytes)                                                       |
++-----------+---------------------------------------------------------------------+
+|  CV/Gate                                                                        |
++-----------+-----------------------------+---------------------------------------+
+| 120       | Mode                        | 0~2:monotribe,MS-20,Custom            |
++-----------+-----------------------------+---------------------------------------+
+| 121       | CV type                     | 0~2:Oct/V,Hz/V,2Oct/V                 |
++-----------+-----------------------------+---------------------------------------+
+| 122       | CV Range                    | 0~2:Full,Limit8V,Limit5V              |
++-----------+-----------------------------+---------------------------------------+
+| 123       | Gate Polarity               | 0,1:-,+                               |
++-----------+-----------------------------+---------------------------------------+
+| 124~127   | (dummy bytes)                                                       |
++-----------+---------------------------------------------------------------------+
+|  Favorites                                                                      |
++-----------+-----------------------------+---------------------------------------+
+| 128~135   | Category [1]~[8]            | 0~299:Program 1~300                   |
++-----------+-----------------------------+---------------------------------------+
+| 136~143   | Favorites A[1]~A[8]         | 0~299:Program 1~300                   |
++-----------+-----------------------------+---------------------------------------+
+| 144~151   | Favorites B[1]~B[8]         | 0~299:Program 1~300                   |
++-----------+-----------------------------+---------------------------------------+
+| 152~159   | Favorites C[1]~C[8]         | 0~299:Program 1~300                   |
++-----------+-----------------------------+---------------------------------------+
+| 160~167   | Favorites D[1]~D[8]         | 0~299:Program 1~300                   |
++-----------+-----------------------------+---------------------------------------+
+| 168~175   | Favorites E[1]~E[8]         | 0~299:Program 1~300                   |
++-----------+-----------------------------+---------------------------------------+
+
+ *T09-1 :
+       0: Equal Temp   5: Werckmeist
+       1: Pure Major   6: Kirnberger
+       2: Pure Minor   7: Slendoro
+       3: Arabic       8: Pelog
+       4: Pythagorea   9: UserKeyTune
+
+ *T09-2 :
+       0: Off          3: Pink         6: Purple
+       1: White        4: Blue         7: Gold
+       2: Red          5: Green        8: Fickle
+
+ *T09-3 :
+       0: P.Bend
+       1: A.Touch
+       2~97: #CC 000~095
+       98~115: #CC 102~119
+       116: #CC16+/-
+       117: #CC17+/-
+       118: #CC19+/-
+       119: #CC20+/-
+       120: #CC21+/-
+
+ *T09-4 :
+       [00]: Portamento            [29]: LFO1 Intensity        [58]: Vocoder Resonance
+       [01]: Portamento SW         [30]: LFO1 Frequency        [59]: Vocoder Fc Mod.Int
+       [02]: Unison SW             [31]: LFO2 Intensity        [60]: Vocoder E.F. Sens
+       [03]: OSC1 Type             [32]: LFO2 Frequency
+       [04]: OSC1 Control1         [33]: Patch1 Int.
+       [05]: OSC1 Control2         [34]: Patch2 Int.
+       [06]: OSC2 Type             [35]: Patch3 Int.
+       [07]: OSC2 Control1         [36]: Patch4 Int.
+       [08]  OSC2 Control2         [37]: Patch5 Int.
+       [09]: OSC3 Type             [38]: Patch6 Int.
+       [10]: OSC3 Control1         [39]: EQ Hi.Gain
+       [11]: OSC3 Control2         [40]: EQ Low.Gain
+       [12]: OSC1 Level            [41]: PreFx Drive
+       [13]: OSC2 Level            [42]: ModFx Depth
+       [14]: OSC3 Level            [43]: ModFx Speed
+       [15]: Filter Cutoff         [44]: Rev/Delay time
+       [16]: Filter Resonance      [45]: PreFx SW
+       [17]: Filter EG1 Int        [46]: ModFx SW
+       [18]: Filter KeyTrack       [47]: Rev/Delay Depth
+       [19]: Amp Level             [48]: Rev/Delay SW
+       [20]: Panpot                [49]: Vocoder Threshold
+       [21]: EG1 Attack            [50]: Vocoder HPF Level
+       [22]: EG1 Decay             [51]: Vocoder HPF Gate
+       [23]: EG1 Sustain           [52]: Vocoder Direct Level
+       [24]: EG1 Release           [53]: Vocoder In TimbreA Level
+       [25]: EG2 Attack            [54]: Vocoder In TimbreB Level
+       [26]: EG2 Decay             [55]: Vocoder Level
+       [27]: EG2 Sustain           [56]: Vocoder Formant Shift
+       [28]: EG2 Release           [57]: Vocoder FC Offset
+
+ *T09-5 :
+       0: Volume           4: JS +Y
+       1: Exp.Pedal        5: JS -Y
+       2: Panpot           6: Foot Pedal
+       3: AfterTouch
+
+ *T09-6 :
+       0: Program Up       4: Portamento SW    8: JS Lock X
+       1: Program Down     5: Arp SW           9: JS Lock Y
+       2: Octave Up        6: Arp Stop         10: JS Lock XY
+       3: Octave Down      7: Foot SW
+
+ *T09-7 :
+       0: 20       10: 63       20: 200      30: 710
+       1: 22       11: 71       21: 224      31: 800
+       2: 25       12: 80       22: 250      32: 900
+       3: 28       13: 90       23: 280      33: 1000
+       4: 32       14: 10       24: 315
+       5: 36       15: 11       25: 400
+       6: 40       16: 12       26: 450
+       7: 45       17: 14       27: 500
+       8: 50       18: 16       28: 560
+       9: 56       19: 18       29: 630
+
+ *T09-8 :
+       0: 1.00     10: 3.15     20: 11.2
+       1: 1.12     11: 4.00     21: 12.5
+       2: 1.25     12: 4.50     22: 14.0
+       3: 1.40     13: 5.00     23: 16.0
+       4: 1.60     14: 5.60     24: 18.0
+       5: 1.80     15: 6.30     25: 20.0
+       6: 2.00     16: 7.10
+       7: 2.24     17: 8.00
+       8: 2.50     18: 9.00
+       9: 2.80     19: 10.0
