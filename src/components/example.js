@@ -14,8 +14,13 @@ class Example extends React.Component {
     this.programChanged           = this.programChanged.bind(this);
   }
 
-  componentDidMount()    { ProgramStore.listen(this.programChanged); }
-  componentWillUnmount() { ProgramStore.unlisten(this.programChanged); }
+  componentDidMount()    {
+    ProgramStore.listen(this.programChanged);
+  }
+
+  componentWillUnmount() {
+    ProgramStore.unlisten(this.programChanged);
+  }
 
   programChanged(program)  { this.setState({ program: program }); }
 
@@ -25,11 +30,12 @@ class Example extends React.Component {
 
   render() {
     let {program} = this.state;
+    let name = program.get("name");
 
     return (
       <div>
-          <h1>Program: {program.get("name")}</h1>
-          <input type="text" value={this.state.name} onChange={this.onChange}/>
+          <h1>Program: {name}</h1>
+          <input type="text" value={name} onChange={this.onChange}/>
       </div>
     );
   }

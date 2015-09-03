@@ -6,19 +6,25 @@ import Actions        from 'actions/program_actions';
 
 class ProgramStore {
   constructor() {
-    let { setName } = Actions;
+    let { setName, fromData } = Actions;
 
     this.bindListeners({
-      setName: setName
+      setName: setName,
+      fromData: fromData
     });
 
-    this.state = Immutable.Map({
-      name: ""
+    this.state = Immutable.fromJS({
+      name: "", // 12
+      data: []
     });
   }
 
   setName(name) {
     return this.setState(this.state.set("name", name));
+  }
+
+  fromData(data) {
+    return this.setState(data);
   }
 }
 
