@@ -4,6 +4,8 @@ import ProgramActions from 'actions/program_actions'
 import ProgramStore            from 'stores/program_store';
 import Timbre            from 'components/program/timbre';
 import Param            from 'components/program/param';
+import Parameter            from 'components/program/parameter';
+import programData            from 'data/program';
 
 
 
@@ -143,6 +145,24 @@ class Main extends React.Component {
     }
   }
 
+
+  renderProgram(program) {
+
+    let data = program.get("data").toJS();
+
+    let parameters = programData.map((parameter, index) => {
+      return (
+        <Parameter key={index} parameter={parameter} programData={data}/>
+      );
+    });
+
+    return (
+      <div>
+        {parameters}
+      </div>
+    );
+  }
+
   render() {
 
     let {program} = this.state;
@@ -154,8 +174,13 @@ class Main extends React.Component {
         <p>KK here: {this.state.kingKorgPresent ? "YES" : "NO" }</p>
 
 
+
         <h2>Program</h2>
         <Param value={program.get("name")} title="Name" />
+
+        {this.renderProgram(program)}
+
+        <hr />
         <Param value={data.get(13)} title="Category" translation={translation.program["category"]} />
 
         <h2>Timbre</h2>

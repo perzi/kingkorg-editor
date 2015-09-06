@@ -3,6 +3,7 @@ import Immutable       from 'immutable';
 
 import AltInstance    from 'lib/AltInstance';
 import Actions        from 'actions/program_actions';
+import program        from 'data/program';
 
 class ProgramStore {
   constructor() {

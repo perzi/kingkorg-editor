@@ -22,7 +22,8 @@ module.exports = {
     publicPath: '',
     filename: '[name].js',
     library: ['Example', '[name]'],
-    pathInfo: true
+    pathInfo: true,
+    sourceMapFilename: '[file].map'
   },
 
   module: {
