@@ -14,3 +14,28 @@ Program change
 KBD IN [176, 0, 0]   [0xB0, 0x00, 0x00]    Program change, channel 0, LSB
 KBD IN [176, 32, 0]  [0xB0, 0x20, 0x00]    Program change, channel 0, MSB
 KBD IN [192, 1]      [0xC0, 0x01]          Program change
+
+
+s13:Osc1
+Type:Dual Saw
+
+
+
+Stab King Real Data
+s01: Poly
+s02: 2
+s03: 04
+s04: 064
+s05: -12
+s06: -03 cent
+s07: +01
+s08: +0080
+s09: +02
+s10: Off
+s11: 040
+s12: 012
+s13: Dual Saw     // Osc1 Type
+s14: +00          // Osc1 Semitone
+s15: +00          // Osc1 Tune
+s16: +00          // Oscq CTRL1
+s17: +00          // Osc1 CTRL2
