@@ -20,8 +20,9 @@ class ProgramActions {
       programData.push(dataToUse[i]);
     }
 
-    for (let i = 0; i < 12; i++) {
-      name = name + String.fromCharCode(programData[i]);
+    for (let i = 0; i < 13; i++) {
+      if (programData[i] !== 0)
+        name = name + String.fromCharCode(programData[i]);
     }
 
     this.dispatch(Immutable.fromJS({
