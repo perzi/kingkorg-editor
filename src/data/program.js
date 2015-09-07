@@ -1,4 +1,5 @@
 import Parameter       from 'lib/parameter';
+import ParameterGroup       from 'lib/parametergroup';
 
 
 //
@@ -204,7 +205,45 @@ let program = [
     number: paramNumber++,
     title: "Split Key",
     lookup: createSplitKeyLookup()
-  })
+  }),
+  new ParameterGroup({
+    number: paramNumber++,
+    title: "Timbre A",
+    parameters: [
+
+      new ParameterGroup({
+        number: paramNumber++,
+        title: "Voice",
+        parameters: [
+
+        new Parameter({
+          number: 0,
+          title: "Voice Assign",
+          lookup: {
+            0: "Mono1", 1: "Mono2", 2:"Poly"
+          }
+        }),
+        new Parameter({
+          number: 1,
+          title: "Unison SW",
+          lookup: {
+            0: "OFF", 1: "2Voice", 3:"3Voice", 4:"4Voice"
+          }
+        }),
+        new Parameter({
+          number: 3,
+          title: "Unison Detune",
+          lookup: function(value) { return value + "cent"; }
+        }),
+        new Parameter({
+          number: 3,
+          title: "Unison Spread"
+        })
+      ]
+    })
+    ]
+  }),
+
 ];
 //
 //   name: new Parameter({
