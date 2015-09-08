@@ -1,4 +1,4 @@
-KORG KingKORG MIDI Implementation          Revision 1.00 (2013.01.15)
+	    KORG KingKORG MIDI Implementation          Revision 1.00 (2013.01.15)
 
 1.TRANSMITTED DATA
 
@@ -403,7 +403,7 @@ KORG KingKORG MIDI Implementation          Revision 1.00 (2013.01.15)
               101 - 200                       00,01,01-64  /  00,01,001-100
               201 - 300                       00,02,01-64  /  00,02,001-100
 
-      Source Program &amp; Timbre
+      Source Program & Timbre
               001 - 100 TimbreA               20,20,01-64  /  32,32,001-100
               101 - 200 TimbreA               20,21,01-64  /  32,33,001-100
               201 - 300 TimbreA               20,22,01-64  /  32,34,001-100
@@ -719,8 +719,8 @@ MIDI EXCLUSIVE FORMAT   (R:Receive, T:Transmit)
 | 1111 0111 (F7) | EOX                                              |
 +----------------+--------------------------------------------------+
 
- Receive this message &amp; data, save them to Edit Buffer and transmits Func=23 or Func=24 message.
- Receive Func=10 message, and transmits this message &amp; data from Edit Buffer.
+ Receive this message & data, save them to Edit Buffer and transmits Func=23 or Func=24 message.
+ Receive Func=10 message, and transmits this message & data from Edit Buffer.
 
 
 (6) PROGRAM DATA DUMP (1 PROG)                                   R/T
@@ -739,9 +739,9 @@ MIDI EXCLUSIVE FORMAT   (R:Receive, T:Transmit)
 
  PPpp : 0~12B = Program No. 001-300
 
- Receive this message &amp; data, save them to Internal Memory and transmits Func=23 or Func=24 message.
- Receive Func=1C message, and transmits this message &amp; data from Internal Memory.
- When DATA DUMP is executed, transmit this message &amp; data from Internal Memory.
+ Receive this message & data, save them to Internal Memory and transmits Func=23 or Func=24 message.
+ Receive Func=1C message, and transmits this message & data from Internal Memory.
+ When DATA DUMP is executed, transmit this message & data from Internal Memory.
 
 
 (7) GLOBAL DATA DUMP                                             R/T
@@ -756,9 +756,9 @@ MIDI EXCLUSIVE FORMAT   (R:Receive, T:Transmit)
 | 1111 0111 (F7) | EOX                                              |
 +----------------+--------------------------------------------------+
 
- Receive this message &amp; data, save them to Internal Memory and transmits Func=23 or Func=24 message.
- Receive Func=0E message, and transmits this message &amp; data from Edit Buffer.
- When DATA DUMP is executed, transmit this message &amp; data from Edit Buffer.
+ Receive this message & data, save them to Internal Memory and transmits Func=23 or Func=24 message.
+ Receive Func=0E message, and transmits this message & data from Edit Buffer.
+ When DATA DUMP is executed, transmit this message & data from Edit Buffer.
 
 
 (8) PARAMETER CHANGE                                             R/T
@@ -778,8 +778,8 @@ MIDI EXCLUSIVE FORMAT   (R:Receive, T:Transmit)
 | 1111 0111 (F7) | EOX                                              |
 +----------------+--------------------------------------------------+
 
- Receive this message &amp; data, select &amp; change a Parameter and transmits Func=23 or Func=24 message.
- When the Parameter is changed, transmit this message &amp; data.
+ Receive this message & data, select & change a Parameter and transmits Func=23 or Func=24 message.
+ When the Parameter is changed, transmit this message & data.
 
 
 (9) RECEIVE DATA FORMAT ERROR                                      T
@@ -848,12 +848,12 @@ MIDI EXCLUSIVE FORMAT   (R:Receive, T:Transmit)
 
 
  NOTE 1: CURRENT PROGRAM DATA (IN CURRENT BUFFER) DUMP FORMAT
-         &amp; PROGRAM DATA (IN INTERNAL MEMORY) DUMP FORMAT
-         316Bytes       = 7*45+1    -&gt; 8*45+(1+1)   =&gt; 362Bytes
+         & PROGRAM DATA (IN INTERNAL MEMORY) DUMP FORMAT
+         316Bytes       = 7*45+1    -> 8*45+(1+1)   => 362Bytes
          (Refer TABLE 1)
 
  NOTE 2: GLOBAL DATA (IN INTERNAL MEMORY) DUMP FORMAT
-         176Bytes       = 7*25+1    -&gt; 8*25+(1+1)   =&gt; 202Bytes
+         176Bytes       = 7*25+1    -> 8*25+(1+1)   => 202Bytes
          (Refer TABLE 10)
 
  NOTE 3: The dump data conversion
@@ -894,7 +894,7 @@ MIDI EXCLUSIVE FORMAT   (R:Receive, T:Transmit)
 
  TABLE 1 : PROGRAM PARAMETER ( 1 PROG, CURRENT PROG )
   No. : No. in the PROGRAM DUMP DATA.
-  Parameter ID &amp; SUB ID [Hex]: for PARAMETER CHANGE.
+  Parameter ID & SUB ID [Hex]: for PARAMETER CHANGE.
 +-----------+-------------------+--------------------------------------+----------+
 |  No.      |    PARAMETER      |  VALUE        DESCRIPTION            | ID:SubID |
 +-----------+-------------------+--------------------------------------+----------+
@@ -943,7 +943,7 @@ MIDI EXCLUSIVE FORMAT   (R:Receive, T:Transmit)
 
  TABLE 2 : TIMBRE PARAMETER ( 1 TIMBRE )
   OFFSET : Offset in the Timbre Parameter
-  Parameter ID &amp; SUB ID [Hex]: for PARAMETER CHANGE.
+  Parameter ID & SUB ID [Hex]: for PARAMETER CHANGE.
 +-----------+-------------------+--------------------------------------+----------+
 |  OFFSET   |    PARAMETER      |  VALUE        DESCRIPTION            | ID:SubID |
 +-----------+-------------------+--------------------------------------+----------+
@@ -965,7 +965,7 @@ MIDI EXCLUSIVE FORMAT   (R:Receive, T:Transmit)
 +-----------+-------------------+--------------------------------------+----------+
 | +6        | LFO2ModInt        | -63~0~63                             | +0:06    |
 +-----------+-------------------+--------------------------------------+----------+
-| +7        | LFO2 &amp; JS+Y       | -63~0~63:-2400~0~2400[cent]   *T02-1 | +0:07    |
+| +7        | LFO2 & JS+Y       | -63~0~63:-2400~0~2400[cent]   *T02-1 | +0:07    |
 +-----------+-------------------+--------------------------------------+----------+
 | +8        | Bend Range        | -12~0~12[note]                       | +0:08    |
 +-----------+-------------------+--------------------------------------+----------+
@@ -1003,7 +1003,7 @@ MIDI EXCLUSIVE FORMAT   (R:Receive, T:Transmit)
 +-----------+-------------------+--------------------------------------+----------+
 | +43       | LFO1 Mod Int.     | -63~0~63                             | +0:22    |
 +-----------+-------------------+--------------------------------------+----------+
-| +44       | LFO1 &amp; JS-Y       | -63~0~63                             | +0:23    |
+| +44       | LFO1 & JS-Y       | -63~0~63                             | +0:23    |
 +-----------+-------------------+--------------------------------------+----------+
 | +45       | Keyboard Track    | -63~0~63:-2.00~0~2.00         *T02-3 | +0:24    |
 +-----------+-------------------+--------------------------------------+----------+
@@ -1126,7 +1126,7 @@ MIDI EXCLUSIVE FORMAT   (R:Receive, T:Transmit)
 
  TABLE 3 : VIRTUAL PATCH PARAMETER
   OFFSET : Offset in the Virtual Patch Parameter
-  Parameter ID &amp; SUB ID [Hex]: for PARAMETER CHANGE.
+  Parameter ID & SUB ID [Hex]: for PARAMETER CHANGE.
 +-----------+-------------------+--------------------------------------+----------+
 |  OFFSET   |    PARAMETER      |  VALUE        DESCRIPTION            | ID:SubID |
 +-----------+-------------------+--------------------------------------+----------+
@@ -1146,7 +1146,7 @@ MIDI EXCLUSIVE FORMAT   (R:Receive, T:Transmit)
 
  TABLE 4 : EFFECT PARAMETER
   OFFSET : Offset in the Effect Parameter
-  Parameter ID &amp; SUB ID [Hex]: for PARAMETER CHANGE.
+  Parameter ID & SUB ID [Hex]: for PARAMETER CHANGE.
 +-----------+-------------------+--------------------------------------+----------+
 |  OFFSET   |    PARAMETER      |  VALUE        DESCRIPTION            | ID:SubID |
 +-----------+-------------------+--------------------------------------+----------+
@@ -1193,7 +1193,7 @@ MIDI EXCLUSIVE FORMAT   (R:Receive, T:Transmit)
 
  TABLE 5 : VOCODER PARAMETER
   OFFSET : Offset in the Vocoder Parameter
-  Parameter ID &amp; SUB ID [Hex]: for PARAMETER CHANGE.
+  Parameter ID & SUB ID [Hex]: for PARAMETER CHANGE.
 +-----------+-------------------+--------------------------------------+----------+
 |  OFFSET   |    PARAMETER      |  VALUE        DESCRIPTION            | ID:SubID |
 +-----------+-------------------+--------------------------------------+----------+
@@ -1288,7 +1288,7 @@ MIDI EXCLUSIVE FORMAT   (R:Receive, T:Transmit)
 
  TABLE 6 : ARPEGGIO PARAMETER
   OFS. : Offset in the Arpeggio Parameter
-  Parameter ID &amp; SUB ID [Hex]: for PARAMETER CHANGE.
+  Parameter ID & SUB ID [Hex]: for PARAMETER CHANGE.
 +-----------+-------------------+--------------------------------------+----------+
 | OFS. (bit)|    PARAMETER      |  VALUE        DESCRIPTION            | ID:SubID |
 +-----------+-------------------+--------------------------------------+----------+
@@ -1352,7 +1352,7 @@ MIDI EXCLUSIVE FORMAT   (R:Receive, T:Transmit)
 
  TABLE 7 : OSC PARAMETER ( 1 OSC )
   OFFSET : Offset in the Osc Parameter
-  Parameter ID &amp; SUB ID [Hex]: for PARAMETER CHANGE.
+  Parameter ID & SUB ID [Hex]: for PARAMETER CHANGE.
 +-----------+-------------------+--------------------------------------+----------+
 |  OFFSET   |    PARAMETER      |  VALUE        DESCRIPTION            | ID:SubID |
 +-----------+-------------------+--------------------------------------+----------+
@@ -1391,7 +1391,7 @@ MIDI EXCLUSIVE FORMAT   (R:Receive, T:Transmit)
 
  TABLE 8 : EG PARAMETER ( 1 EG )
   OFFSET : Offset in the EG Parameter
-  Parameter ID &amp; SUB ID [Hex]: for PARAMETER CHANGE.
+  Parameter ID & SUB ID [Hex]: for PARAMETER CHANGE.
 +-----------+-------------------+--------------------------------------+----------+
 |  OFFSET   |    PARAMETER      |  VALUE        DESCRIPTION            | ID:SubID |
 +-----------+-------------------+--------------------------------------+----------+
@@ -1411,7 +1411,7 @@ MIDI EXCLUSIVE FORMAT   (R:Receive, T:Transmit)
 
  TABLE 9 : VIRTUAL PATCH PARAMETER ( 1 VIRTUAL PATCH )
   OFFSET : Offset in the Virtual Patch Parameter
-  Parameter ID &amp; SUB ID [Hex]: for PARAMETER CHANGE.
+  Parameter ID & SUB ID [Hex]: for PARAMETER CHANGE.
 +-----------+-------------------+--------------------------------------+----------+
 |  OFFSET   |    PARAMETER      |  VALUE        DESCRIPTION            | ID:SubID |
 +-----------+-------------------+--------------------------------------+----------+
@@ -1456,7 +1456,7 @@ MIDI EXCLUSIVE FORMAT   (R:Receive, T:Transmit)
 +-----------+-----------------------------+---------------------------------------+
 | 5         | Scale Key                   | 0~11:C,C#~B                           |
 +-----------+-----------------------------+---------------------------------------+
-| 6         | Power Save Mode             | 0~2:DisLow,DispOff,Disp&amp;LEDOff        |
+| 6         | Power Save Mode             | 0~2:DisLow,DispOff,Disp&LEDOff        |
 +-----------+-----------------------------+---------------------------------------+
 | 7         | Power Save Time             | 0~3:30sec,1min,5min,15min             |
 +-----------+-----------------------------+---------------------------------------+
@@ -1511,7 +1511,7 @@ MIDI EXCLUSIVE FORMAT   (R:Receive, T:Transmit)
 +-----------+-----------------------------+---------------------------------------+
 | 89~91     | (dummy bytes)                                                       |
 +-----------+---------------------------------------------------------------------+
-|  Damper &amp; Foot Control                                                          |
+|  Damper & Foot Control                                                          |
 +-----------+-----------------------------+---------------------------------------+
 | 92        | Damper Polarity             | 0,1:+,-/KORG                          |
 +-----------+-----------------------------+---------------------------------------+
