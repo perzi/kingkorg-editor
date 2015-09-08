@@ -16,7 +16,7 @@ class Example extends React.Component {
     let text = parameter.getValueAsText(this.props.programData);
     return (
       <div>
-          <span className="param param-title">{this.props.parameter.title}</span>
+          <span className="param param-title">{this.props.parameter.name}</span>
           <span className="param param-value">{text}</span>
       </div>
     );

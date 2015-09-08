@@ -9,18 +9,18 @@ class ProgramActions {
     }));
   }
 
-  fromData(data) {
+  fromData(programData) {
 
     var name = "";
-    let dataToUse = data.subarray ? data.subarray(8) : data.slice(8); // TODO: remove overhead som other way?
-    let programData = []
 
-    // convert to array
-    for (let i = 0; i < dataToUse.length; i++) {
-      programData.push(dataToUse[i]);
+    // remove what seems to be a dummy byte
+    if (programData[15] === 0) {
+      programData.splice(15, 1);
     }
+    // remove first bytes
+    programData.splice(0, 8);
 
-    for (let i = 0; i < 13; i++) {
+    for (let i = 0; i < 12; i++) {
       if (programData[i] !== 0)
         name = name + String.fromCharCode(programData[i]);
     }
