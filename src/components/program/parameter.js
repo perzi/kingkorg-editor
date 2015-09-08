@@ -14,10 +14,12 @@ class Example extends React.Component {
     let parameter = this.props.parameter;
 
     let text = parameter.getValueAsText(this.props.programData);
+    let value = parameter.getValue(this.props.programData);
+
     return (
       <div>
-          <span className="param param-title">{this.props.parameter.name}</span>
-          <span className="param param-value">{text}</span>
+          <span className="param param-title">{this.props.parameter.category + " "}{this.props.parameter.name} ({this.props.parameter.offset})</span>
+          <span className="param param-value">{text} ({value})</span>
       </div>
     );
   }

@@ -21,14 +21,14 @@ class ProgramDump extends React.Component {
       if (parameter.isGroup) {
         let childParameters = this.renderParameters(parameter.parameters, data, level + 1);
 
-        if (level === 1) return (<div class=""><h3>{parameter.title}</h3>{childParameters}</div>);
-        if (level === 2) return (<div class=""><h4>{parameter.title}</h4>{childParameters}</div>);
-        if (level === 3) return (<div class=""><h5>{parameter.title}</h5>{childParameters}</div>);
-        if (level === 4) return (<div class=""><h6>{parameter.title}</h6>{childParameters}</div>);
+        if (level === 1) return (<div key={level * 1000 + index} className=""><h3>{parameter.name}</h3>{childParameters}</div>);
+        if (level === 2) return (<div key={level * 1000 + index} className=""><h4>{parameter.name}</h4>{childParameters}</div>);
+        if (level === 3) return (<div key={level * 1000 + index} className=""><h5>{parameter.name}</h5>{childParameters}</div>);
+        if (level === 4) return (<div key={level * 1000 + index} className=""><h6>{parameter.name}</h6>{childParameters}</div>);
 
       } else {
         return (
-          <Parameter key={index} parameter={parameter} programData={data}/>
+          <Parameter key={level * 2000 + index} parameter={parameter} programData={data}/>
         );
       }
     });
