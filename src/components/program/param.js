@@ -13,9 +13,6 @@ class Example extends React.Component {
   getText() {
     // TODO: check if object or not
     if (this.props.translation) {
-
-      console.log(this.props.translation, this.props.value, this.props.translation[this.props.value]);
-
       return this.props.translation[this.props.value];
     } else {
       return this.props.value;

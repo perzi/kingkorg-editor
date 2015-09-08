@@ -1,12 +1,12 @@
 import React from 'react';
-import {Route} from 'react-router';
+import {Route, DefaultRoute} from 'react-router';
 
-import Main from 'components/main';
-import Example from 'components/example';
+import App from 'components/app';
+import Intro from 'components/intro';
 
 const routes = (
-  <Route handler={Main}>
-    <Route name='example' handler={Example}/>
+  <Route handler={App}>
+    <DefaultRoute name='intro' handler={Intro}/>
   </Route>
 );
 

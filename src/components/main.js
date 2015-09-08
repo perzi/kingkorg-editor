@@ -141,7 +141,7 @@ class Main extends React.Component {
       }
 
       console.log("PROGRAM DUMP", hexData.join(", "));
-      console.log("PROGRAM DUMP", evt.data.subarray(0, 5));
+//      console.log("PROGRAM DUMP", evt.data.subarray(0, 5));
 
       ProgramActions.fromData(evt.data);
     }
