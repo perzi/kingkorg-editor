@@ -46,17 +46,25 @@ class Parameter {
 
   setParent(parent) {
     this.parent = parent;
-    this.offset += parent.offset;
-    this.id += parent.id;
-    this.subId += parent.subId;
+    // this.offset += parent.offset;
+    // this.id += parent.id;
+    // this.subId += parent.subId;
+  }
+
+  getOffset() {
+    if (this.parent) {
+      return this.offset + this.parent.getOffset();
+    } else {
+      return this.offset;
+    }
   }
 
   getValue(programData) {
-    return programData[this.offset];
+    return programData[this.getOffset()];
   }
 
   getValueAsText(programData) {
-    let value = programData[this.offset];
+    let value = programData[this.getOffset()];
     let lookup = this.lookup;
 
     if (lookup && typeof lookup === "object") {
@@ -93,10 +101,14 @@ class ParamGroup {
 
   setParent(parent) {
     this.parent = parent;
-    this.offset += parent.offset;
-    this.id += parent.id;
-    this.subId += parent.subId;
-    this.parameters.forEach(parameter => parameter.setParent(this));
+  }
+
+  getOffset() {
+    if (this.parent) {
+      return this.offset + this.parent.getOffset();
+    } else {
+      return this.offset;
+    }
   }
 }
 
@@ -140,14 +152,159 @@ let lookupSplitKey = (value, data) => {
 };
 
 
+let oscTypeDictionary = [
+  "Off            -               -               Analog",
+  "Saw            Waveform        —               Analog",
+  "Pulse          PulseWidth      —               Analog",
+  "Triangle       Waveform        —               Analog",
+  "Sine           Waveform        —               Analog",
+  "White Noise    Decimator Fc    Noise Decay     Analog",
+  "Pink Noise     LPF Cutoff      Noise Decay     Analog",
+  "Blue Noise     HPF Cutoff      Noise Decay     Analog",
+  "Res. Noise     Resonance       Noise Decay     Analog",
+  "Dual Saw       Detune          —               Analog",
+  "Dual Square    Detune          —               Analog",
+  "Dual Tri.      Detune          —               Analog",
+  "Dual Sine      Detune          —               Analog",
+  "Unison Saw     Detune          —               Analog",
+  "Unison Squ.    Detune          —               Analog",
+  "Unison Tri.    Detune          —               Analog",
+  "Unison Sine    Detune          —               Analog",
+  "Sync Saw       Mod Pitch       —               Analog",
+  "Sync Square    Mod Pitch       —               Analog",
+  "Sync Tri.      Mod Pitch       —               Analog",
+  "Sync Sine      Mod Pitch       —               Analog",
+  "Ring Saw       Mod Pitch       —               Analog",
+  "Ring Square    Mod Pitch       —               Analog",
+  "Ring Tri.      Mod Pitch       —               Analog",
+  "Ring Sine      Mod Pitch       —               Analog",
+  "XMod Saw       Mod Depth       Mod Pitch       Analog",
+  "XMod Square    Mod Depth       Mod Pitch       Analog",
+  "XMod Tri.      Mod Depth       Mod Pitch       Analog",
+  "XMod Sine      Mod Depth       Mod Pitch       Analog",
+  "VPM Saw        Mod Depth       Mod Harm        Analog",
+  "VPM Square     Mod Depth       Mod Harm        Analog",
+  "VPM Tri.       Mod Depth       Mod Harm        Analog",
+  "VPM Sine       Mod Depth       Mod Harm        Analog",
+  "Syn Sine 1     Detune          -               DWGS",
+  "Syn Sine 2     Detune          -               DWGS",
+  "Syn Sine 3     Detune          -               DWGS",
+  "Syn Sine 4     Detune          -               DWGS",
+  "Syn Sine 5     Detune          -               DWGS",
+  "Syn Sine 6     Detune          -               DWGS",
+  "Syn Sine 7     Detune          -               DWGS",
+  "Syn Sine 8     Detune          -               DWGS",
+  "Syn Sine 9     Detune          -               DWGS",
+  "Syn Wave 1     Detune          -               DWGS",
+  "Syn Wave 2     Detune          -               DWGS",
+  "Syn Wave 3     Detune          -               DWGS",
+  "Syn Wave 4     Detune          -               DWGS",
+  "Syn Wave 5     Detune          -               DWGS",
+  "Syn Wave 6     Detune          -               DWGS",
+  "Syn Wave 7     Detune          -               DWGS",
+  "Syn Wire 1     Detune          -               DWGS",
+  "Syn Wire 2     Detune          -               DWGS",
+  "Syn Wire 3     Detune          -               DWGS",
+  "Syn Wire 4     Detune          -               DWGS",
+  "5th Saw        Detune          -               DWGS",
+  "5th Square     Detune          -               DWGS",
+  "Inharm 1       Detune          -               DWGS",
+  "Inharm 2       Detune          -               DWGS",
+  "Inharm 3       Detune          -               DWGS",
+  "Inharm 4       Detune          -               DWGS",
+  "Inharm 5       Detune          -               DWGS",
+  "Inharm 6       Detune          -               DWGS",
+  "Inharm 7       Detune          -               DWGS",
+  "Inharm 8       Detune          -               DWGS",
+  "Inharm 9       Detune          -               DWGS",
+  "Digital 1      Detune          -               DWGS",
+  "Digital 2      Detune          -               DWGS",
+  "Digital 3      Detune          -               DWGS",
+  "Digital 4      Detune          -               DWGS",
+  "Digital 5      Detune          -               DWGS",
+  "Digital 6      Detune          -               DWGS",
+  "Digital 7      Detune          -               DWGS",
+  "Digital 8      Detune          -               DWGS",
+  "Digital 9      Detune          -               DWGS",
+  "E.Piano 1      Detune          -               DWGS",
+  "E.Piano 2      Detune          -               DWGS",
+  "E.Piano 3      Detune          -               DWGS",
+  "E.Piano 4      Detune          -               DWGS",
+  "Organ 1        Detune          -               DWGS",
+  "Organ 2        Detune          -               DWGS",
+  "Organ 3        Detune          -               DWGS",
+  "Organ 4        Detune          -               DWGS",
+  "Organ 5        Detune          -               DWGS",
+  "Organ 6        Detune          -               DWGS",
+  "Organ 7        Detune          -               DWGS",
+  "Clav 1         Detune          -               DWGS",
+  "Clav 2         Detune          -               DWGS",
+  "Guitar 1       Detune          -               DWGS",
+  "Guitar 2       Detune          -               DWGS",
+  "E.Bass 1       Detune          -               DWGS",
+  "E.Bass 2       Detune          -               DWGS",
+  "E.Bass 3       Detune          -               DWGS",
+  "Bell 1         Detune          -               DWGS",
+  "Bell 2         Detune          -               DWGS",
+  "Bell 3         Detune          -               DWGS",
+  "Bell 4         Detune          -               DWGS",
+  "Syn Vox 1      Detune          -               DWGS",
+  "Syn Vox 2      Detune          -               DWGS",
+  "A.Piano        -               -               PCM",
+  "E.Grand        -               -               PCM",
+  "Tine EP        -               -               PCM",
+  "Dyno EP        -               -               PCM",
+  "Wurly EP       -               -               PCM",
+  "Clav 1         -               -               PCM",
+  "Clav 2         -               -               PCM",
+  "Organ 1        -               -               PCM",
+  "Organ 2        -               -               PCM",
+  "Organ 3        -               -               PCM",
+  "M1 Organ       -               -               PCM",
+  "Vox Organ      -               -               PCM",
+  "Marimba        -               -               PCM",
+  "Bell 1         -               -               PCM",
+  "Bell 2         -               -               PCM",
+  "Tape Flute     -               -               PCM",
+  "Brass 1        -               -               PCM",
+  "Brass 2        -               -               PCM",
+  "Trumpet        -               -               PCM",
+  "Strings        -               -               PCM",
+  "Tape Str.      -               -               PCM",
+  "Choir 1        -               -               PCM",
+  "Choir 2        -               -               PCM",
+  "Choir 3        -               -               PCM",
+  "A.Guitar       -               -               PCM",
+  "E.Guitar       -               -               PCM",
+  "A.Bass         -               -               PCM",
+  "E.Bass 1       -               -               PCM",
+  "E.Bass 2       -               -               PCM",
+  "E.Bass 3       -               -               PCM",
+  "Mic In         Gain            -               MIC IN"
+];
 
-let programParameters = [
-  new Parameter(   0, "Program Name",      0x00, 0x00, lookupName),
-  new Parameter(  12, "Category",          0x00, 0x0C, "Synth,Lead,Bass,Brass,Strings,Piano,Key,SE/Voc,User"),
-  new Parameter(  13, "Voice Mode",        0x00, 0x0D, "Single,Layer,Split"),
-  new Parameter(  14, "TimbreB MIDI Ch.",  0x00, 0x0E, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,Global"),
-  new Parameter(  15, "Split Key",         0x00, 0x0F, lookupSplitKey),
-  new ParamGroup( 16, "Timbre A",          0x20, 0x00, [
+let generateOscTypeNames = () =>  {
+  return oscTypeDictionary.map(row => {
+    return row.substring(0, 16).trim();
+  });
+}
+
+let oscTypeNames = generateOscTypeNames();
+
+
+
+let oscParameters = () => {
+  return [
+    new Parameter(  0, "Osc Type",  0x00, 0x00, oscTypeNames),
+    new Parameter(  1, "Semitone",  0x00, 0x01, null),
+    new Parameter(  2, "Tune",      0x00, 0x02, null),
+    new Parameter(  3, "CTRL1",     0x00, 0x03, null),
+    new Parameter(  4, "CTRL1",     0x00, 0x04, null)
+  ]
+}
+
+let timbreParameters = () => {
+  return [
     // Voice
     new Parameter(  0, "Voice Assign",         0x00, 0x00, "Mono1,Mono2,Poly", "Voice"),
     new Parameter(  1, "Unison SW",            0x00, 0x01, "OFF,2 Voice,3 Voice,4 Voice", "Voice"),
@@ -161,40 +318,22 @@ let programParameters = [
     new Parameter(  7, "LFO2 & JS+Y",     0x00, 0x07, "-63~0~63:-2400~0~2400[cent]   *T02-1", "Pitch"),
     new Parameter(  8, "Bend Range",      0x00, 0x08, "-12~0~12[note]", "Pitch"),
     new Parameter(  9, "Portamento SW",   0x00, 0x09, "0,1:Off,On", "Pitch"),
-    new Parameter( 10, "Portamento Time", 0x00, 0x0A, "0~127", "Pitch"),
-    new Parameter( 11, "Analog Tuning",   0x00, 0x0B, "0~127", "Pitch"),
+    new Parameter( 10, "Portamento Time", 0x00, 0x0A, null, "Pitch"),
+    new Parameter( 11, "Analog Tuning",   0x00, 0x0B, null, "Pitch"),
 
     // OSC 1 Data
-    new ParamGroup( 12, "Osc 1 Data", 0x00, 0x0C, [
-      new Parameter(  0, "Osc Type",  0x00, 0x00, null),
-      new Parameter(  1, "Semitone",  0x00, 0x01, null),
-      new Parameter(  2, "Tune",      0x00, 0x02, null),
-      new Parameter(  3, "CTRL1",     0x00, 0x03, null),
-      new Parameter(  4, "CTRL1",     0x00, 0x04, null)
-    ], "Osc"),
+    new ParamGroup( 12, "Osc 1 Data", 0x00, 0x0C, oscParameters(), "Osc"),
 
     // OSC 2 Data
-    new ParamGroup( 20, "Osc 2 Data",          0x00, 0x11, [
-      new Parameter(  0, "Osc Type",  0x00, 0x00, null),
-      new Parameter(  1, "Semitone",  0x00, 0x01, null),
-      new Parameter(  2, "Tune",      0x00, 0x02, null),
-      new Parameter(  3, "CTRL1",     0x00, 0x03, null),
-      new Parameter(  4, "CTRL1",     0x00, 0x04, null)
-    ], "Osc"),
+    new ParamGroup( 20, "Osc 2 Data", 0x00, 0x11, oscParameters(), "Osc"),
 
     // OSC 3 Data
-    new ParamGroup( 28, "Osc 3 Data",          0x00, 0x16, [
-      new Parameter(  0, "Osc Type",  0x00, 0x00, null),
-      new Parameter(  1, "Semitone",  0x00, 0x01, null),
-      new Parameter(  2, "Tune",      0x00, 0x02, null),
-      new Parameter(  3, "CTRL1",     0x00, 0x03, null),
-      new Parameter(  4, "CTRL1",     0x00, 0x04, null)
-    ], "Osc"),
+    new ParamGroup( 28, "Osc 3 Data", 0x00, 0x16, oscParameters(), "Osc"),
 
     // Mixer
-    new Parameter( 36, "Osc 1 Level",   0x00, 0x1B, "0~127", "Mixer"),
-    new Parameter( 37, "Osc 2 Level",   0x00, 0x1C, "0~127", "Mixer"),
-    new Parameter( 38, "Osc 3 Level",   0x00, 0x1D, "0~127", "Mixer"),
+    new Parameter( 36, "Osc 1 Level",   0x00, 0x1B, null, "Mixer"),
+    new Parameter( 37, "Osc 2 Level",   0x00, 0x1C, null, "Mixer"),
+    new Parameter( 38, "Osc 3 Level",   0x00, 0x1D, null, "Mixer"),
 
     // Filter
     new Parameter( 39, "Type",            0x00, 0x1E, "0~17                          *T02-2", "Filter"),
@@ -207,11 +346,22 @@ let programParameters = [
     new Parameter( 46, "Velocity Sens",   0x00, 0x25, "-63~0~63", "Filter"),
 
     // Amp
-    new Parameter( 47, "Level",       0x00, 0x26, "0~127", "Amp"),
+    new Parameter( 47, "Level",       0x00, 0x26, null, "Amp"),
     new Parameter( 48, "Panpot",      0x00, 0x27, null, "Amp"),
     new Parameter( 49, "Punch Level", 0x00, 0x28, null, "Amp"),
     new Parameter( 50, "Key Track",   0x00, 0x29, null, "Amp"),
-  ])
+  ];
+};
+
+
+let programParameters = [
+  new Parameter(   0, "Program Name",      0x00, 0x00, lookupName),
+  new Parameter(  12, "Category",          0x00, 0x0C, "Synth,Lead,Bass,Brass,Strings,Piano,Key,SE/Voc,User"),
+  new Parameter(  13, "Voice Mode",        0x00, 0x0D, "Single,Layer,Split"),
+  new Parameter(  14, "TimbreB MIDI Ch.",  0x00, 0x0E, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,Global"),
+  new Parameter(  15, "Split Key",         0x00, 0x0F, lookupSplitKey),
+  new ParamGroup( 16, "Timbre A",          0x20, 0x00, timbreParameters()),
+  new ParamGroup(124, "Timbre B",          0x40, 0x00, timbreParameters())
 ];
 
 export default programParameters;
