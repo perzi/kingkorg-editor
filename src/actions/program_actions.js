@@ -9,24 +9,47 @@ class ProgramActions {
     }));
   }
 
-  fromData(programData) {
+  fromData(sysexData) {
+
+    //console.log("programData.length", programData.length);
 
     var name = "";
 
-    // remove what seems to be a dummy byte
-    if (programData[15] === 0) {
-      programData.splice(15, 1);
+    // // remove what seems to be a dummy byte
+    // if (programData[15] === 0) {
+    //   programData.splice(15, 1);
+    // }
+
+    // remove first bytes and the last one
+    //programData.splice(0, 7);
+    //programData.splice(programData.length - 1, 1);
+    let programData = sysexData.slice(7, sysexData.length - 1);
+
+    console.log("programData.length", programData.length);
+
+    let data = [];
+
+    for (let i = 0; i < programData.length; i++) {
+
+      let r = i % 8; // get order
+
+      if (r !== 0) {
+        let highbits = programData[Math.floor(i / 8) * 8];
+        let highbit = (highbits << (8 - r)) & 0b10000000;
+        let value = highbit | programData[i];
+
+        data.push(value);
+      }
     }
-    // remove first bytes
-    programData.splice(0, 8);
+
+    console.log(data.length);
 
     for (let i = 0; i < 12; i++) {
-      if (programData[i] !== 0)
-        name = name + String.fromCharCode(programData[i]);
+      name = name + String.fromCharCode(data[i]);
     }
 
     this.dispatch(Immutable.fromJS({
-      data: programData,
+      data: data,
       name: name
     }));
   }
