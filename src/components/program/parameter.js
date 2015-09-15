@@ -18,8 +18,8 @@ class Example extends React.Component {
 
     return (
       <div>
-          <span className="param param-title">{this.props.parameter.category + " "}{this.props.parameter.name} ({this.props.parameter.offset})</span>
-          <span className="param param-value">{text} ({value})</span>
+          <span className="param param-title">{this.props.parameter.category + " "}{this.props.parameter.name} <span className="raw">{this.props.parameter.getOffset()}</span></span>
+          <span className="param param-value">{text} <span className="raw">{value}</span></span>
       </div>
     );
   }
