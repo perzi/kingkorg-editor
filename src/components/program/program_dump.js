@@ -27,8 +27,19 @@ class ProgramDump extends React.Component {
         if (level === 4) return (<div key={level * 1000 + index} className=""><h6>{parameter.name}</h6>{childParameters}</div>);
 
       } else {
+
+
+        let props = {
+          name: parameter.name,
+          value: parameter.getValue(data),
+          text: parameter.getValueAsText(data),
+          offset: parameter.getOffset(),
+          category: parameter.category,
+          allValues: parameter.lookup instanceof Array ? parameter.lookup : null
+        };
+
         return (
-          <Parameter key={level * 2000 + index} parameter={parameter} programData={data}/>
+          <Parameter key={level * 2000 + index} {...props} />
         );
       }
     });

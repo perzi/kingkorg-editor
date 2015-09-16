@@ -1,11 +1,12 @@
 class Parameter {
-  constructor(offset, name, id, subId, lookup, category) {
+  constructor(offset, name, midiId, midiSubId, lookup, category, id) {
     this.offset = offset;
     this.name = name;
-    this.id = id;
+    this.midiId = midiId;
     this.lookup = lookup || null;
-    this.subId = subId;
+    this.midiSubId = midiSubId;
     this.category = category || "";
+    this.id = id;
     this.parent = null;
     this.isGroup = false;
 
@@ -46,9 +47,6 @@ class Parameter {
 
   setParent(parent) {
     this.parent = parent;
-    // this.offset += parent.offset;
-    // this.id += parent.id;
-    // this.subId += parent.subId;
   }
 
   getOffset() {
@@ -80,19 +78,20 @@ class Parameter {
       return lookup(value, programData);
     }
 
-    return value;
+    return new String(value);
   }
 }
 
 
 class ParamGroup {
-  constructor(offset, name, id, subId, parameters, category) {
+  constructor(offset, name, midiId, midiSubId, parameters, category, id) {
     this.offset = offset;
     this.name = name;
-    this.id = id;
-    this.subId = subId;
+    this.midiId = midiId;
+    this.midiSubId = midiSubId;
     this.parameters = parameters;
     this.category = category || "";
+    this.id = id;
     this.parent = null;
     this.isGroup = true;
 
@@ -285,12 +284,11 @@ let oscTypeDictionary = [
 
 let generateOscTypeNames = () =>  {
   return oscTypeDictionary.map(row => {
-    return row.substring(0, 16).trim();
+    return row.substring(0, 15).trim();
   });
 }
 
 let oscTypeNames = generateOscTypeNames();
-
 
 
 let oscParameters = () => {
@@ -317,7 +315,7 @@ let timbreParameters = () => {
     new Parameter(  6, "LFO2ModInt",      0x00, 0x06, "-63~0~63", "Pitch"),
     new Parameter(  7, "LFO2 & JS+Y",     0x00, 0x07, "-63~0~63:-2400~0~2400[cent]   *T02-1", "Pitch"),
     new Parameter(  8, "Bend Range",      0x00, 0x08, "-12~0~12[note]", "Pitch"),
-    new Parameter(  9, "Portamento SW",   0x00, 0x09, "0,1:Off,On", "Pitch"),
+    new Parameter(  9, "Portamento SW",   0x00, 0x09, "Off,On", "Pitch"),
     new Parameter( 10, "Portamento Time", 0x00, 0x0A, null, "Pitch"),
     new Parameter( 11, "Analog Tuning",   0x00, 0x0B, null, "Pitch"),
 
@@ -357,11 +355,11 @@ let timbreParameters = () => {
 let programParameters = [
   new Parameter(   0, "Program Name",      0x00, 0x00, lookupName),
   new Parameter(  12, "Category",          0x00, 0x0C, "Synth,Lead,Bass,Brass,Strings,Piano,Key,SE/Voc,User"),
-  new Parameter(  13, "Voice Mode",        0x00, 0x0D, "Single,Layer,Split"),
+  new Parameter(  13, "Voice Mode",        0x00, 0x0D, "Single,Layer,Split", null, "voice_mode"),
   new Parameter(  14, "TimbreB MIDI Ch.",  0x00, 0x0E, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,Global"),
   new Parameter(  15, "Split Key",         0x00, 0x0F, lookupSplitKey),
-  new ParamGroup( 16, "Timbre A",          0x20, 0x00, timbreParameters()),
-  new ParamGroup(124, "Timbre B",          0x40, 0x00, timbreParameters())
+  new ParamGroup( 16, "Timbre A",          0x20, 0x00, timbreParameters(), null, "timbre_a"),
+  new ParamGroup(124, "Timbre B",          0x40, 0x00, timbreParameters(), null, "timbre_b")
 ];
 
 export default programParameters;
