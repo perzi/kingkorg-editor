@@ -1,7 +1,8 @@
 //import React from 'react';
-import React          from 'react/addons';
+import React              from 'react/addons';
 
 import Parameter          from 'components/program/parameter';
+import Osc                from 'components/program/osc';
 
 import programParameters  from 'data/program_parameters';
 
@@ -19,16 +20,20 @@ class ProgramDump extends React.Component {
     let parameters = programParameters.map((parameter, index) => {
 
       if (parameter.isGroup) {
-        let childParameters = this.renderParameters(parameter.parameters, data, level + 1);
 
-        if (level === 1) return (<div key={level * 1000 + index} className=""><h3>{parameter.name}</h3>{childParameters}</div>);
-        if (level === 2) return (<div key={level * 1000 + index} className=""><h4>{parameter.name}</h4>{childParameters}</div>);
-        if (level === 3) return (<div key={level * 1000 + index} className=""><h5>{parameter.name}</h5>{childParameters}</div>);
-        if (level === 4) return (<div key={level * 1000 + index} className=""><h6>{parameter.name}</h6>{childParameters}</div>);
+        if (parameter.category === "Osc") {
+          return (
+            <Osc parameterGroup={parameter} offset={parameter.getOffset()} programData={data} />
+          );
+        } else {
+          let childParameters = this.renderParameters(parameter.parameters, data, level + 1);
 
+          if (level === 1) return (<div key={level * 1000 + index} className=""><h3>{parameter.name}</h3>{childParameters}</div>);
+          if (level === 2) return (<div key={level * 1000 + index} className=""><h4>{parameter.name}</h4>{childParameters}</div>);
+          if (level === 3) return (<div key={level * 1000 + index} className=""><h5>{parameter.name}</h5>{childParameters}</div>);
+          if (level === 4) return (<div key={level * 1000 + index} className=""><h6>{parameter.name}</h6>{childParameters}</div>);
+        }
       } else {
-
-
         let props = {
           name: parameter.name,
           value: parameter.getValue(data),
@@ -39,7 +44,7 @@ class ProgramDump extends React.Component {
         };
 
         return (
-          <Parameter key={level * 2000 + index} {...props} />
+          <Parameter key={props.offset} {...props} />
         );
       }
     });
