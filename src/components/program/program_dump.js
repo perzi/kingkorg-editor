@@ -5,6 +5,7 @@ import Parameter          from 'components/program/parameter';
 import Osc                from 'components/program/osc';
 
 import programParameters  from 'data/program_parameters';
+import programActions     from 'actions/program_actions';
 
 class ProgramDump extends React.Component {
   constructor(props) {
@@ -13,6 +14,10 @@ class ProgramDump extends React.Component {
     let { shouldComponentUpdate } = React.addons.PureRenderMixin;
 
     this.shouldComponentUpdate    = shouldComponentUpdate.bind(this);
+  }
+
+  handleChange(value, offset) {
+    programActions.updateParam(value, offset);
   }
 
   renderParameters(programParameters, data, level) {
@@ -40,7 +45,8 @@ class ProgramDump extends React.Component {
           text: parameter.getValueAsText(data),
           offset: parameter.getOffset(),
           category: parameter.category,
-          allValues: parameter.lookup instanceof Array ? parameter.lookup : null
+          allValues: parameter.lookup instanceof Array ? parameter.lookup : null,
+          onChange: this.handleChange.bind(this)
         };
 
         return (

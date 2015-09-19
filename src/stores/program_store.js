@@ -7,10 +7,11 @@ import program        from 'data/program';
 
 class ProgramStore {
   constructor() {
-    let { setName, fromData } = Actions;
+    let { setName, fromData, updateParam } = Actions;
 
     this.bindListeners({
       setName: setName,
+      updateParam: updateParam,
       fromData: fromData
     });
 
@@ -22,6 +23,14 @@ class ProgramStore {
 
   setName(name) {
     return this.setState(this.state.set("name", name));
+  }
+
+  updateParam(obj) {
+    return this.setState(
+      this.state.updateIn(["data"], (list) => {
+        return list.set(obj.index, obj.value);
+      })
+    );
   }
 
   fromData(data) {
