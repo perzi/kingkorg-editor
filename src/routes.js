@@ -1,12 +1,12 @@
-import React from 'react';
+import React                 from 'react';
 import {Route, DefaultRoute} from 'react-router';
 
-import App from 'components/app';
-import Intro from 'components/intro';
+import App                   from 'components/app';
+import CurrentProgram        from 'components/currentprogram';
 
 const routes = (
   <Route handler={App}>
-    <DefaultRoute name='intro' handler={Intro}/>
+    <DefaultRoute name='currentprogram' handler={CurrentProgram}/>
   </Route>
 );
 
