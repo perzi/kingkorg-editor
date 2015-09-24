@@ -9,7 +9,9 @@ class Osc extends React.Component {
     this.shouldComponentUpdate    = shouldComponentUpdate.bind(this);
   }
 
-  renderParameter(parameter, name, visible) {
+  renderParameter(index, name, visible) {
+
+    let parameter = this.props.parameterGroup.parameters[index];
 
     if (name === "-") return false;
 
@@ -20,7 +22,8 @@ class Osc extends React.Component {
       text: parameter.getValueAsText(data),
       offset: parameter.getOffset(),
       category: parameter.category,
-      allValues: parameter.lookup instanceof Array ? parameter.lookup : null
+      allValues: parameter.lookup instanceof Array ? parameter.lookup : null,
+      onChange: this.props.onChange
     };
 
     return (
@@ -39,11 +42,11 @@ class Osc extends React.Component {
     return (
       <div className="">
         <h3>{this.props.parameterGroup.name}</h3>
-        {this.renderParameter(this.props.parameterGroup.parameters[0])}
-        {this.renderParameter(this.props.parameterGroup.parameters[1])}
-        {this.renderParameter(this.props.parameterGroup.parameters[2])}
-        {this.renderParameter(this.props.parameterGroup.parameters[3], ctrl1Name)}
-        {this.renderParameter(this.props.parameterGroup.parameters[4], ctrl2Name)}
+        {this.renderParameter(0)}
+        {this.renderParameter(1)}
+        {this.renderParameter(2)}
+        {this.renderParameter(3, ctrl1Name)}
+        {this.renderParameter(4, ctrl2Name)}
       </div>
     );
   }
@@ -58,7 +61,7 @@ Osc.propTypes = {
 
 
 Osc.defaultProps = {
-  onChange: (value, offset) => {
+  onChange: (offset, value) => {
     console.log(value, offset);
   }
 };

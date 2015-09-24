@@ -7,6 +7,8 @@ import Param            from 'components/program/param';
 import Parameter            from 'components/program/parameter';
 import programData            from 'data/program';
 
+import "styles/app";
+
 
 class App extends React.Component {
 

@@ -1,9 +1,17 @@
 'use strict';
 
-var webpack = require('webpack'),
-  HtmlWebpackPlugin = require('html-webpack-plugin'),
-  path = require('path'),
-  srcPath = path.join(__dirname, 'src');
+var webpack = require("webpack");
+var ExtractTextPlugin = require("extract-text-webpack-plugin");
+var path = require("path");
+var HtmlWebpackPlugin = require('html-webpack-plugin');
+var srcPath = path.join(__dirname, 'src');
+
+var sassLoaders = [
+  "css-loader",
+  "autoprefixer-loader?browsers=last 2 version",
+  "sass-loader?indentedSyntax=sass&includePaths[]=" + path.resolve(__dirname, "./src"),
+];
+
 
 module.exports = {
   target: 'web',
@@ -14,7 +22,7 @@ module.exports = {
   },
   resolve: {
     root: srcPath,
-    extensions: ['', '.js'],
+    extensions: ['', '.js', '.sass'],
     modulesDirectories: ['node_modules', 'src']
   },
   output: {
@@ -28,7 +36,15 @@ module.exports = {
 
   module: {
     loaders: [
-      {test: /\.js?$/, exclude: /node_modules/, loader: 'babel?cacheDirectory'}
+      {
+        test: /\.js?$/,
+        exclude: /node_modules/,
+        loader: 'babel?cacheDirectory'
+      },
+      {
+        test: /\.sass$/,
+        loader: ExtractTextPlugin.extract("style-loader", sassLoaders.join("!")),
+      },
     ]
   },
   plugins: [
@@ -37,6 +53,7 @@ module.exports = {
       inject: true,
       template: 'src/index.html'
     }),
+    new ExtractTextPlugin("[name].css"),
     new webpack.NoErrorsPlugin()
   ],
 

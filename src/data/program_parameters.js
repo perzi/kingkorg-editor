@@ -109,6 +109,14 @@ class ParamGroup {
       return this.offset;
     }
   }
+
+  getParameter(id) {
+    let parameters = this.parameters.filter((parameter) => {
+      return parameter.id === id;
+    });
+
+    return parameters.length > 0 ? parameters[0] : undefined;
+  }
 }
 
 
@@ -325,13 +333,13 @@ let timbreParameters = () => {
     new Parameter( 11, "Analog Tuning",   0x00, 0x0B, null, "Pitch"),
 
     // OSC 1 Data
-    new ParamGroup( 12, "Osc 1 Data", 0x00, 0x0C, oscParameters(), "Osc"),
+    new ParamGroup( 12, "Osc 1 Data", 0x00, 0x0C, oscParameters(), "Osc", "osc_1"),
 
     // OSC 2 Data
-    new ParamGroup( 20, "Osc 2 Data", 0x00, 0x11, oscParameters(), "Osc"),
+    new ParamGroup( 20, "Osc 2 Data", 0x00, 0x11, oscParameters(), "Osc", "osc_2"),
 
     // OSC 3 Data
-    new ParamGroup( 28, "Osc 3 Data", 0x00, 0x16, oscParameters(), "Osc"),
+    new ParamGroup( 28, "Osc 3 Data", 0x00, 0x16, oscParameters(), "Osc", "osc_3"),
 
     // Mixer
     new Parameter( 36, "Osc 1 Level",   0x00, 0x1B, null, "Mixer"),
@@ -357,15 +365,15 @@ let timbreParameters = () => {
 };
 
 
-let programParameters = [
-  new Parameter(   0, "Program Name",      0x00, 0x00, lookupName),
-  new Parameter(  12, "Category",          0x00, 0x0C, "Synth,Lead,Bass,Brass,Strings,Piano,Key,SE/Voc,User"),
-  new Parameter(  13, "Voice Mode",        0x00, 0x0D, "Single,Layer,Split", null, "voice_mode"),
-  new Parameter(  14, "TimbreB MIDI Ch.",  0x00, 0x0E, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,Global"),
-  new Parameter(  15, "Split Key",         0x00, 0x0F, lookupSplitKey),
-  new ParamGroup( 16, "Timbre A",          0x20, 0x00, timbreParameters(), null, "timbre_a"),
-  new ParamGroup(124, "Timbre B",          0x40, 0x00, timbreParameters(), null, "timbre_b")
-];
+let program = new ParamGroup(0, "Program", 0x00, 0x00, [
+    new Parameter(   0, "Program Name",      0x00, 0x00, lookupName),
+    new Parameter(  12, "Category",          0x00, 0x0C, "Synth,Lead,Bass,Brass,Strings,Piano,Key,SE/Voc,User"),
+    new Parameter(  13, "Voice Mode",        0x00, 0x0D, "Single,Layer,Split", null, "voice_mode"),
+    new Parameter(  14, "TimbreB MIDI Ch.",  0x00, 0x0E, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,Global"),
+    new Parameter(  15, "Split Key",         0x00, 0x0F, lookupSplitKey),
+    new ParamGroup( 16, "Timbre A",          0x20, 0x00, timbreParameters(), null, "timbre_a"),
+    new ParamGroup(124, "Timbre B",          0x40, 0x00, timbreParameters(), null, "timbre_b")
+]);
 
 export { oscTypeDictionary };
-export default programParameters;
+export default program;

@@ -6,7 +6,6 @@ class Parameter extends React.Component {
     super(props);
 
     let { shouldComponentUpdate } = React.addons.PureRenderMixin;
-
     this.shouldComponentUpdate    = shouldComponentUpdate.bind(this);
   }
 
