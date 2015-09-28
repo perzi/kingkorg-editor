@@ -1,6 +1,7 @@
 import React   from 'react/addons';
 import Param   from './param';
 import Osc     from './osc';
+import Simple  from 'components/ui/simple';
 
 import program from 'data/program_parameters';
 
@@ -26,6 +27,26 @@ class Timbre extends React.Component {
     };
   }
 
+  getParameterProps(id) {
+    let parameter = this.props.parameter.getParameter(id);
+//    let parameter = this.props.parameter.parameters[index];
+    let data = this.props.data;
+    let offset = parameter.getOffset();
+    let props = {
+      name: parameter.name,
+      value: parameter.getValue(data),
+      text: parameter.getValueAsText(data),
+      offset: offset,
+      category: parameter.category,
+      allValues: parameter.lookup instanceof Array ? parameter.lookup : null,
+      onChange: ((value) => {
+        this.props.onChange(offset, value);
+      }).bind(this)
+    };
+
+    return props;
+  }
+
   render() {
     return (
       <div className="timbre">
@@ -38,7 +59,10 @@ class Timbre extends React.Component {
             <Osc {...this.getOscParameter("osc_3")} />
           </div>
           <div className="timbre__block">
-            <h4>Mixer</h4>
+            <b>Mixer</b>
+            <Simple {...this.getParameterProps("osc1_level")} />
+            <Simple {...this.getParameterProps("osc2_level")} />
+            <Simple {...this.getParameterProps("osc3_level")} />
           </div>
           <div className="timbre__block">
             <h4>Filter + EG1</h4>

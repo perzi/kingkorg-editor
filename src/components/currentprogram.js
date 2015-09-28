@@ -60,6 +60,7 @@ class CurrentProgram extends React.Component {
   }
 
   handleChange(offset, value) {
+    console.log("CurrentProgram.handleChange", offset, value);
     ProgramActions.updateParam(offset, value);
   }
 
