@@ -1,20 +1,4 @@
-@import ~csstyle/csstyle
-
-body
-  font-family: "SourceSansPro-ExtraLight";
-  font-size: 12px;
-  margin: 2em 5em;
-  background: rgb(39, 43, 49);
-  color: lightgreen;
-
-
-h1, h2, h3, h4, h5, h6
-  font-family: "SourceSansPro-Regular"
-  font-weight: normal
-  color: lightgreen
-
-a
-  color: red
+@import "styles/base"
 
 .param-container
   margin: 0 0 0.5em
@@ -96,3 +80,23 @@ a
   transform: translate(-15px, 0)
 
 .knob__value
+
+
+.simple
+  width: $simple-width
+  text-align: right
+  padding: $control-gutter
+  cursor: pointer
+
+.simple:hover
+  background-color: $color-secondary
+
+.simple__name
+
+.simple__value
+  margin-top: $control-gutter / 2
+  font-weight: bold
+  color: lightskyblue
+
+.simple:hover .simple__value
+  background-color: rgb(39, 43, 49)

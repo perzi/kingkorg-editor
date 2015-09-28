@@ -60,7 +60,7 @@ class CurrentProgram extends React.Component {
   }
 
   handleChange(offset, value) {
-    console.log(handleChange, value);
+    ProgramActions.updateParam(offset, value);
   }
 
   render() {
@@ -80,6 +80,10 @@ class CurrentProgram extends React.Component {
         <br />
 
         <Timbre {...this.getTimbreProps("timbre_a", data)}/>
+
+        <br />
+        <br />
+
         <Timbre {...this.getTimbreProps("timbre_b", data)}/>
 
       </div>

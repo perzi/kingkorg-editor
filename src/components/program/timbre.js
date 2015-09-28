@@ -17,30 +17,35 @@ class Timbre extends React.Component {
 
   getOscParameter(id) {
     let parameter = this.props.parameter.getParameter(id);
-
-    console.log(this.props.data);
-
     return {
       title: parameter.name,
-      parameterGroup: parameter,
+      parameter: parameter,
       offset: parameter.getOffset(),
-      programData: this.props.data,
+      data: this.props.data,
       onChange: this.props.onChange
     };
-  }
-
-  handleChange(offset, value) {
-
   }
 
   render() {
     return (
       <div className="timbre">
         <h3>{this.props.name}</h3>
-        <div className="timbre__oscillators">
-          <Osc {...this.getOscParameter("osc_1")} />
-          <Osc {...this.getOscParameter("osc_2")} />
-          <Osc {...this.getOscParameter("osc_3")} />
+        <div className="timbre__blocks">
+          <div className="timbre__oscillators-title"><div>Oscillators</div></div>
+          <div className="timbre__oscillators">
+            <Osc {...this.getOscParameter("osc_1")} />
+            <Osc {...this.getOscParameter("osc_2")} />
+            <Osc {...this.getOscParameter("osc_3")} />
+          </div>
+          <div className="timbre__block">
+            <h4>Mixer</h4>
+          </div>
+          <div className="timbre__block">
+            <h4>Filter + EG1</h4>
+          </div>
+          <div className="timbre__block">
+            <h4>Amp + EG2 + Pan</h4>
+          </div>
         </div>
       </div>
     );

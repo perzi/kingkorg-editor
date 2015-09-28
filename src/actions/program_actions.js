@@ -11,7 +11,7 @@ class ProgramActions {
     }));
   }
 
-  updateParam(value, offset) {
+  updateParam(offset, value) {
     this.dispatch({
       index: offset,
       value: value
