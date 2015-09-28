@@ -306,7 +306,7 @@ let oscTypeNames = oscTypeDictionary.map(item => {
 
 let oscParameters = () => {
   return [
-    new Parameter(  0, "Osc Type",  0x00, 0x00, oscTypeNames),
+    new Parameter(  0, "Type",  0x00, 0x00, oscTypeNames),
     new Parameter(  1, "Semitone",  0x00, 0x01, null),
     new Parameter(  2, "Tune",      0x00, 0x02, null),
     new Parameter(  3, "CTRL1",     0x00, 0x03, null),
@@ -333,18 +333,18 @@ let timbreParameters = () => {
     new Parameter( 11, "Analog Tuning",   0x00, 0x0B, null, "Pitch"),
 
     // OSC 1 Data
-    new ParamGroup( 12, "Osc 1 Data", 0x00, 0x0C, oscParameters(), "Osc", "osc_1"),
+    new ParamGroup( 12, "Oscillator 1", 0x00, 0x0C, oscParameters(), "Osc", "osc_1"),
 
     // OSC 2 Data
-    new ParamGroup( 20, "Osc 2 Data", 0x00, 0x11, oscParameters(), "Osc", "osc_2"),
+    new ParamGroup( 20, "Oscillator 2", 0x00, 0x11, oscParameters(), "Osc", "osc_2"),
 
     // OSC 3 Data
-    new ParamGroup( 28, "Osc 3 Data", 0x00, 0x16, oscParameters(), "Osc", "osc_3"),
+    new ParamGroup( 28, "Oscillator 3", 0x00, 0x16, oscParameters(), "Osc", "osc_3"),
 
     // Mixer
-    new Parameter( 36, "Osc 1 Level",   0x00, 0x1B, null, "Mixer"),
-    new Parameter( 37, "Osc 2 Level",   0x00, 0x1C, null, "Mixer"),
-    new Parameter( 38, "Osc 3 Level",   0x00, 0x1D, null, "Mixer"),
+    new Parameter( 36, "Osc 1 Level",   0x00, 0x1B, null, "Mixer", "osc1_level"),
+    new Parameter( 37, "Osc 2 Level",   0x00, 0x1C, null, "Mixer", "osc2_level"),
+    new Parameter( 38, "Osc 3 Level",   0x00, 0x1D, null, "Mixer", "osc3_level"),
 
     // Filter
     new Parameter( 39, "Type",            0x00, 0x1E, "0~17                          *T02-2", "Filter"),
