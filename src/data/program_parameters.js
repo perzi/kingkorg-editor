@@ -317,20 +317,20 @@ let oscParameters = () => {
 let timbreParameters = () => {
   return [
     // Voice
-    new Parameter(  0, "Voice Assign",         0x00, 0x00, "Mono1,Mono2,Poly", "Voice"),
-    new Parameter(  1, "Unison SW",            0x00, 0x01, "OFF,2 Voice,3 Voice,4 Voice", "Voice"),
-    new Parameter(  2, "Unison Detune",        0x00, 0x02, "0~99:0~99[cent]", "Voice"),
-    new Parameter(  3, "Unison Spread",        0x00, 0x03, null, "Voice"),
+    new Parameter(  0, "Voice Assign",         0x00, 0x00, "Mono1,Mono2,Poly", "Voice", "voice_assign"),
+    new Parameter(  1, "Unison SW",            0x00, 0x01, "OFF,2 Voice,3 Voice,4 Voice", "Voice", "unison_sw"),
+    new Parameter(  2, "Unison Detune",        0x00, 0x02, "0~99:0~99[cent]", "Voice", "unison_detune"),
+    new Parameter(  3, "Unison Spread",        0x00, 0x03, null, "Voice", "unison_spread"),
 
     // Pitch
-    new Parameter(  4, "Transpose",       0x00, 0x04, "-48~0~48[note]", "Pitch"),
-    new Parameter(  5, "Detune",          0x00, 0x05, "-50~0~50[cent]", "Pitch"),
-    new Parameter(  6, "LFO2ModInt",      0x00, 0x06, "-63~0~63", "Pitch"),
-    new Parameter(  7, "LFO2 & JS+Y",     0x00, 0x07, "-63~0~63:-2400~0~2400[cent]   *T02-1", "Pitch"),
-    new Parameter(  8, "Bend Range",      0x00, 0x08, "-12~0~12[note]", "Pitch"),
-    new Parameter(  9, "Portamento SW",   0x00, 0x09, "Off,On", "Pitch"),
-    new Parameter( 10, "Portamento Time", 0x00, 0x0A, null, "Pitch"),
-    new Parameter( 11, "Analog Tuning",   0x00, 0x0B, null, "Pitch"),
+    new Parameter(  4, "Transpose",       0x00, 0x04, "-48~0~48[note]", "Pitch", "pitch_transpose"),
+    new Parameter(  5, "Detune",          0x00, 0x05, "-50~0~50[cent]", "Pitch", "pitch_detune"),
+    new Parameter(  6, "LFO2ModInt",      0x00, 0x06, "-63~0~63", "Pitch", "pitch_lfo2modint"),
+    new Parameter(  7, "LFO2 & JS+Y",     0x00, 0x07, "-63~0~63:-2400~0~2400[cent]   *T02-1", "Pitch", "pitch_lfo2jsy"),
+    new Parameter(  8, "Bend Range",      0x00, 0x08, "-12~0~12[note]", "Pitch", "pitch_bendrange"),
+    new Parameter(  9, "Portamento SW",   0x00, 0x09, "Off,On", "Pitch", "pitch_portamento_sw"),
+    new Parameter( 10, "Portamento Time", 0x00, 0x0A, null, "Pitch", "pitch_portamento_time"),
+    new Parameter( 11, "Analog Tuning",   0x00, 0x0B, null, "Pitch", "pitch_analog_tuning"),
 
     // OSC 1 Data
     new ParamGroup( 12, "Oscillator 1", 0x00, 0x0C, oscParameters(), "Osc", "osc_1"),
@@ -347,20 +347,20 @@ let timbreParameters = () => {
     new Parameter( 38, "Osc 3 Level",   0x00, 0x1D, null, "Mixer", "osc3_level"),
 
     // Filter
-    new Parameter( 39, "Type",            0x00, 0x1E, "0~17                          *T02-2", "Filter"),
-    new Parameter( 40, "Cutoff",          0x00, 0x1F, null, "Filter"),
-    new Parameter( 41, "Resonance",       0x00, 0x20, null, "Filter"),
-    new Parameter( 42, "EG1 Intensity",   0x00, 0x21, "-63~0~63", "Filter"),
-    new Parameter( 43, "LFO1 Mod Int.",   0x00, 0x22, "-63~0~63", "Filter"),
-    new Parameter( 44, "LFO1 & JS-Y",     0x00, 0x23, "-63~0~63", "Filter"),
-    new Parameter( 45, "Keyboard Track",  0x00, 0x24, "-63~0~63:-2.00~0~2.00         *T02-3", "Filter"),
-    new Parameter( 46, "Velocity Sens",   0x00, 0x25, "-63~0~63", "Filter"),
+    new Parameter( 39, "Type",            0x00, 0x1E, "0~17                          *T02-2", "Filter", "filter_type"),
+    new Parameter( 40, "Cutoff",          0x00, 0x1F, null, "Filter", "filter_cutoff"),
+    new Parameter( 41, "Resonance",       0x00, 0x20, null, "Filter", "filter_resonance"),
+    new Parameter( 42, "EG1 Intensity",   0x00, 0x21, "-63~0~63", "Filter", "filter_eg1int"),
+    new Parameter( 43, "LFO1 Mod Int.",   0x00, 0x22, "-63~0~63", "Filter", "filter_lfo1modint"),
+    new Parameter( 44, "LFO1 & JS-Y",     0x00, 0x23, "-63~0~63", "Filter", "filter_lfo1jsy"),
+    new Parameter( 45, "Keyboard Track",  0x00, 0x24, "-63~0~63:-2.00~0~2.00         *T02-3", "Filter", "filter_keytrack"),
+    new Parameter( 46, "Velocity Sens",   0x00, 0x25, "-63~0~63", "Filter", "filter_velocitysens"),
 
     // Amp
-    new Parameter( 47, "Level",       0x00, 0x26, null, "Amp"),
-    new Parameter( 48, "Panpot",      0x00, 0x27, null, "Amp"),
-    new Parameter( 49, "Punch Level", 0x00, 0x28, null, "Amp"),
-    new Parameter( 50, "Key Track",   0x00, 0x29, null, "Amp"),
+    new Parameter( 47, "Level",       0x00, 0x26, null, "Amp", "amp_level"),
+    new Parameter( 48, "Panpot",      0x00, 0x27, null, "Amp", "amp_pan"),
+    new Parameter( 49, "Punch Level", 0x00, 0x28, null, "Amp", "amp_punch"),
+    new Parameter( 50, "Key Track",   0x00, 0x29, null, "Amp", "amp_keytrack"),
   ];
 };
 

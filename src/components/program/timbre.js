@@ -52,6 +52,44 @@ class Timbre extends React.Component {
       <div className="timbre">
         <h3>{this.props.name}</h3>
         <div className="timbre__blocks">
+          <div className="timbre__block">
+            <b>Voice</b>
+            <Simple {...this.getParameterProps("voice_assign")} />
+            <Simple {...this.getParameterProps("unison_sw")} />
+            <Simple {...this.getParameterProps("unison_detune")} />
+            <Simple {...this.getParameterProps("unison_spread")} />
+          </div>
+          <div className="timbre__block">
+            <b>Pitch</b>
+            <Simple {...this.getParameterProps("pitch_transpose")} />
+            <Simple {...this.getParameterProps("pitch_detune")} />
+            <Simple {...this.getParameterProps("pitch_lfo2modint")} />
+            <Simple {...this.getParameterProps("pitch_lfo2jsy")} />
+            <Simple {...this.getParameterProps("pitch_bendrange")} />
+            <Simple {...this.getParameterProps("pitch_portamento_sw")} />
+            <Simple {...this.getParameterProps("pitch_portamento_time")} />
+            <Simple {...this.getParameterProps("pitch_analog_tuning")} />
+          </div>
+          <div className="timbre__block">
+            <b>Filter</b>
+            <Simple {...this.getParameterProps("filter_type")} />
+            <Simple {...this.getParameterProps("filter_cutoff")} />
+            <Simple {...this.getParameterProps("filter_resonance")} />
+            <Simple {...this.getParameterProps("filter_eg1int")} />
+            <Simple {...this.getParameterProps("filter_lfo1modint")} />
+            <Simple {...this.getParameterProps("filter_lfo1jsy")} />
+            <Simple {...this.getParameterProps("filter_keytrack")} />
+            <Simple {...this.getParameterProps("filter_velocitysens")} />
+          </div>
+          <div className="timbre__block">
+            <b>Amp</b>
+            <Simple {...this.getParameterProps("amp_level")} />
+            <Simple {...this.getParameterProps("amp_pan")} />
+            <Simple {...this.getParameterProps("amp_punch")} />
+            <Simple {...this.getParameterProps("amp_keytrack")} />
+          </div>
+        </div>
+        <div className="timbre__blocks">
           <div className="timbre__oscillators-title"><div>Oscillators</div></div>
           <div className="timbre__oscillators">
             <Osc {...this.getOscParameter("osc_1")} />
@@ -65,10 +103,14 @@ class Timbre extends React.Component {
             <Simple {...this.getParameterProps("osc3_level")} />
           </div>
           <div className="timbre__block">
-            <h4>Filter + EG1</h4>
+            <b>Filter + EG1</b>
+
+
           </div>
           <div className="timbre__block">
-            <h4>Amp + EG2 + Pan</h4>
+            <b>Amp + EG2 + Pan</b>
+
+
           </div>
         </div>
       </div>
