@@ -1,6 +1,8 @@
 import React   from 'react/addons';
 import Param   from './param';
 import Osc     from './osc';
+import Control from './control';
+import EG      from './eg';
 import Simple  from 'components/ui/simple';
 
 import program from 'data/program_parameters';
@@ -27,25 +29,25 @@ class Timbre extends React.Component {
     };
   }
 
-  getParameterProps(id) {
-    let parameter = this.props.parameter.getParameter(id);
-//    let parameter = this.props.parameter.parameters[index];
-    let data = this.props.data;
-    let offset = parameter.getOffset();
-    let props = {
-      name: parameter.name,
-      value: parameter.getValue(data),
-      text: parameter.getValueAsText(data),
-      offset: offset,
-      category: parameter.category,
-      allValues: parameter.lookup instanceof Array ? parameter.lookup : null,
-      onChange: ((value) => {
-        this.props.onChange(offset, value);
-      }).bind(this)
-    };
-
-    return props;
-  }
+//   getParameterProps(id) {
+//     let parameter = this.props.parameter.getParameter(id);
+// //    let parameter = this.props.parameter.parameters[index];
+//     let data = this.props.data;
+//     let offset = parameter.getOffset();
+//     let props = {
+//       name: parameter.name,
+//       value: parameter.getValue(data),
+//       text: parameter.getValueAsText(data),
+//       offset: offset,
+//       category: parameter.category,
+//       allValues: parameter.lookup instanceof Array ? parameter.lookup : null,
+//       onChange: ((value) => {
+//         this.props.onChange(offset, value);
+//       }).bind(this)
+//     };
+//
+//     return props;
+//   }
 
   render() {
     return (
@@ -54,39 +56,45 @@ class Timbre extends React.Component {
         <div className="timbre__blocks">
           <div className="timbre__block">
             <b>Voice</b>
-            <Simple {...this.getParameterProps("voice_assign")} />
-            <Simple {...this.getParameterProps("unison_sw")} />
-            <Simple {...this.getParameterProps("unison_detune")} />
-            <Simple {...this.getParameterProps("unison_spread")} />
+            <Control data={this.props.data} id="voice_assign" parentParameter={this.props.parameter} />
+            <Control data={this.props.data} id="unison_sw" parentParameter={this.props.parameter} />
+            <Control data={this.props.data} id="unison_detune" parentParameter={this.props.parameter} />
+            <Control data={this.props.data} id="unison_spread" parentParameter={this.props.parameter} />
           </div>
           <div className="timbre__block">
             <b>Pitch</b>
-            <Simple {...this.getParameterProps("pitch_transpose")} />
-            <Simple {...this.getParameterProps("pitch_detune")} />
-            <Simple {...this.getParameterProps("pitch_lfo2modint")} />
-            <Simple {...this.getParameterProps("pitch_lfo2jsy")} />
-            <Simple {...this.getParameterProps("pitch_bendrange")} />
-            <Simple {...this.getParameterProps("pitch_portamento_sw")} />
-            <Simple {...this.getParameterProps("pitch_portamento_time")} />
-            <Simple {...this.getParameterProps("pitch_analog_tuning")} />
+            <Control data={this.props.data} id="pitch_transpose" parentParameter={this.props.parameter} />
+            <Control data={this.props.data} id="pitch_detune" parentParameter={this.props.parameter} />
+            <Control data={this.props.data} id="pitch_lfo2modint" parentParameter={this.props.parameter} />
+            <Control data={this.props.data} id="pitch_lfo2jsy" parentParameter={this.props.parameter} />
+            <Control data={this.props.data} id="pitch_bendrange" parentParameter={this.props.parameter} />
+            <Control data={this.props.data} id="pitch_portamento_sw" parentParameter={this.props.parameter} />
+            <Control data={this.props.data} id="pitch_portamento_time" parentParameter={this.props.parameter} />
+            <Control data={this.props.data} id="pitch_analog_tuning" parentParameter={this.props.parameter} />
           </div>
           <div className="timbre__block">
             <b>Filter</b>
-            <Simple {...this.getParameterProps("filter_type")} />
-            <Simple {...this.getParameterProps("filter_cutoff")} />
-            <Simple {...this.getParameterProps("filter_resonance")} />
-            <Simple {...this.getParameterProps("filter_eg1int")} />
-            <Simple {...this.getParameterProps("filter_lfo1modint")} />
-            <Simple {...this.getParameterProps("filter_lfo1jsy")} />
-            <Simple {...this.getParameterProps("filter_keytrack")} />
-            <Simple {...this.getParameterProps("filter_velocitysens")} />
+            <Control data={this.props.data} id="filter_type" parentParameter={this.props.parameter} />
+            <Control data={this.props.data} id="filter_cutoff" parentParameter={this.props.parameter} />
+            <Control data={this.props.data} id="filter_resonance" parentParameter={this.props.parameter} />
+            <Control data={this.props.data} id="filter_eg1int" parentParameter={this.props.parameter} />
+            <Control data={this.props.data} id="filter_lfo1modint" parentParameter={this.props.parameter} />
+            <Control data={this.props.data} id="filter_lfo1jsy" parentParameter={this.props.parameter} />
+            <Control data={this.props.data} id="filter_keytrack" parentParameter={this.props.parameter} />
+            <Control data={this.props.data} id="filter_velocitysens" parentParameter={this.props.parameter} />
+          </div>
+          <div className="timbre__block">
+            <b>Mixer</b>
+            <Control data={this.props.data} id="osc1_level" parentParameter={this.props.parameter} />
+            <Control data={this.props.data} id="osc2_level" parentParameter={this.props.parameter} />
+            <Control data={this.props.data} id="osc3_level" parentParameter={this.props.parameter} />
           </div>
           <div className="timbre__block">
             <b>Amp</b>
-            <Simple {...this.getParameterProps("amp_level")} />
-            <Simple {...this.getParameterProps("amp_pan")} />
-            <Simple {...this.getParameterProps("amp_punch")} />
-            <Simple {...this.getParameterProps("amp_keytrack")} />
+            <Control data={this.props.data} id="amp_level" parentParameter={this.props.parameter} />
+            <Control data={this.props.data} id="amp_pan" parentParameter={this.props.parameter} />
+            <Control data={this.props.data} id="amp_punch" parentParameter={this.props.parameter} />
+            <Control data={this.props.data} id="amp_keytrack" parentParameter={this.props.parameter} />
           </div>
         </div>
         <div className="timbre__blocks">
@@ -97,19 +105,14 @@ class Timbre extends React.Component {
             <Osc {...this.getOscParameter("osc_3")} />
           </div>
           <div className="timbre__block">
-            <b>Mixer</b>
-            <Simple {...this.getParameterProps("osc1_level")} />
-            <Simple {...this.getParameterProps("osc2_level")} />
-            <Simple {...this.getParameterProps("osc3_level")} />
-          </div>
-          <div className="timbre__block">
             <b>Filter + EG1</b>
+            <EG data={this.props.data} id="eg_1" parentParameter={this.props.parameter} />
 
 
           </div>
           <div className="timbre__block">
             <b>Amp + EG2 + Pan</b>
-
+            <EG data={this.props.data} id="eg_2" parentParameter={this.props.parameter} />
 
           </div>
         </div>

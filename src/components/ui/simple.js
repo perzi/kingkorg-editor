@@ -73,7 +73,8 @@ Simple.propTypes = {
 Simple.defaultProps = {
   value: 0,
   min: 0,
-  max: 127
+  max: 127,
+  onChange: () => {}
 };
 
 

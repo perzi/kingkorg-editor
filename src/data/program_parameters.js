@@ -314,6 +314,16 @@ let oscParameters = () => {
   ]
 }
 
+let egParameters = () => {
+  return [
+    new Parameter(  0, "Attack",    0x00, 0x00, null, "EG", "attack"),
+    new Parameter(  1, "Decay",     0x00, 0x01, null, "EG", "decay"),
+    new Parameter(  2, "Sustain",   0x00, 0x02, null, "EG", "sustain"),
+    new Parameter(  3, "Release",   0x00, 0x03, null, "EG", "release"),
+    new Parameter(  4, "Level Velo Int.", 0x00, 0x04, "-63~0~63", "EG", "lvl_velo_int")
+  ]
+}
+
 let timbreParameters = () => {
   return [
     // Voice
@@ -361,6 +371,11 @@ let timbreParameters = () => {
     new Parameter( 48, "Panpot",      0x00, 0x27, null, "Amp", "amp_pan"),
     new Parameter( 49, "Punch Level", 0x00, 0x28, null, "Amp", "amp_punch"),
     new Parameter( 50, "Key Track",   0x00, 0x29, null, "Amp", "amp_keytrack"),
+
+    // EG
+    new ParamGroup( 52, "EG 1", 0x00, 0x2A, egParameters(), "EG", "eg_1"),
+    new ParamGroup( 60, "EG 2", 0x00, 0x2F, egParameters(), "EG", "eg_2")
+
   ];
 };
 
