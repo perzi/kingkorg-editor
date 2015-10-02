@@ -324,6 +324,19 @@ let egParameters = () => {
   ]
 }
 
+let lfoParameters = (lfoNum) => {
+
+  // TODO: different wave lookups for each LFO
+
+  return [
+    new Parameter(  0, "Wave",       0x00, 0x00, null, "LFO", "wave"),
+    new Parameter(  1, "Freqency",   0x00, 0x01, null, "LFO", "frequency"),
+    new Parameter(  2, "Key Sync",   0x00, 0x02, null, "LFO", "key_sync"),
+    new Parameter(  3, "Tempo Sync", 0x00, 0x03, null, "LFO", "tempo_sync"),
+    new Parameter(  4, "Sync Note",  0x00, 0x04, null, "LFO", "sync_note")
+  ]
+}
+
 let timbreParameters = () => {
   return [
     // Voice
@@ -374,7 +387,11 @@ let timbreParameters = () => {
 
     // EG
     new ParamGroup( 52, "EG 1", 0x00, 0x2A, egParameters(), "EG", "eg_1"),
-    new ParamGroup( 60, "EG 2", 0x00, 0x2F, egParameters(), "EG", "eg_2")
+    new ParamGroup( 60, "EG 2", 0x00, 0x2F, egParameters(), "EG", "eg_2"),
+
+    // LFO
+    new ParamGroup( 68, "LFO 1", 0x00, 0x34, lfoParameters(1), "LFO", "lfo_1"),
+    new ParamGroup( 76, "LOF 2", 0x00, 0x39, lfoParameters(2), "LFO", "lfo_2")
 
   ];
 };

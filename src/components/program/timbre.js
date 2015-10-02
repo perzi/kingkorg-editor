@@ -3,6 +3,7 @@ import Param   from './param';
 import Osc     from './osc';
 import Control from './control';
 import EG      from './eg';
+import LFO     from './lfo';
 import Simple  from 'components/ui/simple';
 
 import program from 'data/program_parameters';
@@ -96,6 +97,14 @@ class Timbre extends React.Component {
             <Control data={this.props.data} id="amp_punch" parentParameter={this.props.parameter} />
             <Control data={this.props.data} id="amp_keytrack" parentParameter={this.props.parameter} />
           </div>
+          <div className="timbre__block">
+            <b>LFO 1</b>
+            <LFO data={this.props.data} id="lfo_1" parentParameter={this.props.parameter} />
+          </div>
+          <div className="timbre__block">
+            <b>LFO 2</b>
+            <LFO data={this.props.data} id="lfo_2" parentParameter={this.props.parameter} />
+          </div>
         </div>
         <div className="timbre__blocks">
           <div className="timbre__oscillators-title"><div>Oscillators</div></div>
@@ -105,13 +114,13 @@ class Timbre extends React.Component {
             <Osc {...this.getOscParameter("osc_3")} />
           </div>
           <div className="timbre__block">
-            <b>Filter + EG1</b>
+            <b>EG 1 (Filter)</b>
             <EG data={this.props.data} id="eg_1" parentParameter={this.props.parameter} />
 
 
           </div>
           <div className="timbre__block">
-            <b>Amp + EG2 + Pan</b>
+            <b>EG 2 (Amp)</b>
             <EG data={this.props.data} id="eg_2" parentParameter={this.props.parameter} />
 
           </div>
