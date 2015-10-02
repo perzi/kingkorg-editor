@@ -13,6 +13,12 @@ class Control extends React.Component {
     this.shouldComponentUpdate    = shouldComponentUpdate.bind(this);
   }
 
+  getValue() {
+    let parameter = this.props.parentParameter.getParameter(this.props.id);
+    let data = this.props.data;
+    return parameter.getValue(data);
+  }
+
   getParameterProps() {
     let parameter = this.props.parentParameter.getParameter(this.props.id);
     let data = this.props.data;

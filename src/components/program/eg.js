@@ -1,5 +1,6 @@
-import React          from 'react/addons';
-import Control        from './control';
+import React   from 'react/addons';
+import Control from './control';
+import ADSR    from 'components/ui/adsr';
 
 import 'styles/components/program/eg';
 
@@ -11,14 +12,29 @@ class EG extends React.Component {
     this.shouldComponentUpdate    = shouldComponentUpdate.bind(this);
   }
 
+  calculateChildValue(parentParameter, id) {
+    let parameter = parentParameter.getParameter(id);
+    let data = this.props.data;
+    let value = parameter.getValue(data) || 0;
+
+    console.log(id, value / 127.0);
+
+    return value / 127.0;
+  }
+
   render() {
-    // TODO: add props to render different type of controls
     let parameter = this.props.parentParameter.getParameter(this.props.id);
+    let data = this.props.data;
+
+    let A = this.calculateChildValue(parameter, "attack");
+    let D = this.calculateChildValue(parameter, "decay");
+    let S = this.calculateChildValue(parameter, "sustain");
+    let R = this.calculateChildValue(parameter, "release");
 
     return (
       <div className="eg">
         <div className="eg__adsr">
-          Display ADSR
+          <ADSR width="240" height="80" A={A} D={D} S={S} R={R}/>
         </div>
         <div className="eg__controls">
           <Control id="attack" data={this.props.data} parentParameter={parameter} />
