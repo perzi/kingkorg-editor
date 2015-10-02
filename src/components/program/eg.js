@@ -17,8 +17,6 @@ class EG extends React.Component {
     let data = this.props.data;
     let value = parameter.getValue(data) || 0;
 
-    console.log(id, value / 127.0);
-
     return value / 127.0;
   }
 
