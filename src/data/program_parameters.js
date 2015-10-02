@@ -337,6 +337,25 @@ let lfoParameters = (lfoNum) => {
   ]
 }
 
+let vPatchParameter = () => {
+  return [
+    new Parameter(  0, "Source",      0x00, 0x00, null, "EG", "source"),
+    new Parameter(  1, "Destination", 0x00, 0x01, null, "EG", "destination"),
+    new Parameter(  2, "Intensity",   0x00, 0x02, null, "EG", "intensity")
+  ]
+}
+
+let vPatchParameters = () => {
+  return [
+    new ParamGroup( 0, "V.Patch 1", 0x00, 0x00, vPatchParameter(), "VPATCH", "vpatch_1"),
+    new ParamGroup( 4, "V.Patch 2", 0x00, 0x03, vPatchParameter(), "VPATCH", "vpatch_2"),
+    new ParamGroup( 8, "V.Patch 3", 0x00, 0x06, vPatchParameter(), "VPATCH", "vpatch_3"),
+    new ParamGroup(12, "V.Patch 4", 0x00, 0x09, vPatchParameter(), "VPATCH", "vpatch_4"),
+    new ParamGroup(16, "V.Patch 5", 0x00, 0x0C, vPatchParameter(), "VPATCH", "vpatch_5"),
+    new ParamGroup(20, "V.Patch 6", 0x00, 0x0F, vPatchParameter(), "VPATCH", "vpatch_6")
+  ]
+}
+
 let timbreParameters = () => {
   return [
     // Voice
@@ -392,7 +411,6 @@ let timbreParameters = () => {
     // LFO
     new ParamGroup( 68, "LFO 1", 0x00, 0x34, lfoParameters(1), "LFO", "lfo_1"),
     new ParamGroup( 76, "LOF 2", 0x00, 0x39, lfoParameters(2), "LFO", "lfo_2")
-
   ];
 };
 
@@ -404,7 +422,9 @@ let program = new ParamGroup(0, "Program", 0x00, 0x00, [
     new Parameter(  14, "TimbreB MIDI Ch.",  0x00, 0x0E, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,Global"),
     new Parameter(  15, "Split Key",         0x00, 0x0F, lookupSplitKey),
     new ParamGroup( 16, "Timbre A",          0x20, 0x00, timbreParameters(), null, "timbre_a"),
-    new ParamGroup(124, "Timbre B",          0x40, 0x00, timbreParameters(), null, "timbre_b")
+    new ParamGroup(100, "V.Patch A",         0x30, 0x00, vPatchParameters(), null, "vpatch_a"),
+    new ParamGroup(124, "Timbre B",          0x40, 0x00, timbreParameters(), null, "timbre_b"),
+    new ParamGroup(208, "V.Patch B",         0x30, 0x00, vPatchParameters(), null, "vpatch_b")
 ]);
 
 export { oscTypeDictionary };
