@@ -337,24 +337,34 @@ let lfoParameters = (lfoNum) => {
   ]
 }
 
-let vPatchParameter = () => {
-  return [
-    new Parameter(  0, "Source",      0x00, 0x00, null, "EG", "source"),
-    new Parameter(  1, "Destination", 0x00, 0x01, null, "EG", "destination"),
-    new Parameter(  2, "Intensity",   0x00, 0x02, null, "EG", "intensity")
-  ]
-}
+let vPatchParameter = () => [
+  new Parameter(  0, "Source",      0x00, 0x00, null, "EG", "source"),
+  new Parameter(  1, "Destination", 0x00, 0x01, null, "EG", "destination"),
+  new Parameter(  2, "Intensity",   0x00, 0x02, null, "EG", "intensity")
+];
 
-let vPatchParameters = () => {
-  return [
-    new ParamGroup( 0, "V.Patch 1", 0x00, 0x00, vPatchParameter(), "VPATCH", "vpatch_1"),
-    new ParamGroup( 4, "V.Patch 2", 0x00, 0x03, vPatchParameter(), "VPATCH", "vpatch_2"),
-    new ParamGroup( 8, "V.Patch 3", 0x00, 0x06, vPatchParameter(), "VPATCH", "vpatch_3"),
-    new ParamGroup(12, "V.Patch 4", 0x00, 0x09, vPatchParameter(), "VPATCH", "vpatch_4"),
-    new ParamGroup(16, "V.Patch 5", 0x00, 0x0C, vPatchParameter(), "VPATCH", "vpatch_5"),
-    new ParamGroup(20, "V.Patch 6", 0x00, 0x0F, vPatchParameter(), "VPATCH", "vpatch_6")
-  ]
-}
+let vPatchParameters = () => [
+  new ParamGroup( 0, "V.Patch 1", 0x00, 0x00, vPatchParameter(), "VPATCH", "vpatch_1"),
+  new ParamGroup( 4, "V.Patch 2", 0x00, 0x03, vPatchParameter(), "VPATCH", "vpatch_2"),
+  new ParamGroup( 8, "V.Patch 3", 0x00, 0x06, vPatchParameter(), "VPATCH", "vpatch_3"),
+  new ParamGroup(12, "V.Patch 4", 0x00, 0x09, vPatchParameter(), "VPATCH", "vpatch_4"),
+  new ParamGroup(16, "V.Patch 5", 0x00, 0x0C, vPatchParameter(), "VPATCH", "vpatch_5"),
+  new ParamGroup(20, "V.Patch 6", 0x00, 0x0F, vPatchParameter(), "VPATCH", "vpatch_6")
+];
+
+let fxParameters = () => [
+  new Parameter(  0, "PreFX Type",        0x00, 0x00, null, "FX", "prefx_type"),
+  new Parameter(  1, "PreFX SW",          0x00, 0x01, "Off,TimbreA,TimbreB,TimbreA+B", "FX", "prefx_sw"),
+  new Parameter(  2, "PreFX Drive/Freq",  0x00, 0x02, null, "FX", "prefx_drive"),
+  new Parameter(  3, "ModFX Type",        0x00, 0x03, null, "FX", "modfx_type"),
+  new Parameter(  4, "ModFX SW",          0x00, 0x04, "Off,TimbreA,TimbreB,TimbreA+B", "FX", "modfx_sw"),
+  new Parameter(  5, "ModFX Depth",       0x00, 0x05, null, "FX", "modfx_depth"),
+  new Parameter(  6, "ModFX Speed",       0x00, 0x06, null, "FX", "modfx_speed"),
+  new Parameter(  7, "Rev/Dly Type",      0x00, 0x07, null, "FX", "revdly_type"),
+  new Parameter(  8, "Rev/Dly SW",        0x00, 0x08, "Off,TimbreA,TimbreB,TimbreA+B", "FX", "revdly_sw"),
+  new Parameter(  9, "Rev/Dly Depth",     0x00, 0x09, null, "FX", "revdly_depth"),
+  new Parameter( 10, "Rev/Dly Speed",     0x00, 0x0A, null, "FX", "revdly_speed")
+];
 
 let timbreParameters = () => {
   return [
@@ -424,7 +434,8 @@ let program = new ParamGroup(0, "Program", 0x00, 0x00, [
     new ParamGroup( 16, "Timbre A",          0x20, 0x00, timbreParameters(), null, "timbre_a"),
     new ParamGroup(100, "V.Patch A",         0x30, 0x00, vPatchParameters(), null, "vpatch_a"),
     new ParamGroup(124, "Timbre B",          0x40, 0x00, timbreParameters(), null, "timbre_b"),
-    new ParamGroup(208, "V.Patch B",         0x30, 0x00, vPatchParameters(), null, "vpatch_b")
+    new ParamGroup(208, "V.Patch B",         0x50, 0x00, vPatchParameters(), null, "vpatch_b"),
+    new ParamGroup(242, "FX",                0x60, 0x00, fxParameters(), null, "fx")
 ]);
 
 export { oscTypeDictionary };
