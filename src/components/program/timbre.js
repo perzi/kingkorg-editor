@@ -30,6 +30,14 @@ class Timbre extends React.Component {
     };
   }
 
+  getControlParameter(id) {
+    return {
+      data: this.props.data,
+      parentParameter: this.props.parameter,
+      id: id
+    }
+  }
+
 //   getParameterProps(id) {
 //     let parameter = this.props.parameter.getParameter(id);
 // //    let parameter = this.props.parameter.parameters[index];
@@ -57,53 +65,53 @@ class Timbre extends React.Component {
         <div className="timbre__blocks">
           <div className="timbre__block">
             <b>Voice</b>
-            <Control data={this.props.data} id="voice_assign" parentParameter={this.props.parameter} />
-            <Control data={this.props.data} id="unison_sw" parentParameter={this.props.parameter} />
-            <Control data={this.props.data} id="unison_detune" parentParameter={this.props.parameter} />
-            <Control data={this.props.data} id="unison_spread" parentParameter={this.props.parameter} />
+            <Control {...this.getControlParameter("voice_assign")} />
+            <Control {...this.getControlParameter("unison_sw")} />
+            <Control {...this.getControlParameter("unison_detune")} />
+            <Control {...this.getControlParameter("unison_spread")} />
           </div>
           <div className="timbre__block">
             <b>Pitch</b>
-            <Control data={this.props.data} id="pitch_transpose" parentParameter={this.props.parameter} />
-            <Control data={this.props.data} id="pitch_detune" parentParameter={this.props.parameter} />
-            <Control data={this.props.data} id="pitch_lfo2modint" parentParameter={this.props.parameter} />
-            <Control data={this.props.data} id="pitch_lfo2jsy" parentParameter={this.props.parameter} />
-            <Control data={this.props.data} id="pitch_bendrange" parentParameter={this.props.parameter} />
-            <Control data={this.props.data} id="pitch_portamento_sw" parentParameter={this.props.parameter} />
-            <Control data={this.props.data} id="pitch_portamento_time" parentParameter={this.props.parameter} />
-            <Control data={this.props.data} id="pitch_analog_tuning" parentParameter={this.props.parameter} />
+            <Control {...this.getControlParameter("pitch_transpose")} />
+            <Control {...this.getControlParameter("pitch_detune")} />
+            <Control {...this.getControlParameter("pitch_lfo2modint")} />
+            <Control {...this.getControlParameter("pitch_lfo2jsy")} />
+            <Control {...this.getControlParameter("pitch_bendrange")} />
+            <Control {...this.getControlParameter("pitch_portamento_sw")} />
+            <Control {...this.getControlParameter("pitch_portamento_time")} />
+            <Control {...this.getControlParameter("pitch_analog_tuning")} />
           </div>
           <div className="timbre__block">
             <b>Filter</b>
-            <Control data={this.props.data} id="filter_type" parentParameter={this.props.parameter} />
-            <Control data={this.props.data} id="filter_cutoff" parentParameter={this.props.parameter} />
-            <Control data={this.props.data} id="filter_resonance" parentParameter={this.props.parameter} />
-            <Control data={this.props.data} id="filter_eg1int" parentParameter={this.props.parameter} />
-            <Control data={this.props.data} id="filter_lfo1modint" parentParameter={this.props.parameter} />
-            <Control data={this.props.data} id="filter_lfo1jsy" parentParameter={this.props.parameter} />
-            <Control data={this.props.data} id="filter_keytrack" parentParameter={this.props.parameter} />
-            <Control data={this.props.data} id="filter_velocitysens" parentParameter={this.props.parameter} />
+            <Control {...this.getControlParameter("filter_type")} />
+            <Control {...this.getControlParameter("filter_cutoff")} />
+            <Control {...this.getControlParameter("filter_resonance")} />
+            <Control {...this.getControlParameter("filter_eg1int")} />
+            <Control {...this.getControlParameter("filter_lfo1modint")} />
+            <Control {...this.getControlParameter("filter_lfo1jsy")} />
+            <Control {...this.getControlParameter("filter_keytrack")} />
+            <Control {...this.getControlParameter("filter_velocitysens")} />
           </div>
           <div className="timbre__block">
             <b>Mixer</b>
-            <Control data={this.props.data} id="osc1_level" parentParameter={this.props.parameter} />
-            <Control data={this.props.data} id="osc2_level" parentParameter={this.props.parameter} />
-            <Control data={this.props.data} id="osc3_level" parentParameter={this.props.parameter} />
+            <Control {...this.getControlParameter("osc1_level")} />
+            <Control {...this.getControlParameter("osc2_level")} />
+            <Control {...this.getControlParameter("osc3_level")} />
           </div>
           <div className="timbre__block">
             <b>Amp</b>
-            <Control data={this.props.data} id="amp_level" parentParameter={this.props.parameter} />
-            <Control data={this.props.data} id="amp_pan" parentParameter={this.props.parameter} />
-            <Control data={this.props.data} id="amp_punch" parentParameter={this.props.parameter} />
-            <Control data={this.props.data} id="amp_keytrack" parentParameter={this.props.parameter} />
+            <Control {...this.getControlParameter("amp_level")} />
+            <Control {...this.getControlParameter("amp_pan")} />
+            <Control {...this.getControlParameter("amp_punch")} />
+            <Control {...this.getControlParameter("amp_keytrack")} />
           </div>
           <div className="timbre__block">
             <b>LFO 1</b>
-            <LFO data={this.props.data} id="lfo_1" parentParameter={this.props.parameter} />
+            <LFO {...this.getControlParameter("lfo_1")} />
           </div>
           <div className="timbre__block">
             <b>LFO 2</b>
-            <LFO data={this.props.data} id="lfo_2" parentParameter={this.props.parameter} />
+            <LFO {...this.getControlParameter("lfo_2")} />
           </div>
         </div>
         <div className="timbre__blocks">
@@ -115,11 +123,11 @@ class Timbre extends React.Component {
           </div>
           <div className="timbre__block">
             <b>EG 1 (Filter)</b>
-            <EG data={this.props.data} id="eg_1" parentParameter={this.props.parameter} />
+            <EG {...this.getControlParameter("eg_1")} />
           </div>
           <div className="timbre__block">
             <b>EG 2 (Amp)</b>
-            <EG data={this.props.data} id="eg_2" parentParameter={this.props.parameter} />
+            <EG {...this.getControlParameter("eg_2")} />
 
           </div>
         </div>
