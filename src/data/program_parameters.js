@@ -58,11 +58,11 @@ class Parameter {
   }
 
   getValue(programData) {
-    return programData[this.getOffset()];
+    return programData.get(this.getOffset());
   }
 
   getValueAsText(programData) {
-    let value = programData[this.getOffset()];
+    let value = programData.get(this.getOffset());
     let lookup = this.lookup;
 
     if (lookup && typeof lookup === "object") {
@@ -292,11 +292,11 @@ let oscTypeRawDictionary = [
 
 let oscTypeDictionary = oscTypeRawDictionary.map((row, index) => {
     return {
-      value: index,
-      name: row.substr(0, 16).trim(),
+      value:     index,
+      name:      row.substr( 0, 16).trim(),
       ctrl1Name: row.substr(16, 16).trim(),
       ctrl2Name: row.substr(32, 16).trim(),
-      category: row.substr(48, 16).trim()
+      category:  row.substr(48, 16).trim()
     }
 });
 
@@ -306,11 +306,11 @@ let oscTypeNames = oscTypeDictionary.map(item => {
 
 let oscParameters = () => {
   return [
-    new Parameter(  0, "Type",  0x00, 0x00, oscTypeNames),
-    new Parameter(  1, "Semitone",  0x00, 0x01, null),
-    new Parameter(  2, "Tune",      0x00, 0x02, null),
-    new Parameter(  3, "CTRL1",     0x00, 0x03, null),
-    new Parameter(  4, "CTRL2",     0x00, 0x04, null)
+    new Parameter( 0, "Type"     , 0x00, 0x00, oscTypeNames),
+    new Parameter( 1, "Semitone" , 0x00, 0x01, null),
+    new Parameter( 2, "Tune"     , 0x00, 0x02, null),
+    new Parameter( 3, "CTRL1"    , 0x00, 0x03, null),
+    new Parameter( 4, "CTRL2"    , 0x00, 0x04, null)
   ]
 }
 
@@ -409,10 +409,10 @@ let timbreParameters = () => {
     new Parameter( 46, "Velocity Sens",   0x00, 0x25, "-63~0~63", "Filter", "filter_velocitysens"),
 
     // Amp
-    new Parameter( 47, "Level",       0x00, 0x26, null, "Amp", "amp_level"),
-    new Parameter( 48, "Panpot",      0x00, 0x27, null, "Amp", "amp_pan"),
-    new Parameter( 49, "Punch Level", 0x00, 0x28, null, "Amp", "amp_punch"),
-    new Parameter( 50, "Key Track",   0x00, 0x29, null, "Amp", "amp_keytrack"),
+    new Parameter( 47, "Level",           0x00, 0x26, null, "Amp", "amp_level"),
+    new Parameter( 48, "Panpot",          0x00, 0x27, null, "Amp", "amp_pan"),
+    new Parameter( 49, "Punch Level",     0x00, 0x28, null, "Amp", "amp_punch"),
+    new Parameter( 50, "Key Track",       0x00, 0x29, null, "Amp", "amp_keytrack"),
 
     // EG
     new ParamGroup( 52, "EG 1", 0x00, 0x2A, egParameters(), "EG", "eg_1"),

@@ -1,11 +1,9 @@
-import React          from 'react/addons';
+import React from 'react/addons' ;
 
-import ProgramActions from 'actions/program_actions'
-import ProgramStore   from 'stores/program_store';
-
-import KingKORG       from 'components/kingkorg';
-import Timbre         from 'components/program/timbre';
-
+import ProgramActions from 'actions/program_actions';
+import ProgramStore from 'stores/program_store';
+import KingKORG from 'components/kingkorg';
+import Timbre from 'components/program/timbre';
 import program from 'data/program_parameters';
 
 class CurrentProgram extends React.Component {
@@ -113,7 +111,7 @@ class CurrentProgram extends React.Component {
 
   render() {
     let {program} = this.state;
-    let data = program.get("data").toJS();
+    let data = program.get("data");
 
     return (
       <div>

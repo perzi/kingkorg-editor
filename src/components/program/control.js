@@ -1,22 +1,20 @@
-import React          from 'react/addons';
+import React          from 'react';
 import Simple         from 'components/ui/simple';
-
 import program        from 'data/program_parameters';
-import ProgramActions from 'actions/program_actions'
+import ProgramActions from 'actions/program_actions';
 
 
 class Control extends React.Component {
   constructor(props) {
     super(props);
-
-    let { shouldComponentUpdate } = React.addons.PureRenderMixin;
-    this.shouldComponentUpdate    = shouldComponentUpdate.bind(this);
   }
 
-  getValue() {
+  shouldComponentUpdate(nextProps, nextState) {
     let parameter = this.props.parentParameter.getParameter(this.props.id);
     let data = this.props.data;
-    return parameter.getValue(data);
+    let nextData = nextProps.data;
+
+    return parameter.getValue(nextData) !== parameter.getValue(data);
   }
 
   getParameterProps() {
