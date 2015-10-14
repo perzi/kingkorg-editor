@@ -86,7 +86,7 @@ Osc.propTypes = {
   onChange: React.PropTypes.function,
   offset: React.PropTypes.number.isRequired,
   parameter: React.PropTypes.object.isRequired,
-  data: React.PropTypes.array.isRequired
+  data: React.PropTypes.object.isRequired
 };
 
 

@@ -134,6 +134,15 @@ class Timbre extends React.Component {
       </div>
     );
   }
-}
+};
+
+Timbre.propTypes = {
+  onChange: React.PropTypes.function
+};
+
+Timbre.defaultProps = {
+  onChange: (offset, value) => { }
+};
+
 
 export default Timbre;
