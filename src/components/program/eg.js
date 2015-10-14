@@ -32,7 +32,7 @@ class EG extends React.Component {
     return (
       <div className="eg">
         <div className="eg__adsr">
-          <ADSR width="240" height="80" A={A} D={D} S={S} R={R}/>
+          <ADSR width={240} height={80} A={A} D={D} S={S} R={R}/>
         </div>
         <div className="eg__controls">
           <Control id="attack" data={this.props.data} parentParameter={parameter} />
