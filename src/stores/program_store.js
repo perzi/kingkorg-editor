@@ -26,6 +26,9 @@ class ProgramStore {
   }
 
   updateParam(obj) {
+
+    console.log("Store update param", obj.index, obj.value);
+
     return this.setState(
       this.state.updateIn(["data"], (list) => {
         return list.set(obj.index, obj.value);

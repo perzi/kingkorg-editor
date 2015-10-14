@@ -116,8 +116,6 @@ class Timbre extends React.Component {
           <div className="timbre__block">
             <b>EG 1 (Filter)</b>
             <EG data={this.props.data} id="eg_1" parentParameter={this.props.parameter} />
-
-
           </div>
           <div className="timbre__block">
             <b>EG 2 (Amp)</b>
