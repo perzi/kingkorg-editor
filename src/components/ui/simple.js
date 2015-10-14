@@ -50,10 +50,7 @@ class Simple extends React.Component {
         onDragEnd={this.handleDragEnd.bind(this)}
         draggable="true"      >
         <div className="simple__name">{this.props.name}</div>
-        <div className="simple__value"
-
-
-        >{this.props.value}</div>
+        <div className="simple__value">{this.props.text}</div>
         <img ref="dragPreview" style={{display: "none", visibility: "hidden"}} src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP4Xw8AAoABf5/NhYYAAAAASUVORK5CYII=" />
       </div>
     );
@@ -64,6 +61,7 @@ Simple.propTypes = {
   onChange: React.PropTypes.function,
   name: React.PropTypes.string.isRequired,
   value: React.PropTypes.number.isRequired,
+  text: React.PropTypes.string.isRequired,
   className: React.PropTypes.string,
   min: React.PropTypes.number,
   max: React.PropTypes.number,
