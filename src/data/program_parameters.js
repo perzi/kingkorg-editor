@@ -1,125 +1,143 @@
-class Parameter {
-  constructor(offset, name, midiId, midiSubId, lookup, category, id) {
-    this.offset = offset;
-    this.name = name;
-    this.midiId = midiId;
-    this.lookup = lookup || null;
-    this.midiSubId = midiSubId;
-    this.category = category || "";
-    this.id = id;
-    this.parent = null;
-    this.isGroup = false;
+import Parameter from './parameter';
+import ParamGroup from './parametergroup';
 
-    if (typeof lookup === "string") {
-
-
-      if (/^-?\d+~\d+/.test(lookup)) {
-
-        // just output raw value for now
-        this.lookup = null;
-        // // range:  x~y or x~y~z
-        // if (lookup.indexOf(":") > 0) {
-        //   // there's a mapping here here
-        //
-        //
-        // } else {
-        //   // just map it
-        //   let values = lookup.split("~");
-        //
-        //   let min = parseInt(values[0]);
-        //   let max = parseInt(values[values.length - 1]);
-        //
-        //   this.lookup = (value, programData) => {
-        //     let total = max - min;
-        //     return value / 127 * total + min;
-        //   };
-        // }
-        //
-        // this.lookup = (value, programData) => {
-        //   return value;
-        // };
-      } else {
-        // expect it to be comma separated
-        this.lookup = lookup.split(",");
-      }
-    }
-  }
-
-  setParent(parent) {
-    this.parent = parent;
-  }
-
-  getOffset() {
-    if (this.parent) {
-      return this.offset + this.parent.getOffset();
-    } else {
-      return this.offset;
-    }
-  }
-
-  getValue(programData) {
-    return programData.get(this.getOffset());
-  }
-
-  getValueAsText(programData) {
-    let value = programData.get(this.getOffset());
-    let lookup = this.lookup;
-
-    if (lookup && typeof lookup === "object") {
-      // use last value if array and out of bounds
-      if (lookup instanceof Array && value > lookup.length - 1) {
-        value = lookup.length - 1
-      }
-
-      return lookup[value];
-    }
-
-    if (typeof lookup === "function") {
-      return lookup(value, programData);
-    }
-
-    return new String(value);
-  }
+let programParameters = () => {
+  return new ParamGroup(0, "Program", 0x00, 0x00, [
+      new Parameter(   0, "Program Name",      0x00, 0x00, lookupName),
+      new Parameter(  12, "Category",          0x00, 0x0C, "Synth,Lead,Bass,Brass,Strings,Piano,Key,SE/Voc,User"),
+      new Parameter(  13, "Voice Mode",        0x00, 0x0D, "Single,Layer,Split", null, "voice_mode"),
+      new Parameter(  14, "TimbreB MIDI Ch.",  0x00, 0x0E, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,Global"),
+      new Parameter(  15, "Split Key",         0x00, 0x0F, lookupSplitKey),
+      new ParamGroup( 16, "Timbre A",          0x20, 0x00, timbreParameters(), null, "timbre_a"),
+      new ParamGroup(100, "V.Patch A",         0x30, 0x00, vPatchParameters(), null, "vpatch_a"),
+      new ParamGroup(124, "Timbre B",          0x40, 0x00, timbreParameters(), null, "timbre_b"),
+      new ParamGroup(208, "V.Patch B",         0x50, 0x00, vPatchParameters(), null, "vpatch_b"),
+      new ParamGroup(242, "FX",                0x60, 0x00, fxParameters(), null, "fx")
+  ]);
 }
 
+let timbreParameters = () => {
+  return [
+    // Voice
+    new Parameter(  0, "Voice Assign",         0x00, 0x00, "Mono1,Mono2,Poly", "Voice", "voice_assign"),
+    new Parameter(  1, "Unison SW",            0x00, 0x01, "OFF,2 Voice,3 Voice,4 Voice", "Voice", "unison_sw"),
+    new Parameter(  2, "Unison Detune",        0x00, 0x02, "0~99:0~99[cent]", "Voice", "unison_detune"),
+    new Parameter(  3, "Unison Spread",        0x00, 0x03, null, "Voice", "unison_spread"),
 
-class ParamGroup {
-  constructor(offset, name, midiId, midiSubId, parameters, category, id) {
-    this.offset = offset;
-    this.name = name;
-    this.midiId = midiId;
-    this.midiSubId = midiSubId;
-    this.parameters = parameters;
-    this.category = category || "";
-    this.id = id;
-    this.parent = null;
-    this.isGroup = true;
+    // Pitch
+    new Parameter(  4, "Transpose",       0x00, 0x04, "-48~0~48[note]", "Pitch", "pitch_transpose"),
+    new Parameter(  5, "Detune",          0x00, 0x05, "-50~0~50[cent]", "Pitch", "pitch_detune"),
+    new Parameter(  6, "LFO2ModInt",      0x00, 0x06, "-63~0~63", "Pitch", "pitch_lfo2modint"),
+    new Parameter(  7, "LFO2 & JS+Y",     0x00, 0x07, "-63~0~63:-2400~0~2400[cent]   *T02-1", "Pitch", "pitch_lfo2jsy"),
+    new Parameter(  8, "Bend Range",      0x00, 0x08, "-12~0~12[note]", "Pitch", "pitch_bendrange"),
+    new Parameter(  9, "Portamento SW",   0x00, 0x09, "Off,On", "Pitch", "pitch_portamento_sw"),
+    new Parameter( 10, "Portamento Time", 0x00, 0x0A, null, "Pitch", "pitch_portamento_time"),
+    new Parameter( 11, "Analog Tuning",   0x00, 0x0B, null, "Pitch", "pitch_analog_tuning"),
 
-    this.parameters.forEach(parameter => parameter.setParent(this));
-  }
+    // OSC 1 Data
+    new ParamGroup( 12, "Oscillator 1", 0x00, 0x0C, oscParameters(), "Osc", "osc_1"),
 
-  setParent(parent) {
-    this.parent = parent;
-  }
+    // OSC 2 Data
+    new ParamGroup( 20, "Oscillator 2", 0x00, 0x11, oscParameters(), "Osc", "osc_2"),
 
-  getOffset() {
-    if (this.parent) {
-      return this.offset + this.parent.getOffset();
-    } else {
-      return this.offset;
-    }
-  }
+    // OSC 3 Data
+    new ParamGroup( 28, "Oscillator 3", 0x00, 0x16, oscParameters(), "Osc", "osc_3"),
 
-  getParameter(id) {
-    let parameters = this.parameters.filter((parameter) => {
-      return parameter.id === id;
-    });
+    // Mixer
+    new Parameter( 36, "Osc 1 Level",   0x00, 0x1B, null, "Mixer", "osc1_level"),
+    new Parameter( 37, "Osc 2 Level",   0x00, 0x1C, null, "Mixer", "osc2_level"),
+    new Parameter( 38, "Osc 3 Level",   0x00, 0x1D, null, "Mixer", "osc3_level"),
 
-    return parameters.length > 0 ? parameters[0] : undefined;
-  }
-}
+    // Filter
+    new Parameter( 39, "Type",            0x00, 0x1E, "0~17                          *T02-2", "Filter", "filter_type"),
+    new Parameter( 40, "Cutoff",          0x00, 0x1F, null, "Filter", "filter_cutoff"),
+    new Parameter( 41, "Resonance",       0x00, 0x20, null, "Filter", "filter_resonance"),
+    new Parameter( 42, "EG1 Intensity",   0x00, 0x21, "-63~0~63", "Filter", "filter_eg1int"),
+    new Parameter( 43, "LFO1 Mod Int.",   0x00, 0x22, "-63~0~63", "Filter", "filter_lfo1modint"),
+    new Parameter( 44, "LFO1 & JS-Y",     0x00, 0x23, "-63~0~63", "Filter", "filter_lfo1jsy"),
+    new Parameter( 45, "Keyboard Track",  0x00, 0x24, "-63~0~63:-2.00~0~2.00         *T02-3", "Filter", "filter_keytrack"),
+    new Parameter( 46, "Velocity Sens",   0x00, 0x25, "-63~0~63", "Filter", "filter_velocitysens"),
+
+    // Amp
+    new Parameter( 47, "Level",           0x00, 0x26, null, "Amp", "amp_level"),
+    new Parameter( 48, "Panpot",          0x00, 0x27, null, "Amp", "amp_pan"),
+    new Parameter( 49, "Punch Level",     0x00, 0x28, null, "Amp", "amp_punch"),
+    new Parameter( 50, "Key Track",       0x00, 0x29, null, "Amp", "amp_keytrack"),
+
+    // EG
+    new ParamGroup( 52, "EG 1", 0x00, 0x2A, egParameters(), "EG", "eg_1"),
+    new ParamGroup( 60, "EG 2", 0x00, 0x2F, egParameters(), "EG", "eg_2"),
+
+    // LFO
+    new ParamGroup( 68, "LFO 1", 0x00, 0x34, lfoParameters(1), "LFO", "lfo_1"),
+    new ParamGroup( 76, "LOF 2", 0x00, 0x39, lfoParameters(2), "LFO", "lfo_2")
+  ];
+};
+
+let oscParameters = () => {
+  return [
+    new Parameter( 0, "Type"     , 0x00, 0x00, oscTypeNames),
+    new Parameter( 1, "Semitone" , 0x00, 0x01, null),
+    new Parameter( 2, "Tune"     , 0x00, 0x02, null),
+    new Parameter( 3, "CTRL1"    , 0x00, 0x03, null),
+    new Parameter( 4, "CTRL2"    , 0x00, 0x04, null)
+  ]
+};
+
+let egParameters = () => {
+  return [
+    new Parameter(  0, "Attack",    0x00, 0x00, null, "EG", "attack"),
+    new Parameter(  1, "Decay",     0x00, 0x01, null, "EG", "decay"),
+    new Parameter(  2, "Sustain",   0x00, 0x02, null, "EG", "sustain"),
+    new Parameter(  3, "Release",   0x00, 0x03, null, "EG", "release"),
+    new Parameter(  4, "Level Velo Int.", 0x00, 0x04, "-63~0~63", "EG", "lvl_velo_int")
+  ]
+};
+
+let lfoParameters = (lfoNum) => {
+  // TODO: different wave lookups for each LFO
+  return [
+    new Parameter(  0, "Wave",       0x00, 0x00, null, "LFO", "wave"),
+    new Parameter(  1, "Freqency",   0x00, 0x01, null, "LFO", "frequency"),
+    new Parameter(  2, "Key Sync",   0x00, 0x02, null, "LFO", "key_sync"),
+    new Parameter(  3, "Tempo Sync", 0x00, 0x03, null, "LFO", "tempo_sync"),
+    new Parameter(  4, "Sync Note",  0x00, 0x04, null, "LFO", "sync_note")
+  ]
+};
+
+let vPatchParameters = () => [
+  new ParamGroup( 0, "V.Patch 1", 0x00, 0x00, vPatchParameter(), "VPATCH", "vpatch_1"),
+  new ParamGroup( 4, "V.Patch 2", 0x00, 0x03, vPatchParameter(), "VPATCH", "vpatch_2"),
+  new ParamGroup( 8, "V.Patch 3", 0x00, 0x06, vPatchParameter(), "VPATCH", "vpatch_3"),
+  new ParamGroup(12, "V.Patch 4", 0x00, 0x09, vPatchParameter(), "VPATCH", "vpatch_4"),
+  new ParamGroup(16, "V.Patch 5", 0x00, 0x0C, vPatchParameter(), "VPATCH", "vpatch_5"),
+  new ParamGroup(20, "V.Patch 6", 0x00, 0x0F, vPatchParameter(), "VPATCH", "vpatch_6")
+];
+
+let vPatchParameter = () => [
+  new Parameter(  0, "Source",      0x00, 0x00, null, "EG", "source"),
+  new Parameter(  1, "Destination", 0x00, 0x01, null, "EG", "destination"),
+  new Parameter(  2, "Intensity",   0x00, 0x02, null, "EG", "intensity")
+];
+
+let fxParameters = () => [
+  new Parameter(  0, "PreFX Type",        0x00, 0x00, null, "FX", "prefx_type"),
+  new Parameter(  1, "PreFX SW",          0x00, 0x01, "Off,TimbreA,TimbreB,TimbreA+B", "FX", "prefx_sw"),
+  new Parameter(  2, "PreFX Drive/Freq",  0x00, 0x02, null, "FX", "prefx_drive"),
+  new Parameter(  3, "ModFX Type",        0x00, 0x03, null, "FX", "modfx_type"),
+  new Parameter(  4, "ModFX SW",          0x00, 0x04, "Off,TimbreA,TimbreB,TimbreA+B", "FX", "modfx_sw"),
+  new Parameter(  5, "ModFX Depth",       0x00, 0x05, null, "FX", "modfx_depth"),
+  new Parameter(  6, "ModFX Speed",       0x00, 0x06, null, "FX", "modfx_speed"),
+  new Parameter(  7, "Rev/Dly Type",      0x00, 0x07, null, "FX", "revdly_type"),
+  new Parameter(  8, "Rev/Dly SW",        0x00, 0x08, "Off,TimbreA,TimbreB,TimbreA+B", "FX", "revdly_sw"),
+  new Parameter(  9, "Rev/Dly Depth",     0x00, 0x09, null, "FX", "revdly_depth"),
+  new Parameter( 10, "Rev/Dly Speed",     0x00, 0x0A, null, "FX", "revdly_speed")
+];
 
 
+//
+// Lookups
+//
 let createLookup = (raw) => {
   let data = raw.trim().split(/\s*(\d+):\s/);
   let lookup = {};
@@ -132,9 +150,6 @@ let createLookup = (raw) => {
 
   return lookup
 }
-
-
-
 
 let lookupName = (value, data) => {
   var name = "";
@@ -304,139 +319,7 @@ let oscTypeNames = oscTypeDictionary.map(item => {
   return item.name;
 });
 
-let oscParameters = () => {
-  return [
-    new Parameter( 0, "Type"     , 0x00, 0x00, oscTypeNames),
-    new Parameter( 1, "Semitone" , 0x00, 0x01, null),
-    new Parameter( 2, "Tune"     , 0x00, 0x02, null),
-    new Parameter( 3, "CTRL1"    , 0x00, 0x03, null),
-    new Parameter( 4, "CTRL2"    , 0x00, 0x04, null)
-  ]
-}
 
-let egParameters = () => {
-  return [
-    new Parameter(  0, "Attack",    0x00, 0x00, null, "EG", "attack"),
-    new Parameter(  1, "Decay",     0x00, 0x01, null, "EG", "decay"),
-    new Parameter(  2, "Sustain",   0x00, 0x02, null, "EG", "sustain"),
-    new Parameter(  3, "Release",   0x00, 0x03, null, "EG", "release"),
-    new Parameter(  4, "Level Velo Int.", 0x00, 0x04, "-63~0~63", "EG", "lvl_velo_int")
-  ]
-}
-
-let lfoParameters = (lfoNum) => {
-
-  // TODO: different wave lookups for each LFO
-
-  return [
-    new Parameter(  0, "Wave",       0x00, 0x00, null, "LFO", "wave"),
-    new Parameter(  1, "Freqency",   0x00, 0x01, null, "LFO", "frequency"),
-    new Parameter(  2, "Key Sync",   0x00, 0x02, null, "LFO", "key_sync"),
-    new Parameter(  3, "Tempo Sync", 0x00, 0x03, null, "LFO", "tempo_sync"),
-    new Parameter(  4, "Sync Note",  0x00, 0x04, null, "LFO", "sync_note")
-  ]
-}
-
-let vPatchParameter = () => [
-  new Parameter(  0, "Source",      0x00, 0x00, null, "EG", "source"),
-  new Parameter(  1, "Destination", 0x00, 0x01, null, "EG", "destination"),
-  new Parameter(  2, "Intensity",   0x00, 0x02, null, "EG", "intensity")
-];
-
-let vPatchParameters = () => [
-  new ParamGroup( 0, "V.Patch 1", 0x00, 0x00, vPatchParameter(), "VPATCH", "vpatch_1"),
-  new ParamGroup( 4, "V.Patch 2", 0x00, 0x03, vPatchParameter(), "VPATCH", "vpatch_2"),
-  new ParamGroup( 8, "V.Patch 3", 0x00, 0x06, vPatchParameter(), "VPATCH", "vpatch_3"),
-  new ParamGroup(12, "V.Patch 4", 0x00, 0x09, vPatchParameter(), "VPATCH", "vpatch_4"),
-  new ParamGroup(16, "V.Patch 5", 0x00, 0x0C, vPatchParameter(), "VPATCH", "vpatch_5"),
-  new ParamGroup(20, "V.Patch 6", 0x00, 0x0F, vPatchParameter(), "VPATCH", "vpatch_6")
-];
-
-let fxParameters = () => [
-  new Parameter(  0, "PreFX Type",        0x00, 0x00, null, "FX", "prefx_type"),
-  new Parameter(  1, "PreFX SW",          0x00, 0x01, "Off,TimbreA,TimbreB,TimbreA+B", "FX", "prefx_sw"),
-  new Parameter(  2, "PreFX Drive/Freq",  0x00, 0x02, null, "FX", "prefx_drive"),
-  new Parameter(  3, "ModFX Type",        0x00, 0x03, null, "FX", "modfx_type"),
-  new Parameter(  4, "ModFX SW",          0x00, 0x04, "Off,TimbreA,TimbreB,TimbreA+B", "FX", "modfx_sw"),
-  new Parameter(  5, "ModFX Depth",       0x00, 0x05, null, "FX", "modfx_depth"),
-  new Parameter(  6, "ModFX Speed",       0x00, 0x06, null, "FX", "modfx_speed"),
-  new Parameter(  7, "Rev/Dly Type",      0x00, 0x07, null, "FX", "revdly_type"),
-  new Parameter(  8, "Rev/Dly SW",        0x00, 0x08, "Off,TimbreA,TimbreB,TimbreA+B", "FX", "revdly_sw"),
-  new Parameter(  9, "Rev/Dly Depth",     0x00, 0x09, null, "FX", "revdly_depth"),
-  new Parameter( 10, "Rev/Dly Speed",     0x00, 0x0A, null, "FX", "revdly_speed")
-];
-
-let timbreParameters = () => {
-  return [
-    // Voice
-    new Parameter(  0, "Voice Assign",         0x00, 0x00, "Mono1,Mono2,Poly", "Voice", "voice_assign"),
-    new Parameter(  1, "Unison SW",            0x00, 0x01, "OFF,2 Voice,3 Voice,4 Voice", "Voice", "unison_sw"),
-    new Parameter(  2, "Unison Detune",        0x00, 0x02, "0~99:0~99[cent]", "Voice", "unison_detune"),
-    new Parameter(  3, "Unison Spread",        0x00, 0x03, null, "Voice", "unison_spread"),
-
-    // Pitch
-    new Parameter(  4, "Transpose",       0x00, 0x04, "-48~0~48[note]", "Pitch", "pitch_transpose"),
-    new Parameter(  5, "Detune",          0x00, 0x05, "-50~0~50[cent]", "Pitch", "pitch_detune"),
-    new Parameter(  6, "LFO2ModInt",      0x00, 0x06, "-63~0~63", "Pitch", "pitch_lfo2modint"),
-    new Parameter(  7, "LFO2 & JS+Y",     0x00, 0x07, "-63~0~63:-2400~0~2400[cent]   *T02-1", "Pitch", "pitch_lfo2jsy"),
-    new Parameter(  8, "Bend Range",      0x00, 0x08, "-12~0~12[note]", "Pitch", "pitch_bendrange"),
-    new Parameter(  9, "Portamento SW",   0x00, 0x09, "Off,On", "Pitch", "pitch_portamento_sw"),
-    new Parameter( 10, "Portamento Time", 0x00, 0x0A, null, "Pitch", "pitch_portamento_time"),
-    new Parameter( 11, "Analog Tuning",   0x00, 0x0B, null, "Pitch", "pitch_analog_tuning"),
-
-    // OSC 1 Data
-    new ParamGroup( 12, "Oscillator 1", 0x00, 0x0C, oscParameters(), "Osc", "osc_1"),
-
-    // OSC 2 Data
-    new ParamGroup( 20, "Oscillator 2", 0x00, 0x11, oscParameters(), "Osc", "osc_2"),
-
-    // OSC 3 Data
-    new ParamGroup( 28, "Oscillator 3", 0x00, 0x16, oscParameters(), "Osc", "osc_3"),
-
-    // Mixer
-    new Parameter( 36, "Osc 1 Level",   0x00, 0x1B, null, "Mixer", "osc1_level"),
-    new Parameter( 37, "Osc 2 Level",   0x00, 0x1C, null, "Mixer", "osc2_level"),
-    new Parameter( 38, "Osc 3 Level",   0x00, 0x1D, null, "Mixer", "osc3_level"),
-
-    // Filter
-    new Parameter( 39, "Type",            0x00, 0x1E, "0~17                          *T02-2", "Filter", "filter_type"),
-    new Parameter( 40, "Cutoff",          0x00, 0x1F, null, "Filter", "filter_cutoff"),
-    new Parameter( 41, "Resonance",       0x00, 0x20, null, "Filter", "filter_resonance"),
-    new Parameter( 42, "EG1 Intensity",   0x00, 0x21, "-63~0~63", "Filter", "filter_eg1int"),
-    new Parameter( 43, "LFO1 Mod Int.",   0x00, 0x22, "-63~0~63", "Filter", "filter_lfo1modint"),
-    new Parameter( 44, "LFO1 & JS-Y",     0x00, 0x23, "-63~0~63", "Filter", "filter_lfo1jsy"),
-    new Parameter( 45, "Keyboard Track",  0x00, 0x24, "-63~0~63:-2.00~0~2.00         *T02-3", "Filter", "filter_keytrack"),
-    new Parameter( 46, "Velocity Sens",   0x00, 0x25, "-63~0~63", "Filter", "filter_velocitysens"),
-
-    // Amp
-    new Parameter( 47, "Level",           0x00, 0x26, null, "Amp", "amp_level"),
-    new Parameter( 48, "Panpot",          0x00, 0x27, null, "Amp", "amp_pan"),
-    new Parameter( 49, "Punch Level",     0x00, 0x28, null, "Amp", "amp_punch"),
-    new Parameter( 50, "Key Track",       0x00, 0x29, null, "Amp", "amp_keytrack"),
-
-    // EG
-    new ParamGroup( 52, "EG 1", 0x00, 0x2A, egParameters(), "EG", "eg_1"),
-    new ParamGroup( 60, "EG 2", 0x00, 0x2F, egParameters(), "EG", "eg_2"),
-
-    // LFO
-    new ParamGroup( 68, "LFO 1", 0x00, 0x34, lfoParameters(1), "LFO", "lfo_1"),
-    new ParamGroup( 76, "LOF 2", 0x00, 0x39, lfoParameters(2), "LFO", "lfo_2")
-  ];
-};
-
-
-let program = new ParamGroup(0, "Program", 0x00, 0x00, [
-    new Parameter(   0, "Program Name",      0x00, 0x00, lookupName),
-    new Parameter(  12, "Category",          0x00, 0x0C, "Synth,Lead,Bass,Brass,Strings,Piano,Key,SE/Voc,User"),
-    new Parameter(  13, "Voice Mode",        0x00, 0x0D, "Single,Layer,Split", null, "voice_mode"),
-    new Parameter(  14, "TimbreB MIDI Ch.",  0x00, 0x0E, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,Global"),
-    new Parameter(  15, "Split Key",         0x00, 0x0F, lookupSplitKey),
-    new ParamGroup( 16, "Timbre A",          0x20, 0x00, timbreParameters(), null, "timbre_a"),
-    new ParamGroup(100, "V.Patch A",         0x30, 0x00, vPatchParameters(), null, "vpatch_a"),
-    new ParamGroup(124, "Timbre B",          0x40, 0x00, timbreParameters(), null, "timbre_b"),
-    new ParamGroup(208, "V.Patch B",         0x50, 0x00, vPatchParameters(), null, "vpatch_b"),
-    new ParamGroup(242, "FX",                0x60, 0x00, fxParameters(), null, "fx")
-]);
 
 export { oscTypeDictionary };
-export default program;
+export default programParameters();
