@@ -1,11 +1,10 @@
 import React from 'react';
 import {RouteHandler, Link} from 'react-router';
-import ProgramActions from 'actions/program_actions'
-import ProgramStore            from 'stores/program_store';
-import Timbre            from 'components/program/timbre';
-import Param            from 'components/program/param';
+import ProgramActions       from 'actions/program_actions'
+import ProgramStore         from 'stores/program_store';
+import Timbre               from 'components/program/timbre';
+import Param                from 'components/program/param';
 import Parameter            from 'components/program/parameter';
-import programData            from 'data/program';
 
 
 
