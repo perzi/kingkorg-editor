@@ -61,7 +61,7 @@ Simple.propTypes = {
   onChange: React.PropTypes.function,
   name: React.PropTypes.string.isRequired,
   value: React.PropTypes.number.isRequired,
-  text: React.PropTypes.string.isRequired,
+  text: React.PropTypes.string,
   className: React.PropTypes.string,
   min: React.PropTypes.number,
   max: React.PropTypes.number,
