@@ -1,5 +1,5 @@
 class Parameter {
-  constructor(offset, name, midiId, midiSubId, lookup, category, id) {
+  constructor(offset, name, midiId, midiSubId, lookup, category, id, length) {
     this.offset = offset;
     this.name = name;
     this.midiId = midiId;
@@ -8,10 +8,10 @@ class Parameter {
     this.category = category || "";
     this.id = id;
     this.parent = null;
+    this.length = length || 1;
     this.isGroup = false;
 
     if (typeof lookup === "string") {
-
 
       if (/^-?\d+~\d+/.test(lookup)) {
 
@@ -58,7 +58,16 @@ class Parameter {
   }
 
   getValue(programData) {
-    return programData.get(this.getOffset());
+    if (this.length > 1) {
+      let values = [];
+      // TODO: return array of values instead
+      for (let i = 0; i < this.length; i++) {
+        values.push(programData.get(this.getOffset()));
+      }
+      return values;
+    } else {
+      return programData.get(this.getOffset());
+    }
   }
 
   getValueAsText(programData) {
