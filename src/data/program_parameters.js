@@ -3,16 +3,19 @@ import ParamGroup from './parametergroup';
 
 let programParameters = () => {
   return new ParamGroup(0, "Program", 0x00, 0x00, [
-      new Parameter(   0, "Program Name",      0x00, 0x00, lookupName),
-      new Parameter(  12, "Category",          0x00, 0x0C, "Synth,Lead,Bass,Brass,Strings,Piano,Key,SE/Voc,User"),
-      new Parameter(  13, "Voice Mode",        0x00, 0x0D, "Single,Layer,Split", null, "voice_mode"),
-      new Parameter(  14, "TimbreB MIDI Ch.",  0x00, 0x0E, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,Global"),
+      new Parameter(   0, "Program Name",      0x00, 0x00, lookupName, null, "program_name", 12),
+      new Parameter(  12, "Category",          0x00, 0x0C, "Synth,Lead,Bass,Brass,Strings,Piano,Key,SE/Voc,User", null, "category"),
+      new Parameter(  13, "Voice Mode",        0x00, 0x0D, "Single,Layer,Split",  null, "voice_mode"),
+      new Parameter(  14, "TimbreB MIDI Ch.",  0x00, 0x0E, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,Global", null, "timbreb_midi_ch"),
       new Parameter(  15, "Split Key",         0x00, 0x0F, lookupSplitKey),
-      new ParamGroup( 16, "Timbre A",          0x20, 0x00, timbreParameters(), null, "timbre_a"),
-      new ParamGroup(100, "V.Patch A",         0x30, 0x00, vPatchParameters(), null, "vpatch_a"),
-      new ParamGroup(124, "Timbre B",          0x40, 0x00, timbreParameters(), null, "timbre_b"),
-      new ParamGroup(208, "V.Patch B",         0x50, 0x00, vPatchParameters(), null, "vpatch_b"),
-      new ParamGroup(242, "FX",                0x60, 0x00, fxParameters(), null, "fx")
+      new ParamGroup( 16, "Timbre A",          0x20, 0x00, timbreParameters(),    null, "timbre_a"),
+      new ParamGroup(100, "V.Patch A",         0x30, 0x00, vPatchParameters(),    null, "vpatch_a"),
+      new ParamGroup(124, "Timbre B",          0x40, 0x00, timbreParameters(),    null, "timbre_b"),
+      new ParamGroup(208, "V.Patch B",         0x50, 0x00, vPatchParameters(),    null, "vpatch_b"),
+      new ParamGroup(232, "FX",                0x60, 0x00, fxParameters(),        null, "fx"),
+      new ParamGroup(244, "Vocoder",           0x70, 0x00, vocoderParameters(),   null, "vocoder"),
+      new ParamGroup(296, "Arpeggio",          0x80, 0x00, arpeggioParameters(),  null, "arpeggio"),
+      new Parameter( 312, "Key response",      0x10, 0x00, "Normal,Shallow,Deep", null, "key_response")
   ]);
 }
 
@@ -133,6 +136,75 @@ let fxParameters = () => [
   new Parameter(  9, "Rev/Dly Depth",     0x00, 0x09, null, "FX", "revdly_depth"),
   new Parameter( 10, "Rev/Dly Speed",     0x00, 0x0A, null, "FX", "revdly_speed")
 ];
+
+let vocoderParameters = () => [
+  // Switch
+  new Parameter(  0, "SW",                  0x00, 0x00, "Dis,Ena", null, "sw"),
+
+  // Carrier
+  new Parameter(  1, "TimbreA Level",       0x00, 0x01, null, "Carrier", "timbre_a_level"),
+  new Parameter(  2, "TimbreB Level",       0x00, 0x02, null, "Carrier", "timbre_b_level"),
+
+  // Modulator
+  new Parameter(  3, "Audio Source",        0x00, 0x03, null,       "Modulator", "audio_source"),
+  new Parameter(  4, "Gate Sens",           0x00, 0x04, null,       "Modulator", "gate_sens"),
+  new Parameter(  5, "Threshold",           0x00, 0x05, null,       "Modulator", "threshold"),
+  new Parameter(  6, "HPF Level",           0x00, 0x06, null,       "Modulator", "hpf_level"),
+  new Parameter(  7, "HPF Gate",            0x00, 0x07, "Dis,Ena",  "Modulator", "hpf_gate"),
+
+  // Filter
+  new Parameter(  8, "Formanto Shift",      0x00, 0x08, null, "Filter", "formanto_shift"),
+  new Parameter(  9, "Fc offset",           0x00, 0x09, null, "Filter", "fc_offset"),
+  new Parameter( 10, "Resonance",           0x00, 0x00, null, "Filter", "fc_resonance"),
+  new Parameter( 11, "Fc Mod Source",       0x00, 0x10, null, "Filter", "fc_mod_source"),
+  new Parameter( 12, "Fc Mod Intensity",    0x00, 0x11, null, "Filter", "fc_mod_int"),
+  new Parameter( 13, "E.F.Sens",            0x00, 0x12, null, "Filter", "ef_sens"),
+
+  // Formant Hold Data
+  new Parameter( 16, "Band 1",              0x00, 0x0E, null, "Formant Hold", "band1", 2),
+  new Parameter( 18, "Band 2",              0x00, 0x0F, null, "Formant Hold", "band2", 2),
+  new Parameter( 20, "Band 3",              0x00, 0x10, null, "Formant Hold", "band1", 2),
+  new Parameter( 22, "Band 4",              0x00, 0x11, null, "Formant Hold", "band2", 2),
+  new Parameter( 24, "Band 5",              0x00, 0x12, null, "Formant Hold", "band1", 2),
+  new Parameter( 26, "Band 6",              0x00, 0x13, null, "Formant Hold", "band2", 2),
+  new Parameter( 28, "Band 7",              0x00, 0x14, null, "Formant Hold", "band1", 2),
+  new Parameter( 30, "Band 8",              0x00, 0x15, null, "Formant Hold", "band2", 2),
+  new Parameter( 32, "Band 9",              0x00, 0x16, null, "Formant Hold", "band1", 2),
+  new Parameter( 34, "Band 10",             0x00, 0x17, null, "Formant Hold", "band2", 2),
+  new Parameter( 36, "Band 11",             0x00, 0x18, null, "Formant Hold", "band1", 2),
+  new Parameter( 38, "Band 12",             0x00, 0x19, null, "Formant Hold", "band2", 2),
+  new Parameter( 40, "Band 13",             0x00, 0x1A, null, "Formant Hold", "band1", 2),
+  new Parameter( 42, "Band 14",             0x00, 0x1B, null, "Formant Hold", "band2", 2),
+  new Parameter( 44, "Band 15",             0x00, 0x1C, null, "Formant Hold", "band1", 2),
+  new Parameter( 46, "Band 16",             0x00, 0x1D, null, "Formant Hold", "band2", 2),
+
+  // Amp
+  new Parameter( 48, "Vocoder Level",       0x00, 0x1E, null, "Amp", "vocoder_level"),
+  new Parameter( 49, "Direct Level",        0x00, 0x1F, null, "Amp", "direct_level"),
+  new Parameter( 50, "Wet Spread",          0x00, 0x20, null, "Amp", "wet_spread"),
+  new Parameter( 51, "Wet Level",           0x00, 0x21, null, "Amp", "wet_level")
+];
+
+let arpeggioParameters = () => [
+  new Parameter(  0, "Tempo",               0x00, 0x01, null,     null, "tempo", 2),
+  new Parameter(  2, "Arp SW",              0x00, 0x00, "Off,On", null, "arp_sw"),
+  new Parameter(  3, "Latch",               0x00, 0x02, "Off,On", null, "latch"),
+  new Parameter(  4, "Key Sync",            0x00, 0x03, "Off,On", null, "key_sync"),
+  new Parameter(  5, "Timbre Assign",       0x00, 0x04, "Off,On", null, "timbre_assign"),
+  new Parameter(  6, "Type",                0x00, 0x05, null,     null, "type"),
+  new Parameter(  7, "Resolution",          0x00, 0x06, null,     null, "resolution"),
+  new Parameter(  8, "gate time",           0x00, 0x07, null,     null, "gate_time"),
+  new Parameter(  9, "Swing",               0x00, 0x08, null,     null, "swing"),
+  new Parameter( 10, "Last step",           0x00, 0x09, null,     null, "last_step"),
+  new Parameter( 11, "Octave Range",        0x00, 0x0A, null,     null, "octave_range"),
+
+  // TODO: implement bit parameter? this is a group of bits
+  // Step
+  new Parameter( 12, "Step",                0x00, 0x0B, "Off,On", null, "step")
+];
+
+
+
 
 
 //
