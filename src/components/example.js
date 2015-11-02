@@ -1,5 +1,5 @@
-//import React from 'react';
-import React                    from 'react/addons';
+import React from 'react';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 import ProgramStore            from 'stores/program_store';
 import ProgramActions            from 'actions/program_actions';
 
@@ -7,7 +7,7 @@ class Example extends React.Component {
   constructor(props) {
     super(props);
 
-    let { shouldComponentUpdate } = React.addons.PureRenderMixin;
+    let { shouldComponentUpdate } = PureRenderMixin;
 
     this.shouldComponentUpdate    = shouldComponentUpdate.bind(this);
     this.state                    = { program: ProgramStore.getState() };

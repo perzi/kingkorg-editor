@@ -57,21 +57,32 @@ class Parameter {
     }
   }
 
+  getByte(programData, index) {
+
+    // Do we have Immutable data?
+    let useGet = typeof programData.get === "function";
+
+    if (useGet) {
+      return programData.get(this.getOffset());
+    } else {
+      return programData[this.getOffset()];
+    }
+  }
+
   getValue(programData) {
     if (this.length > 1) {
       let values = [];
-      // TODO: return array of values instead
       for (let i = 0; i < this.length; i++) {
-        values.push(programData.get(this.getOffset()));
+        values.push(this.getByte(programData, i));
       }
       return values;
     } else {
-      return programData.get(this.getOffset());
+      return this.getByte(programData, this.getOffset());
     }
   }
 
   getValueAsText(programData) {
-    let value = programData.get(this.getOffset());
+    let value = this.getByte(programData, this.getOffset());
     let lookup = this.lookup;
 
     if (lookup && typeof lookup === "object") {

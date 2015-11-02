@@ -1,4 +1,5 @@
-import React                from 'react/addons';
+import React                from 'react';
+import PureRenderMixin      from 'react-addons-pure-render-mixin';
 import Parameter            from 'components/program/parameter';
 import Simple               from 'components/ui/simple';
 import {oscTypeDictionary}  from 'data/program_parameters';
@@ -8,7 +9,7 @@ import 'styles/components/program/osc';
 class Osc extends React.Component {
   constructor(props) {
     super(props);
-    let { shouldComponentUpdate } = React.addons.PureRenderMixin;
+    let { shouldComponentUpdate } = PureRenderMixin;
     this.shouldComponentUpdate    = shouldComponentUpdate.bind(this);
   }
 

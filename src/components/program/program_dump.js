@@ -1,5 +1,5 @@
-//import React from 'react';
-import React              from 'react/addons';
+import React from 'react';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import Parameter          from 'components/program/parameter';
 import Osc                from 'components/program/osc';
@@ -11,7 +11,7 @@ class ProgramDump extends React.Component {
   constructor(props) {
     super(props);
 
-    let { shouldComponentUpdate } = React.addons.PureRenderMixin;
+    let { shouldComponentUpdate } = PureRenderMixin;
 
     this.shouldComponentUpdate    = shouldComponentUpdate.bind(this);
   }

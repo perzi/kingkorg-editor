@@ -1,10 +1,11 @@
-import React   from 'react/addons';
-import Control from './control';
+import React            from 'react';
+import PureRenderMixin  from 'react-addons-pure-render-mixin';
+import Control          from './control';
 
 class EG extends React.Component {
   constructor(props) {
     super(props);
-    let { shouldComponentUpdate } = React.addons.PureRenderMixin;
+    let { shouldComponentUpdate } = PureRenderMixin;
     this.shouldComponentUpdate    = shouldComponentUpdate.bind(this);
   }
 
