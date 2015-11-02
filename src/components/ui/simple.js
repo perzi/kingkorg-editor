@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 class Simple extends React.Component {
@@ -20,7 +21,7 @@ class Simple extends React.Component {
   }
 
   handleDragStart(e) {
-    e.nativeEvent.dataTransfer.setDragImage(React.findDOMNode(this.refs.dragPreview), 0, 0);
+    e.nativeEvent.dataTransfer.setDragImage(ReactDOM.findDOMNode(this.refs.dragPreview), 0, 0);
   }
 
   handleDrag(e) {

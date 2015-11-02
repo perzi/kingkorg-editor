@@ -1,7 +1,9 @@
 import React          from 'react';
 import Simple         from 'components/ui/simple';
 import program        from 'data/program_parameters';
-import ProgramActions from 'actions/program_actions';
+
+import { connect } from 'react-redux';
+import { updateCurrentProgramParam } from 'actions/actions';
 
 
 class Control extends React.Component {
@@ -29,7 +31,7 @@ class Control extends React.Component {
       category: parameter.category,
       allValues: parameter.lookup instanceof Array ? parameter.lookup : null,
       onChange: ((value) => {
-        ProgramActions.updateParam(offset, value);
+        this.props.dispatch(updateCurrentProgramParam(offset, value));
       }).bind(this)
     };
 
@@ -50,4 +52,4 @@ Control.propTypes = {
   parentParameter: React.PropTypes.object.isRequired
 }
 
-export default Control;
+export default connect()(Control);

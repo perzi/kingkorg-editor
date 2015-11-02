@@ -1,19 +1,11 @@
 import React from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import { RouteHandler, Link } from 'react-router';
-import { Provider } from 'react-redux'
-import { createStore } from 'redux'
-import kingkorgApp from 'reducers/reducers'
-
-// import { setCurrentProgramName, updateCurrentProgramParam, loadCurrentProgram } from 'actions/actions'
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
+import kingkorgApp from 'reducers/reducers';
 
 let store = createStore(kingkorgApp);
-
-// import ProgramActions       from 'actions/program_actions'
-// import ProgramStore         from 'stores/program_store';
-// import Timbre               from 'components/program/timbre';
-// import Param                from 'components/program/param';
-// import Parameter            from 'components/program/parameter';
 
 import "styles/app";
 
