@@ -19,6 +19,8 @@ export default function kingkorgApp(state = initialState, action) {
       });
 
     case CHANGE_CURRENT_PROGRAM_PARAMETER:
+
+      // TODO: enable update of more than one byte
       return Object.assign({}, state, {
         currentProgram: {
           name: state.currentProgram.name,

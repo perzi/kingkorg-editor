@@ -100,15 +100,16 @@ class CurrentProgram extends React.Component {
     let {program} = this.state;
     let name = currentProgram.name;
     let data = currentProgram.data;
+    let handlePrograChange = (index) => () => dispatch(loadCurrentProgram(this.state.exampleData[index]));
 
     return (
       <div>
 
         <h2>{name}</h2>
 
-        <button onClick={() => dispatch(loadCurrentProgram(this.state.exampleData[0]))}>Stab King</button>
-        <button onClick={() => dispatch(loadCurrentProgram(this.state.exampleData[1]))}>Classic Lead</button>
-        <button onClick={() => dispatch(loadCurrentProgram(this.state.exampleData[2]))}>DistModLead</button>
+        <button onClick={handlePrograChange(0)}>Stab King</button>
+        <button onClick={handlePrograChange(1)}>Classic Lead</button>
+        <button onClick={handlePrograChange(2)}>DistModLead</button>
 
         <br />
         <br />
@@ -131,11 +132,11 @@ class CurrentProgram extends React.Component {
 }
 
 
-function select(state) {
+function selectPropsFromStore(state) {
   return {
     currentProgram: state.currentProgram
   }
 }
 
 // Wrap the component to inject dispatch and state into it
-export default connect(select)(CurrentProgram);
+export default connect(selectPropsFromStore)(CurrentProgram);
