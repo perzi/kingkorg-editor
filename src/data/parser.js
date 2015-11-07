@@ -42,9 +42,6 @@ let parser = {
       values[intValue.toString()] = text;
     }
 
-    console.log(id, name, min, max);
-    console.log(values);
-
     return {
       id: id,
       name: name,
@@ -53,6 +50,93 @@ let parser = {
       values: values
     };
 
+  },
+
+  parseValueString: function(s, refs) {
+
+    let ref = s.match(/\*T\d+\-\d+/);
+    let hasRef = ref && ref.length > 0;
+
+    if (hasRef) {
+      return refs[ref];
+    }
+
+    let trimmed = this.trim(s);
+    let splitted = trimmed.split(":");
+    let valueParts = splitted[0].split(",");
+    let textParts = splitted[splitted.length - 1].split(",");
+    let values = [];
+    let texts = [];
+    let rangeReg = /[\-\d]+(?:~[\-\d]+)+/
+    let valuesHash = {};
+    var min = 0;
+    var max = 0;
+    var i;
+
+    valueParts.forEach(function(valuePart) {
+
+      let range = valuePart.match(rangeReg);
+
+      if (range) {
+        // explode range
+        let rangeParts = range[0].split("~");
+        let minValue = parseInt(rangeParts[0], 10);
+        var maxValue = 127
+        if (rangeParts.length > 1) {
+          maxValue = parseInt(rangeParts[rangeParts.length - 1], 10);
+        }
+
+        if (min !== null) {
+          min = Math.min(min, minValue);
+        } else {
+          min = minValue;
+        }
+        if (max !== null) {
+          max = Math.max(max, maxValue);
+        } else {
+          max = maxValue;
+        }
+
+        for (i = minValue; i <= maxValue; i++) {
+          values.push(i);
+        }
+      } else {
+        values.push(parseInt(valuePart, 10));
+      }
+    });
+
+    textParts.forEach(function(textPart) {
+
+      let range = textPart.match(rangeReg);
+
+      if (range) {
+        // explode range
+        let rangeParts = range[0].split("~");
+        let minValue = parseInt(rangeParts[0], 10);
+        var maxValue = 127
+        if (rangeParts.length > 1) {
+          maxValue = parseInt(rangeParts[rangeParts.length - 1], 10);
+        }
+
+        for (i = minValue; i <= maxValue; i++) {
+          texts.push(textPart.replace(rangeReg, i));
+        }
+      } else {
+          texts.push(textPart);
+      }
+    });
+
+    values.forEach(function(value, index) {
+      valuesHash[value] = texts[index];
+    });
+
+    return {
+      id: s,
+      name: s,
+      min: min,
+      max: max,
+      values: valuesHash
+    };
   }
 };
 

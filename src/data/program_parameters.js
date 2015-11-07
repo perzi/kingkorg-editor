@@ -1,13 +1,83 @@
 import Parameter from './parameter';
 import ParamGroup from './parametergroup';
+import source_data from './program_source_data';
+import parser from './parser'
+
+var refs = {};
+
+source_data.refs.forEach((dataString) => {
+  let data = parser.parseValueTable(dataString);
+  refs[data.id] = data;
+});
+
+// TODO: the hard lookup values to parse can be generated and put in refs beforehand 
+
+let parseValueString = (s) => {
+
+  if (refs[s]) {
+    return refs[s];
+  }
+
+  let result = parser.parseValueString(s, refs);
+  refs[s] = result;
+
+  return result;
+}
+
+
+let createParam = function(sourceString, offset, name, midiId, midiSubId, lookup, category, id, length) {
+
+  // sourceString
+  // sourceString, category
+  // sourceString, category, id
+
+  const rangeOffset = [1, 12];
+  const rangeParameter = [13, 32];
+  const rangeValue = [33, 71];
+  const rangeMidiId = [72, 82];
+
+  // TODO: change this later when we can parse almost anything
+  // and deal with arguments in a nices way
+  if ((arguments.length === 2) || (arguments.length === 3)) {
+    category = offset;
+  }
+
+  if (arguments.length === 3) {
+    id = name;
+  }
+
+  if (typeof sourceString === "string" && sourceString.length > 0) {
+
+    let offsetString = sourceString.substring.apply(sourceString, rangeOffset).trim();
+    let nameString = sourceString.substring.apply(sourceString, rangeParameter).trim();
+    let valueString = sourceString.substring.apply(sourceString, rangeValue);
+    let midiIdString = sourceString.substring.apply(sourceString, rangeMidiId).trim();
+
+    offset = parseInt(offsetString, 10);
+    name = nameString;
+    lookup = parseValueString(valueString);
+    [midiId, midiSubId] = midiIdString.split(":");
+
+    midiId = parseInt(midiId, 16);
+    midiSubId = parseInt(midiSubId, 16);
+
+    // No id supplied
+    if (typeof id === "undefined") {
+      id = name.toLowerCase().replace(/[&\.]*/g, "").replace(/\s+/g, "_");
+      console.log(id);
+    }
+  }
+
+  return new Parameter(offset, name, midiId, midiSubId, lookup, category, id, length);
+};
 
 let programParameters = () => {
   return new ParamGroup(0, "Program", 0x00, 0x00, [
-      new Parameter(   0, "Program Name",      0x00, 0x00, lookupName, null, "program_name", 12),
-      new Parameter(  12, "Category",          0x00, 0x0C, "Synth,Lead,Bass,Brass,Strings,Piano,Key,SE/Voc,User", null, "category"),
-      new Parameter(  13, "Voice Mode",        0x00, 0x0D, "Single,Layer,Split",  null, "voice_mode"),
-      new Parameter(  14, "TimbreB MIDI Ch.",  0x00, 0x0E, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,Global", null, "timbreb_midi_ch"),
-      new Parameter(  15, "Split Key",         0x00, 0x0F, lookupSplitKey),
+      createParam("",   0, "Program Name",      0x00, 0x00, lookupName, null, "program_name", 12),
+      createParam("",  12, "Category",          0x00, 0x0C, "Synth,Lead,Bass,Brass,Strings,Piano,Key,SE/Voc,User", null, "category"),
+      createParam("",  13, "Voice Mode",        0x00, 0x0D, "Single,Layer,Split",  null, "voice_mode"),
+      createParam("",  14, "TimbreB MIDI Ch.",  0x00, 0x0E, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,Global", null, "timbreb_midi_ch"),
+      createParam("",  15, "Split Key",         0x00, 0x0F, lookupSplitKey),
       new ParamGroup( 16, "Timbre A",          0x20, 0x00, timbreParameters(),    null, "timbre_a"),
       new ParamGroup(100, "V.Patch A",         0x30, 0x00, vPatchParameters(),    null, "vpatch_a"),
       new ParamGroup(124, "Timbre B",          0x40, 0x00, timbreParameters(),    null, "timbre_b"),
@@ -15,27 +85,27 @@ let programParameters = () => {
       new ParamGroup(232, "FX",                0x60, 0x00, fxParameters(),        null, "fx"),
       new ParamGroup(244, "Vocoder",           0x70, 0x00, vocoderParameters(),   null, "vocoder"),
       new ParamGroup(296, "Arpeggio",          0x80, 0x00, arpeggioParameters(),  null, "arpeggio"),
-      new Parameter( 312, "Key response",      0x10, 0x00, "Normal,Shallow,Deep", null, "key_response")
+      createParam("", 312, "Key response",      0x10, 0x00, "Normal,Shallow,Deep", null, "key_response")
   ]);
 }
 
 let timbreParameters = () => {
   return [
     // Voice
-    new Parameter(  0, "Voice Assign",         0x00, 0x00, "Mono1,Mono2,Poly", "Voice", "voice_assign"),
-    new Parameter(  1, "Unison SW",            0x00, 0x01, "OFF,2 Voice,3 Voice,4 Voice", "Voice", "unison_sw"),
-    new Parameter(  2, "Unison Detune",        0x00, 0x02, "0~99:0~99[cent]", "Voice", "unison_detune"),
-    new Parameter(  3, "Unison Spread",        0x00, 0x03, null, "Voice", "unison_spread"),
+    createParam("| +0        | Voice Assign      | 0~2:Mono1,Mono2,Poly                 | +0:00    |", "Voice"),
+    createParam(null,  1, "Unison SW",            0x00, 0x01, null, "Voice", "unison_sw"),
+    createParam("| +2        | Unison Detune     | 0~99:0~99[cent]                      | +0:02    |", "Voice"),
+    createParam("| +3        | Unison Spread     | 0~127                                | +0:03    |", "Voice"),
 
     // Pitch
-    new Parameter(  4, "Transpose",       0x00, 0x04, "-48~0~48[note]", "Pitch", "pitch_transpose"),
-    new Parameter(  5, "Detune",          0x00, 0x05, "-50~0~50[cent]", "Pitch", "pitch_detune"),
-    new Parameter(  6, "LFO2ModInt",      0x00, 0x06, "-63~0~63", "Pitch", "pitch_lfo2modint"),
-    new Parameter(  7, "LFO2 & JS+Y",     0x00, 0x07, "-63~0~63:-2400~0~2400[cent]   *T02-1", "Pitch", "pitch_lfo2jsy"),
-    new Parameter(  8, "Bend Range",      0x00, 0x08, "-12~0~12[note]", "Pitch", "pitch_bendrange"),
-    new Parameter(  9, "Portamento SW",   0x00, 0x09, "Off,On", "Pitch", "pitch_portamento_sw"),
-    new Parameter( 10, "Portamento Time", 0x00, 0x0A, null, "Pitch", "pitch_portamento_time"),
-    new Parameter( 11, "Analog Tuning",   0x00, 0x0B, null, "Pitch", "pitch_analog_tuning"),
+    createParam("| +4        | Transpose         | -48~0~48[note]                       | +0:04    |", "Pitch", "pitch_transpose"),
+    createParam("| +5        | Detune            | -50~0~50[cent]                       | +0:05    |", "Pitch", "pitch_detune"),
+    createParam("| +6        | LFO2ModInt        | -63~0~63                             | +0:06    |", "Pitch", "pitch_lfo2modint"),
+    createParam("| +7        | LFO2 & JS+Y       | -63~0~63:-2400~0~2400[cent]   *T02-1 | +0:07    |", "Pitch", "pitch_lfo2jsy"),
+    createParam("| +8        | Bend Range        | -12~0~12[note]                       | +0:08    |", "Pitch", "pitch_bendrange"),
+    createParam("| +9        | Portamento SW     | 0,1:Off,On                           | +0:09    |", "Pitch", "pitch_portamento_sw"),
+    createParam("| +10       | Portamento Time   | 0~127                                | +0:0A    |", "Pitch", "pitch_portamento_time"),
+    createParam("| +11       | Analog Tuning     | 0~127                                | +0:0B    |", "Pitch", "pitch_analog_tuning"),
 
     // OSC 1 Data
     new ParamGroup( 12, "Oscillator 1", 0x00, 0x0C, oscParameters(), "Osc", "osc_1"),
@@ -47,25 +117,25 @@ let timbreParameters = () => {
     new ParamGroup( 28, "Oscillator 3", 0x00, 0x16, oscParameters(), "Osc", "osc_3"),
 
     // Mixer
-    new Parameter( 36, "Osc 1 Level",   0x00, 0x1B, null, "Mixer", "osc1_level"),
-    new Parameter( 37, "Osc 2 Level",   0x00, 0x1C, null, "Mixer", "osc2_level"),
-    new Parameter( 38, "Osc 3 Level",   0x00, 0x1D, null, "Mixer", "osc3_level"),
+    createParam("| +36       | Osc1 Level        | 0~127                                | +0:1B    |", "Mixer"),
+    createParam("| +37       | Osc2 Level        | 0~127                                | +0:1C    |", "Mixer"),
+    createParam("| +38       | Osc3 Level        | 0~127                                | +0:1D    |", "Mixer"),
 
     // Filter
-    new Parameter( 39, "Type",            0x00, 0x1E, "0~17                          *T02-2", "Filter", "filter_type"),
-    new Parameter( 40, "Cutoff",          0x00, 0x1F, null, "Filter", "filter_cutoff"),
-    new Parameter( 41, "Resonance",       0x00, 0x20, null, "Filter", "filter_resonance"),
-    new Parameter( 42, "EG1 Intensity",   0x00, 0x21, "-63~0~63", "Filter", "filter_eg1int"),
-    new Parameter( 43, "LFO1 Mod Int.",   0x00, 0x22, "-63~0~63", "Filter", "filter_lfo1modint"),
-    new Parameter( 44, "LFO1 & JS-Y",     0x00, 0x23, "-63~0~63", "Filter", "filter_lfo1jsy"),
-    new Parameter( 45, "Keyboard Track",  0x00, 0x24, "-63~0~63:-2.00~0~2.00         *T02-3", "Filter", "filter_keytrack"),
-    new Parameter( 46, "Velocity Sens",   0x00, 0x25, "-63~0~63", "Filter", "filter_velocitysens"),
+    createParam("| +39       | Type              | 0~17                          *T02-2 | +0:1E    |", "Filter"),
+    createParam("| +40       | Cutoff            | 0~127                                | +0:1F    |", "Filter"),
+    createParam("| +41       | Resonance         | 0~127                                | +0:20    |", "Filter"),
+    createParam("| +42       | EG1 Intensity     | -63~0~63                             | +0:21    |", "Filter"),
+    createParam("| +43       | LFO1 Mod Int.     | -63~0~63                             | +0:22    |", "Filter"),
+    createParam("| +44       | LFO1 & JS-Y       | -63~0~63                             | +0:23    |", "Filter"),
+    createParam("| +45       | Keyboard Track    | -63~0~63:-2.00~0~2.00         *T02-3 | +0:24    |", "Filter"),
+    createParam("| +46       | Velocity Sens     | -63~0~63                             | +0:25    |", "Filter"),
 
     // Amp
-    new Parameter( 47, "Level",           0x00, 0x26, null, "Amp", "amp_level"),
-    new Parameter( 48, "Panpot",          0x00, 0x27, null, "Amp", "amp_pan"),
-    new Parameter( 49, "Punch Level",     0x00, 0x28, null, "Amp", "amp_punch"),
-    new Parameter( 50, "Key Track",       0x00, 0x29, null, "Amp", "amp_keytrack"),
+    createParam("| +47       | Level             | 0~127                                | +0:26    |", "Amp"),
+    createParam("| +48       | Panpot            | 0,1~64~127:L63,L63~CNT~R63           | +0:27    |", "Amp"),
+    createParam("| +49       | Punch Level       | 0~127                                | +0:28    |", "Amp"),
+    createParam("| +50       | Key Track         | -63~0~63                             | +0:29    |", "Amp"),
 
     // EG
     new ParamGroup( 52, "EG 1", 0x00, 0x2A, egParameters(), "EG", "eg_1"),
@@ -79,32 +149,32 @@ let timbreParameters = () => {
 
 let oscParameters = () => {
   return [
-    new Parameter( 0, "Type"     , 0x00, 0x00, oscTypeNames),
-    new Parameter( 1, "Semitone" , 0x00, 0x01, null),
-    new Parameter( 2, "Tune"     , 0x00, 0x02, null),
-    new Parameter( 3, "CTRL1"    , 0x00, 0x03, null),
-    new Parameter( 4, "CTRL2"    , 0x00, 0x04, null)
+    createParam("", 0, "Type"     , 0x00, 0x00, oscTypeNames),
+    createParam("", 1, "Semitone" , 0x00, 0x01, null),
+    createParam("", 2, "Tune"     , 0x00, 0x02, null),
+    createParam("", 3, "CTRL1"    , 0x00, 0x03, null),
+    createParam("", 4, "CTRL2"    , 0x00, 0x04, null)
   ]
 };
 
 let egParameters = () => {
   return [
-    new Parameter(  0, "Attack",    0x00, 0x00, null, "EG", "attack"),
-    new Parameter(  1, "Decay",     0x00, 0x01, null, "EG", "decay"),
-    new Parameter(  2, "Sustain",   0x00, 0x02, null, "EG", "sustain"),
-    new Parameter(  3, "Release",   0x00, 0x03, null, "EG", "release"),
-    new Parameter(  4, "Level Velo Int.", 0x00, 0x04, "-63~0~63", "EG", "lvl_velo_int")
+    createParam("",  0, "Attack",    0x00, 0x00, null, "EG", "attack"),
+    createParam("",  1, "Decay",     0x00, 0x01, null, "EG", "decay"),
+    createParam("",  2, "Sustain",   0x00, 0x02, null, "EG", "sustain"),
+    createParam("",  3, "Release",   0x00, 0x03, null, "EG", "release"),
+    createParam("",  4, "Level Velo Int.", 0x00, 0x04, "-63~0~63", "EG", "lvl_velo_int")
   ]
 };
 
 let lfoParameters = (lfoNum) => {
   // TODO: different wave lookups for each LFO
   return [
-    new Parameter(  0, "Wave",       0x00, 0x00, null, "LFO", "wave"),
-    new Parameter(  1, "Freqency",   0x00, 0x01, null, "LFO", "frequency"),
-    new Parameter(  2, "Key Sync",   0x00, 0x02, null, "LFO", "key_sync"),
-    new Parameter(  3, "Tempo Sync", 0x00, 0x03, null, "LFO", "tempo_sync"),
-    new Parameter(  4, "Sync Note",  0x00, 0x04, null, "LFO", "sync_note")
+    createParam("",  0, "Wave",       0x00, 0x00, null, "LFO", "wave"),
+    createParam("",  1, "Freqency",   0x00, 0x01, null, "LFO", "frequency"),
+    createParam("",  2, "Key Sync",   0x00, 0x02, null, "LFO", "key_sync"),
+    createParam("",  3, "Tempo Sync", 0x00, 0x03, null, "LFO", "tempo_sync"),
+    createParam("",  4, "Sync Note",  0x00, 0x04, null, "LFO", "sync_note")
   ]
 };
 
@@ -118,89 +188,89 @@ let vPatchParameters = () => [
 ];
 
 let vPatchParameter = () => [
-  new Parameter(  0, "Source",      0x00, 0x00, null, "EG", "source"),
-  new Parameter(  1, "Destination", 0x00, 0x01, null, "EG", "destination"),
-  new Parameter(  2, "Intensity",   0x00, 0x02, null, "EG", "intensity")
+  createParam("",  0, "Source",      0x00, 0x00, null, "EG", "source"),
+  createParam("",  1, "Destination", 0x00, 0x01, null, "EG", "destination"),
+  createParam("",  2, "Intensity",   0x00, 0x02, null, "EG", "intensity")
 ];
 
 let fxParameters = () => [
-  new Parameter(  0, "PreFX Type",        0x00, 0x00, null, "FX", "prefx_type"),
-  new Parameter(  1, "PreFX SW",          0x00, 0x01, "Off,TimbreA,TimbreB,TimbreA+B", "FX", "prefx_sw"),
-  new Parameter(  2, "PreFX Drive/Freq",  0x00, 0x02, null, "FX", "prefx_drive"),
-  new Parameter(  3, "ModFX Type",        0x00, 0x03, null, "FX", "modfx_type"),
-  new Parameter(  4, "ModFX SW",          0x00, 0x04, "Off,TimbreA,TimbreB,TimbreA+B", "FX", "modfx_sw"),
-  new Parameter(  5, "ModFX Depth",       0x00, 0x05, null, "FX", "modfx_depth"),
-  new Parameter(  6, "ModFX Speed",       0x00, 0x06, null, "FX", "modfx_speed"),
-  new Parameter(  7, "Rev/Dly Type",      0x00, 0x07, null, "FX", "revdly_type"),
-  new Parameter(  8, "Rev/Dly SW",        0x00, 0x08, "Off,TimbreA,TimbreB,TimbreA+B", "FX", "revdly_sw"),
-  new Parameter(  9, "Rev/Dly Depth",     0x00, 0x09, null, "FX", "revdly_depth"),
-  new Parameter( 10, "Rev/Dly Speed",     0x00, 0x0A, null, "FX", "revdly_speed")
+  createParam("",  0, "PreFX Type",        0x00, 0x00, null, "FX", "prefx_type"),
+  createParam("",  1, "PreFX SW",          0x00, 0x01, "Off,TimbreA,TimbreB,TimbreA+B", "FX", "prefx_sw"),
+  createParam("",  2, "PreFX Drive/Freq",  0x00, 0x02, null, "FX", "prefx_drive"),
+  createParam("",  3, "ModFX Type",        0x00, 0x03, null, "FX", "modfx_type"),
+  createParam("",  4, "ModFX SW",          0x00, 0x04, "Off,TimbreA,TimbreB,TimbreA+B", "FX", "modfx_sw"),
+  createParam("",  5, "ModFX Depth",       0x00, 0x05, null, "FX", "modfx_depth"),
+  createParam("",  6, "ModFX Speed",       0x00, 0x06, null, "FX", "modfx_speed"),
+  createParam("",  7, "Rev/Dly Type",      0x00, 0x07, null, "FX", "revdly_type"),
+  createParam("",  8, "Rev/Dly SW",        0x00, 0x08, "Off,TimbreA,TimbreB,TimbreA+B", "FX", "revdly_sw"),
+  createParam("",  9, "Rev/Dly Depth",     0x00, 0x09, null, "FX", "revdly_depth"),
+  createParam("", 10, "Rev/Dly Speed",     0x00, 0x0A, null, "FX", "revdly_speed")
 ];
 
 let vocoderParameters = () => [
   // Switch
-  new Parameter(  0, "SW",                  0x00, 0x00, "Dis,Ena", null, "sw"),
+  createParam("",  0, "SW",                  0x00, 0x00, "Dis,Ena", null, "sw"),
 
   // Carrier
-  new Parameter(  1, "TimbreA Level",       0x00, 0x01, null, "Carrier", "timbre_a_level"),
-  new Parameter(  2, "TimbreB Level",       0x00, 0x02, null, "Carrier", "timbre_b_level"),
+  createParam("",  1, "TimbreA Level",       0x00, 0x01, null, "Carrier", "timbre_a_level"),
+  createParam("",  2, "TimbreB Level",       0x00, 0x02, null, "Carrier", "timbre_b_level"),
 
   // Modulator
-  new Parameter(  3, "Audio Source",        0x00, 0x03, null,       "Modulator", "audio_source"),
-  new Parameter(  4, "Gate Sens",           0x00, 0x04, null,       "Modulator", "gate_sens"),
-  new Parameter(  5, "Threshold",           0x00, 0x05, null,       "Modulator", "threshold"),
-  new Parameter(  6, "HPF Level",           0x00, 0x06, null,       "Modulator", "hpf_level"),
-  new Parameter(  7, "HPF Gate",            0x00, 0x07, "Dis,Ena",  "Modulator", "hpf_gate"),
+  createParam("",  3, "Audio Source",        0x00, 0x03, null,       "Modulator", "audio_source"),
+  createParam("",  4, "Gate Sens",           0x00, 0x04, null,       "Modulator", "gate_sens"),
+  createParam("",  5, "Threshold",           0x00, 0x05, null,       "Modulator", "threshold"),
+  createParam("",  6, "HPF Level",           0x00, 0x06, null,       "Modulator", "hpf_level"),
+  createParam("",  7, "HPF Gate",            0x00, 0x07, "Dis,Ena",  "Modulator", "hpf_gate"),
 
   // Filter
-  new Parameter(  8, "Formanto Shift",      0x00, 0x08, null, "Filter", "formanto_shift"),
-  new Parameter(  9, "Fc offset",           0x00, 0x09, null, "Filter", "fc_offset"),
-  new Parameter( 10, "Resonance",           0x00, 0x00, null, "Filter", "fc_resonance"),
-  new Parameter( 11, "Fc Mod Source",       0x00, 0x10, null, "Filter", "fc_mod_source"),
-  new Parameter( 12, "Fc Mod Intensity",    0x00, 0x11, null, "Filter", "fc_mod_int"),
-  new Parameter( 13, "E.F.Sens",            0x00, 0x12, null, "Filter", "ef_sens"),
+  createParam("",  8, "Formanto Shift",      0x00, 0x08, null, "Filter", "formanto_shift"),
+  createParam("",  9, "Fc offset",           0x00, 0x09, null, "Filter", "fc_offset"),
+  createParam("", 10, "Resonance",           0x00, 0x00, null, "Filter", "fc_resonance"),
+  createParam("", 11, "Fc Mod Source",       0x00, 0x10, null, "Filter", "fc_mod_source"),
+  createParam("", 12, "Fc Mod Intensity",    0x00, 0x11, null, "Filter", "fc_mod_int"),
+  createParam("", 13, "E.F.Sens",            0x00, 0x12, null, "Filter", "ef_sens"),
 
   // Formant Hold Data
-  new Parameter( 16, "Band 1",              0x00, 0x0E, null, "Formant Hold", "band1", 2),
-  new Parameter( 18, "Band 2",              0x00, 0x0F, null, "Formant Hold", "band2", 2),
-  new Parameter( 20, "Band 3",              0x00, 0x10, null, "Formant Hold", "band1", 2),
-  new Parameter( 22, "Band 4",              0x00, 0x11, null, "Formant Hold", "band2", 2),
-  new Parameter( 24, "Band 5",              0x00, 0x12, null, "Formant Hold", "band1", 2),
-  new Parameter( 26, "Band 6",              0x00, 0x13, null, "Formant Hold", "band2", 2),
-  new Parameter( 28, "Band 7",              0x00, 0x14, null, "Formant Hold", "band1", 2),
-  new Parameter( 30, "Band 8",              0x00, 0x15, null, "Formant Hold", "band2", 2),
-  new Parameter( 32, "Band 9",              0x00, 0x16, null, "Formant Hold", "band1", 2),
-  new Parameter( 34, "Band 10",             0x00, 0x17, null, "Formant Hold", "band2", 2),
-  new Parameter( 36, "Band 11",             0x00, 0x18, null, "Formant Hold", "band1", 2),
-  new Parameter( 38, "Band 12",             0x00, 0x19, null, "Formant Hold", "band2", 2),
-  new Parameter( 40, "Band 13",             0x00, 0x1A, null, "Formant Hold", "band1", 2),
-  new Parameter( 42, "Band 14",             0x00, 0x1B, null, "Formant Hold", "band2", 2),
-  new Parameter( 44, "Band 15",             0x00, 0x1C, null, "Formant Hold", "band1", 2),
-  new Parameter( 46, "Band 16",             0x00, 0x1D, null, "Formant Hold", "band2", 2),
+  createParam("", 16, "Band 1",              0x00, 0x0E, null, "Formant Hold", "band1", 2),
+  createParam("", 18, "Band 2",              0x00, 0x0F, null, "Formant Hold", "band2", 2),
+  createParam("", 20, "Band 3",              0x00, 0x10, null, "Formant Hold", "band1", 2),
+  createParam("", 22, "Band 4",              0x00, 0x11, null, "Formant Hold", "band2", 2),
+  createParam("", 24, "Band 5",              0x00, 0x12, null, "Formant Hold", "band1", 2),
+  createParam("", 26, "Band 6",              0x00, 0x13, null, "Formant Hold", "band2", 2),
+  createParam("", 28, "Band 7",              0x00, 0x14, null, "Formant Hold", "band1", 2),
+  createParam("", 30, "Band 8",              0x00, 0x15, null, "Formant Hold", "band2", 2),
+  createParam("", 32, "Band 9",              0x00, 0x16, null, "Formant Hold", "band1", 2),
+  createParam("", 34, "Band 10",             0x00, 0x17, null, "Formant Hold", "band2", 2),
+  createParam("", 36, "Band 11",             0x00, 0x18, null, "Formant Hold", "band1", 2),
+  createParam("", 38, "Band 12",             0x00, 0x19, null, "Formant Hold", "band2", 2),
+  createParam("", 40, "Band 13",             0x00, 0x1A, null, "Formant Hold", "band1", 2),
+  createParam("", 42, "Band 14",             0x00, 0x1B, null, "Formant Hold", "band2", 2),
+  createParam("", 44, "Band 15",             0x00, 0x1C, null, "Formant Hold", "band1", 2),
+  createParam("", 46, "Band 16",             0x00, 0x1D, null, "Formant Hold", "band2", 2),
 
   // Amp
-  new Parameter( 48, "Vocoder Level",       0x00, 0x1E, null, "Amp", "vocoder_level"),
-  new Parameter( 49, "Direct Level",        0x00, 0x1F, null, "Amp", "direct_level"),
-  new Parameter( 50, "Wet Spread",          0x00, 0x20, null, "Amp", "wet_spread"),
-  new Parameter( 51, "Wet Level",           0x00, 0x21, null, "Amp", "wet_level")
+  createParam("", 48, "Vocoder Level",       0x00, 0x1E, null, "Amp", "vocoder_level"),
+  createParam("", 49, "Direct Level",        0x00, 0x1F, null, "Amp", "direct_level"),
+  createParam("", 50, "Wet Spread",          0x00, 0x20, null, "Amp", "wet_spread"),
+  createParam("", 51, "Wet Level",           0x00, 0x21, null, "Amp", "wet_level")
 ];
 
 let arpeggioParameters = () => [
-  new Parameter(  0, "Tempo",               0x00, 0x01, null,     null, "tempo", 2),
-  new Parameter(  2, "Arp SW",              0x00, 0x00, "Off,On", null, "arp_sw"),
-  new Parameter(  3, "Latch",               0x00, 0x02, "Off,On", null, "latch"),
-  new Parameter(  4, "Key Sync",            0x00, 0x03, "Off,On", null, "key_sync"),
-  new Parameter(  5, "Timbre Assign",       0x00, 0x04, "Off,On", null, "timbre_assign"),
-  new Parameter(  6, "Type",                0x00, 0x05, null,     null, "type"),
-  new Parameter(  7, "Resolution",          0x00, 0x06, null,     null, "resolution"),
-  new Parameter(  8, "gate time",           0x00, 0x07, null,     null, "gate_time"),
-  new Parameter(  9, "Swing",               0x00, 0x08, null,     null, "swing"),
-  new Parameter( 10, "Last step",           0x00, 0x09, null,     null, "last_step"),
-  new Parameter( 11, "Octave Range",        0x00, 0x0A, null,     null, "octave_range"),
+  createParam("",  0, "Tempo",               0x00, 0x01, null,     null, "tempo", 2),
+  createParam("",  2, "Arp SW",              0x00, 0x00, "Off,On", null, "arp_sw"),
+  createParam("",  3, "Latch",               0x00, 0x02, "Off,On", null, "latch"),
+  createParam("",  4, "Key Sync",            0x00, 0x03, "Off,On", null, "key_sync"),
+  createParam("",  5, "Timbre Assign",       0x00, 0x04, "Off,On", null, "timbre_assign"),
+  createParam("",  6, "Type",                0x00, 0x05, null,     null, "type"),
+  createParam("",  7, "Resolution",          0x00, 0x06, null,     null, "resolution"),
+  createParam("",  8, "gate time",           0x00, 0x07, null,     null, "gate_time"),
+  createParam("",  9, "Swing",               0x00, 0x08, null,     null, "swing"),
+  createParam("", 10, "Last step",           0x00, 0x09, null,     null, "last_step"),
+  createParam("", 11, "Octave Range",        0x00, 0x0A, null,     null, "octave_range"),
 
   // TODO: implement bit parameter? this is a group of bits
   // Step
-  new Parameter( 12, "Step",                0x00, 0x0B, "Off,On", null, "step")
+  createParam("", 12, "Step",                0x00, 0x0B, "Off,On", null, "step")
 ];
 
 

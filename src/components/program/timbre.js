@@ -84,14 +84,14 @@ class Timbre extends React.Component {
           </div>
           <div className="timbre__block">
             <b>Filter</b>
-            <Control {...this.getControlParameter("filter_type")} />
-            <Control {...this.getControlParameter("filter_cutoff")} />
-            <Control {...this.getControlParameter("filter_resonance")} />
-            <Control {...this.getControlParameter("filter_eg1int")} />
-            <Control {...this.getControlParameter("filter_lfo1modint")} />
-            <Control {...this.getControlParameter("filter_lfo1jsy")} />
-            <Control {...this.getControlParameter("filter_keytrack")} />
-            <Control {...this.getControlParameter("filter_velocitysens")} />
+            <Control {...this.getControlParameter("type")} />
+            <Control {...this.getControlParameter("cutoff")} />
+            <Control {...this.getControlParameter("resonance")} />
+            <Control {...this.getControlParameter("eg1_intensity")} />
+            <Control {...this.getControlParameter("lfo1_mod_int")} />
+            <Control {...this.getControlParameter("lfo1_js-y")} />
+            <Control {...this.getControlParameter("keyboard_track")} />
+            <Control {...this.getControlParameter("velocity_sens")} />
           </div>
           <div className="timbre__block">
             <b>Mixer</b>
@@ -101,10 +101,10 @@ class Timbre extends React.Component {
           </div>
           <div className="timbre__block">
             <b>Amp</b>
-            <Control {...this.getControlParameter("amp_level")} />
-            <Control {...this.getControlParameter("amp_pan")} />
-            <Control {...this.getControlParameter("amp_punch")} />
-            <Control {...this.getControlParameter("amp_keytrack")} />
+            <Control {...this.getControlParameter("level")} />
+            <Control {...this.getControlParameter("panpot")} />
+            <Control {...this.getControlParameter("punch_level")} />
+            <Control {...this.getControlParameter("key_track")} />
           </div>
           <div className="timbre__block">
             <b>LFO 1</b>

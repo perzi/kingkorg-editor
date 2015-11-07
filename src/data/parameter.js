@@ -91,7 +91,11 @@ class Parameter {
         value = lookup.length - 1
       }
 
-      return lookup[value];
+      if (typeof lookup.values === "object") {
+        return lookup.values[value];
+      } else {
+        return lookup[value];
+      }
     }
 
     if (typeof lookup === "function") {
