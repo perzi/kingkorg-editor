@@ -10,7 +10,7 @@ source_data.refs.forEach((dataString) => {
   refs[data.id] = data;
 });
 
-// TODO: the hard lookup values to parse can be generated and put in refs beforehand 
+// TODO: the hard lookup values to parse can be generated and put in refs beforehand
 
 let parseValueString = (s) => {
 
@@ -63,8 +63,7 @@ let createParam = function(sourceString, offset, name, midiId, midiSubId, lookup
 
     // No id supplied
     if (typeof id === "undefined") {
-      id = name.toLowerCase().replace(/[&\.]*/g, "").replace(/\s+/g, "_");
-      console.log(id);
+      id = name.toLowerCase().replace(/[^\s\w_-]*/g, "").replace(/\s+/g, "_");
     }
   }
 
@@ -142,8 +141,23 @@ let timbreParameters = () => {
     new ParamGroup( 60, "EG 2", 0x00, 0x2F, egParameters(), "EG", "eg_2"),
 
     // LFO
-    new ParamGroup( 68, "LFO 1", 0x00, 0x34, lfoParameters(1), "LFO", "lfo_1"),
-    new ParamGroup( 76, "LOF 2", 0x00, 0x39, lfoParameters(2), "LFO", "lfo_2")
+//    new ParamGroup( 68, "LFO 1", 0x00, 0x34, [
+    new ParamGroup( 0, "LFO 1", 0x00, 0x00, [
+      createParam("| +68       | Wave              | 0~4:Saw,Square,Triangle,S/H,Random   | +0:34    |", "LFO 1"),
+      createParam("| +69       | Frequency         | 0~127:0.01~100[kHz]           *T02-4 | +0:35    |", "LFO 1"),
+      createParam("| +70       | Key Sync          | 0~2:Off,Timbre,Voice                 | +0:36    |", "LFO 1"),
+      createParam("| +71       | Tempo Sync        | 0,1:Off,On                           | +0:37    |", "LFO 1"),
+      createParam("| +72       | Sync Note         | 0~16:8/1~1/64                 *T02-5 | +0:38    |", "LFO 1")
+    ], "LFO", "lfo_1"),
+
+//    new ParamGroup( 76, "LFO 2", 0x00, 0x39, [
+    new ParamGroup( 0, "LFO 2", 0x00, 0x00, [
+      createParam("| +76       | Wave              | 0~4:Saw,Square+,Sine,S/H,Random      | +0:39    |", "LFO 2"),
+      createParam("| +77       | Frequency         | 0~127:0.01~100[kHz]           *T02-4 | +0:3A    |", "LFO 2"),
+      createParam("| +78       | Key Sync          | 0~2:Off,Timbre,Voice                 | +0:3B    |", "LFO 2"),
+      createParam("| +79       | Tempo Sync        | 0,1:Off,On                           | +0:3C    |", "LFO 2"),
+      createParam("| +80       | Sync Note         | 0~16:8/1~1/64                 *T02-5 | +0:3D    |", "LFO 2")
+    ], "LFO", "lfo_2")
   ];
 };
 
@@ -159,24 +173,29 @@ let oscParameters = () => {
 
 let egParameters = () => {
   return [
-    createParam("",  0, "Attack",    0x00, 0x00, null, "EG", "attack"),
-    createParam("",  1, "Decay",     0x00, 0x01, null, "EG", "decay"),
-    createParam("",  2, "Sustain",   0x00, 0x02, null, "EG", "sustain"),
-    createParam("",  3, "Release",   0x00, 0x03, null, "EG", "release"),
-    createParam("",  4, "Level Velo Int.", 0x00, 0x04, "-63~0~63", "EG", "lvl_velo_int")
+    createParam("| +0        | Attack Time       | 0~127                                | +0:+0    |", "EG"),
+    createParam("| +1        | Decay Time        | 0~127                                | +0:+1    |", "EG"),
+    createParam("| +2        | Sustain Level     | 0~127                                | +0:+2    |", "EG"),
+    createParam("| +3        | Release Time      | 0~127                                | +0:+3    |", "EG"),
+    createParam("| +4        | Level Velo Int.   | -63~0~63                             | +0:+4    |", "EG")
+    // createParam("",  0, "Attack",    0x00, 0x00, null, "EG", "attack"),
+    // createParam("",  1, "Decay",     0x00, 0x01, null, "EG", "decay"),
+    // createParam("",  2, "Sustain",   0x00, 0x02, null, "EG", "sustain"),
+    // createParam("",  3, "Release",   0x00, 0x03, null, "EG", "release"),
+    // createParam("",  4, "Level Velo Int.", 0x00, 0x04, "-63~0~63", "EG", "lvl_velo_int")
   ]
 };
 
-let lfoParameters = (lfoNum) => {
-  // TODO: different wave lookups for each LFO
-  return [
-    createParam("",  0, "Wave",       0x00, 0x00, null, "LFO", "wave"),
-    createParam("",  1, "Freqency",   0x00, 0x01, null, "LFO", "frequency"),
-    createParam("",  2, "Key Sync",   0x00, 0x02, null, "LFO", "key_sync"),
-    createParam("",  3, "Tempo Sync", 0x00, 0x03, null, "LFO", "tempo_sync"),
-    createParam("",  4, "Sync Note",  0x00, 0x04, null, "LFO", "sync_note")
-  ]
-};
+// let lfoParameters = (lfoNum) => {
+//   // TODO: different wave lookups for each LFO
+//   return [
+//     createParam("",  0, "Wave",       0x00, 0x00, null, "LFO", "wave"),
+//     createParam("",  1, "Freqency",   0x00, 0x01, null, "LFO", "frequency"),
+//     createParam("",  2, "Key Sync",   0x00, 0x02, null, "LFO", "key_sync"),
+//     createParam("",  3, "Tempo Sync", 0x00, 0x03, null, "LFO", "tempo_sync"),
+//     createParam("",  4, "Sync Note",  0x00, 0x04, null, "LFO", "sync_note")
+//   ]
+// };
 
 let vPatchParameters = () => [
   new ParamGroup( 0, "V.Patch 1", 0x00, 0x00, vPatchParameter(), "VPATCH", "vpatch_1"),

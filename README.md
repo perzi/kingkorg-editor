@@ -19,7 +19,7 @@ Make sure you have installed NodeJS and NPM first and that you can run them from
 
 The documentation has some errors
 
-* Not list for oscillator names
+* OSC Type refers to *4-1 but that is the unison sw option
 
 * *T10-4 has values in brackets [x] where all other tables are without
   And missing : after 8

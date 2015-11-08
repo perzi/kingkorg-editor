@@ -25,10 +25,10 @@ class EG extends React.Component {
     let parameter = this.props.parentParameter.getParameter(this.props.id);
     let data = this.props.data;
 
-    let A = this.calculateChildValue(parameter, "attack");
-    let D = this.calculateChildValue(parameter, "decay");
-    let S = this.calculateChildValue(parameter, "sustain");
-    let R = this.calculateChildValue(parameter, "release");
+    let A = this.calculateChildValue(parameter, "attack_time");
+    let D = this.calculateChildValue(parameter, "decay_time");
+    let S = this.calculateChildValue(parameter, "sustain_level");
+    let R = this.calculateChildValue(parameter, "release_time");
 
     return (
       <div className="eg">
@@ -36,11 +36,11 @@ class EG extends React.Component {
           <ADSR width={240} height={80} A={A} D={D} S={S} R={R}/>
         </div>
         <div className="eg__controls">
-          <Control id="attack" data={this.props.data} parentParameter={parameter} />
-          <Control id="decay" data={this.props.data} parentParameter={parameter} />
-          <Control id="sustain" data={this.props.data} parentParameter={parameter} />
-          <Control id="release" data={this.props.data} parentParameter={parameter} />
-          <Control id="lvl_velo_int" data={this.props.data} parentParameter={parameter} />
+          <Control id="attack_time" data={this.props.data} parentParameter={parameter} />
+          <Control id="decay_time" data={this.props.data} parentParameter={parameter} />
+          <Control id="sustain_level" data={this.props.data} parentParameter={parameter} />
+          <Control id="release_time" data={this.props.data} parentParameter={parameter} />
+          <Control id="level_velo_int" data={this.props.data} parentParameter={parameter} />
         </div>
       </div>
     );
