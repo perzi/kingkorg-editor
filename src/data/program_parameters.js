@@ -207,23 +207,34 @@ let vPatchParameters = () => [
 ];
 
 let vPatchParameter = () => [
-  createParam("",  0, "Source",      0x00, 0x00, null, "EG", "source"),
-  createParam("",  1, "Destination", 0x00, 0x01, null, "EG", "destination"),
-  createParam("",  2, "Intensity",   0x00, 0x02, null, "EG", "intensity")
+  createParam("| +0        | Patch Source      | 0~11:EG1~MIDI3                *T05-1 | +0:+0    |"),
+  createParam("| +1        | Patch Destination | 0~41:Off~Rev/Delay Time       *T09-1 | +0:+1    |"),
+  createParam("| +2        | Patch Intensity   | -63~0~63                             | +0:+2    |")
 ];
 
 let fxParameters = () => [
-  createParam("",  0, "PreFX Type",        0x00, 0x00, null, "FX", "prefx_type"),
-  createParam("",  1, "PreFX SW",          0x00, 0x01, "Off,TimbreA,TimbreB,TimbreA+B", "FX", "prefx_sw"),
-  createParam("",  2, "PreFX Drive/Freq",  0x00, 0x02, null, "FX", "prefx_drive"),
-  createParam("",  3, "ModFX Type",        0x00, 0x03, null, "FX", "modfx_type"),
-  createParam("",  4, "ModFX SW",          0x00, 0x04, "Off,TimbreA,TimbreB,TimbreA+B", "FX", "modfx_sw"),
-  createParam("",  5, "ModFX Depth",       0x00, 0x05, null, "FX", "modfx_depth"),
-  createParam("",  6, "ModFX Speed",       0x00, 0x06, null, "FX", "modfx_speed"),
-  createParam("",  7, "Rev/Dly Type",      0x00, 0x07, null, "FX", "revdly_type"),
-  createParam("",  8, "Rev/Dly SW",        0x00, 0x08, "Off,TimbreA,TimbreB,TimbreA+B", "FX", "revdly_sw"),
-  createParam("",  9, "Rev/Dly Depth",     0x00, 0x09, null, "FX", "revdly_depth"),
-  createParam("", 10, "Rev/Dly Speed",     0x00, 0x0A, null, "FX", "revdly_speed")
+  createParam("| +0        | PreFX Type        | 0~5:DISTORTION~TONE           *T04-1 | 06:00    |", "FX"),
+  createParam("| +1        | PreFX SW          | 0~3:Off,TimbreA,TimbreB,TimbreA+B    | 06:01    |", "FX"),
+  createParam("| +2        | PreFX Drive/Freq  | 0~127                           *4-9 | 06:02    |", "FX"),
+  createParam("| +3        | ModFX Type        | 0~5:FLANGER~ROTARY            *T04-2 | 06:03    |", "FX"),
+  createParam("| +4        | ModFX SW          | 0~3:Off,TimbreA,TimbreB,TimbreA+B    | 06:04    |", "FX"),
+  createParam("| +5        | ModFX Depth       | 0~127                                | 06:05    |", "FX"),
+  createParam("| +6        | ModFX Speed       | 0~127                                | 06:06    |", "FX"),
+  createParam("| +7        | Rev/Dly Type      | 0~5:HALL~BPM DELAY            *T04-3 | 06:07    |", "FX"),
+  createParam("| +8        | Rev/Dly SW        | 0~3:Off,TimbreA,TimbreB,TimbreA+B    | 06:08    |", "FX"),
+  createParam("| +9        | Rev/Dly Depth     | 0~127                                | 06:09    |", "FX"),
+  createParam("| +10       | Rev/Dly Time      | 0~127                          *4-10 | 06:0A    |", "FX")  
+  // createParam("",  0, "PreFX Type",        0x00, 0x00, null, "FX", "prefx_type"),
+  // createParam("",  1, "PreFX SW",          0x00, 0x01, "Off,TimbreA,TimbreB,TimbreA+B", "FX", "prefx_sw"),
+  // createParam("",  2, "PreFX Drive/Freq",  0x00, 0x02, null, "FX", "prefx_drive"),
+  // createParam("",  3, "ModFX Type",        0x00, 0x03, null, "FX", "modfx_type"),
+  // createParam("",  4, "ModFX SW",          0x00, 0x04, "Off,TimbreA,TimbreB,TimbreA+B", "FX", "modfx_sw"),
+  // createParam("",  5, "ModFX Depth",       0x00, 0x05, null, "FX", "modfx_depth"),
+  // createParam("",  6, "ModFX Speed",       0x00, 0x06, null, "FX", "modfx_speed"),
+  // createParam("",  7, "Rev/Dly Type",      0x00, 0x07, null, "FX", "revdly_type"),
+  // createParam("",  8, "Rev/Dly SW",        0x00, 0x08, "Off,TimbreA,TimbreB,TimbreA+B", "FX", "revdly_sw"),
+  // createParam("",  9, "Rev/Dly Depth",     0x00, 0x09, null, "FX", "revdly_depth"),
+  // createParam("", 10, "Rev/Dly Speed",     0x00, 0x0A, null, "FX", "revdly_speed")
 ];
 
 let vocoderParameters = () => [
