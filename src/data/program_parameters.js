@@ -5,12 +5,25 @@ import parser from './parser'
 
 var refs = {};
 
-source_data.refs.forEach((dataString) => {
-  let data = parser.parseValueTable(dataString);
-  refs[data.id] = data;
-});
+let generateSplitKeyMap = () => {
 
-// TODO: the hard lookup values to parse can be generated and put in refs beforehand
+  let keys = "C,C#,D,D#,E,F,F#,G,G#,A,A#,B".split(",");
+  let map = {};
+
+  for (let value = 0; value <= 127; value++) {
+    let k = value % 12;
+    let o = Math.floor(value / 12) + 1;
+    map[value] = keys[k] + "-" + o;
+  }
+
+  return {
+    id: "split_key",
+    name: "Split Key",
+    min: 0,
+    max: 127,
+    values: map
+  };
+};
 
 let parseValueString = (s) => {
 
@@ -23,6 +36,19 @@ let parseValueString = (s) => {
 
   return result;
 }
+
+// Add parsed values to string
+source_data.refs.forEach((dataString) => {
+  let data = parser.parseValueTable(dataString);
+  refs[data.id] = data;
+});
+
+// Add hard parsed values
+refs["0~127:C-1~G9"] = generateSplitKeyMap()
+
+
+// TODO: the hard lookup values to parse can be generated and put in refs beforehand
+
 
 
 let createParam = function(sourceString, offset, name, midiId, midiSubId, lookup, category, id, length) {
@@ -50,7 +76,7 @@ let createParam = function(sourceString, offset, name, midiId, midiSubId, lookup
 
     let offsetString = sourceString.substring.apply(sourceString, rangeOffset).trim();
     let nameString = sourceString.substring.apply(sourceString, rangeParameter).trim();
-    let valueString = sourceString.substring.apply(sourceString, rangeValue);
+    let valueString = sourceString.substring.apply(sourceString, rangeValue).trim();
     let midiIdString = sourceString.substring.apply(sourceString, rangeMidiId).trim();
 
     offset = parseInt(offsetString, 10);
@@ -73,10 +99,10 @@ let createParam = function(sourceString, offset, name, midiId, midiSubId, lookup
 let programParameters = () => {
   return new ParamGroup(0, "Program", 0x00, 0x00, [
       createParam("",   0, "Program Name",      0x00, 0x00, lookupName, null, "program_name", 12),
-      createParam("",  12, "Category",          0x00, 0x0C, "Synth,Lead,Bass,Brass,Strings,Piano,Key,SE/Voc,User", null, "category"),
-      createParam("",  13, "Voice Mode",        0x00, 0x0D, "Single,Layer,Split",  null, "voice_mode"),
-      createParam("",  14, "TimbreB MIDI Ch.",  0x00, 0x0E, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,Global", null, "timbreb_midi_ch"),
-      createParam("",  15, "Split Key",         0x00, 0x0F, lookupSplitKey),
+      createParam("| 12        | category          | 0~8:Synth~User                *T01-1 | 00:0C    |"),
+      createParam("| 13        | Voice Mode        | 0~2:Single,Layer,Split               | 00:0D    |"),
+      createParam("| 14        | TimbreB MIDI Ch.  | 0~15,16~:1~16,Global                 | 00:0E    |"),
+      createParam("| 15        | Split Key         | 0~127:C-1~G9                         | 00:0F    |"),
       new ParamGroup( 16, "Timbre A",          0x20, 0x00, timbreParameters(),    null, "timbre_a"),
       new ParamGroup(100, "V.Patch A",         0x30, 0x00, vPatchParameters(),    null, "vpatch_a"),
       new ParamGroup(124, "Timbre B",          0x40, 0x00, timbreParameters(),    null, "timbre_b"),
@@ -223,7 +249,7 @@ let fxParameters = () => [
   createParam("| +7        | Rev/Dly Type      | 0~5:HALL~BPM DELAY            *T04-3 | 06:07    |", "FX"),
   createParam("| +8        | Rev/Dly SW        | 0~3:Off,TimbreA,TimbreB,TimbreA+B    | 06:08    |", "FX"),
   createParam("| +9        | Rev/Dly Depth     | 0~127                                | 06:09    |", "FX"),
-  createParam("| +10       | Rev/Dly Time      | 0~127                          *4-10 | 06:0A    |", "FX")  
+  createParam("| +10       | Rev/Dly Time      | 0~127                          *4-10 | 06:0A    |", "FX")
   // createParam("",  0, "PreFX Type",        0x00, 0x00, null, "FX", "prefx_type"),
   // createParam("",  1, "PreFX SW",          0x00, 0x01, "Off,TimbreA,TimbreB,TimbreA+B", "FX", "prefx_sw"),
   // createParam("",  2, "PreFX Drive/Freq",  0x00, 0x02, null, "FX", "prefx_drive"),
@@ -344,6 +370,8 @@ let lookupSplitKey = (value, data) => {
 
   return getKey(value);
 };
+
+
 
 
 let oscTypeRawDictionary = [
