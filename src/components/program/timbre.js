@@ -31,11 +31,12 @@ class Timbre extends React.Component {
     };
   }
 
-  getControlParameter(id) {
+  getControlParameter(id, type = "simple") {
     return {
       data: this.props.data,
       parentParameter: this.props.parameter,
-      id: id
+      id,
+      type
     }
   }
 
@@ -66,10 +67,10 @@ class Timbre extends React.Component {
         <div className="timbre__blocks">
           <div className="timbre__block">
             <b>Voice</b>
-            <Control {...this.getControlParameter("voice_assign")} />
+            <Control {...this.getControlParameter("voice_assign", "select")} />
             <Control {...this.getControlParameter("unison_sw")} />
-            <Control {...this.getControlParameter("unison_detune")} />
-            <Control {...this.getControlParameter("unison_spread")} />
+            <Control {...this.getControlParameter("unison_detune", "select")} />
+            <Control {...this.getControlParameter("unison_spread", "select")} />
           </div>
           <div className="timbre__block">
             <b>Pitch</b>
