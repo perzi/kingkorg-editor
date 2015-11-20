@@ -50,10 +50,11 @@ class Simple extends React.Component {
         onDragStart={this.handleDragStart.bind(this)}
         onDrag={this.handleDrag.bind(this)}
         onDragEnd={this.handleDragEnd.bind(this)}
-        draggable="true"      >
-        <div className="simple__name">{this.props.name}</div>
+        draggable="true"
+      >
+        <div className="simple__name">{this.props.name} ({this.props.value})</div>
         <div className="simple__value">{this.props.text}</div>
-        <img ref="dragPreview" style={{display: "none", visibility: "hidden"}} src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP4Xw8AAoABf5/NhYYAAAAASUVORK5CYII=" />
+        <div ref="dragPreview" style={{display: "none", visibility: "hidden"}} />
       </div>
     );
   }
