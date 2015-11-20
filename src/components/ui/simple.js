@@ -60,7 +60,7 @@ class Simple extends React.Component {
 }
 
 Simple.propTypes = {
-  onChange: React.PropTypes.function,
+  onChange: React.PropTypes.func,
   name: React.PropTypes.string.isRequired,
   value: React.PropTypes.number.isRequired,
   text: React.PropTypes.string,

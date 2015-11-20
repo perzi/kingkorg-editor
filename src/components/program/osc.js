@@ -84,7 +84,7 @@ class Osc extends React.Component {
 
 
 Osc.propTypes = {
-  onChange: React.PropTypes.function,
+  onChange: React.PropTypes.func,
   offset: React.PropTypes.number.isRequired,
   parameter: React.PropTypes.object.isRequired,
   data: React.PropTypes.object.isRequired

@@ -76,7 +76,7 @@ class Knob extends React.Component {
 }
 
 Knob.propTypes = {
-  onChange: React.PropTypes.function,
+  onChange: React.PropTypes.func,
   name: React.PropTypes.string.isRequired,
   value: React.PropTypes.number.isRequired,
   className: React.PropTypes.string.isRequired,
