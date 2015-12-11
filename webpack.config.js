@@ -37,9 +37,12 @@ module.exports = {
   module: {
     loaders: [
       {
-        test: /\.js?$/,
+        test: /\.jsx?$/,
         exclude: /node_modules/,
-        loader: 'babel?cacheDirectory'
+        loader: 'babel-loader',
+        query: {
+          presets: ['es2015']
+        }
       },
       {
         test: /\.sass$/,
