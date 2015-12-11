@@ -2,6 +2,7 @@ import React      from 'react';
 import { connect } from 'react-redux';
 
 import { updateCurrentProgramParam } from 'actions/actions';
+import Knob       from 'components/ui/knob';
 import Simple     from 'components/ui/simple';
 import Select     from 'components/ui/select';
 import program    from 'data/program_parameters';
@@ -43,7 +44,11 @@ class Control extends React.Component {
   render() {
     // TODO: add props to render different type of controls
 
-    if (this.props.type === "select") {
+    if (this.props.type === "knob" || this.props.type === "cknob") {
+      return (
+        <Knob {...this.getParameterProps()} center={this.props.type === "cknob"} />
+      );
+    } else if (this.props.type === "select") {
       return (
         <Select {...this.getParameterProps()} />
       );
