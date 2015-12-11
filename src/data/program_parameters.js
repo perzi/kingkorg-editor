@@ -25,6 +25,22 @@ let generateSplitKeyMap = () => {
   };
 };
 
+let generateUnisonSW= () => {
+
+  return {
+    id: "unison_sw",
+    name: "Unison SW",
+    min: 0,
+    max: 3,
+    values: {
+      0: "OFF",
+      1: "2Voice",
+      2: "3Voice",
+      3: "4Voice"
+    }
+  };
+};
+
 let parseValueString = (s) => {
 
   if (refs[s]) {
@@ -45,6 +61,7 @@ source_data.refs.forEach((dataString) => {
 
 // Add hard parsed values
 refs["0~127:C-1~G9"] = generateSplitKeyMap()
+refs["0,1~3:OFF,2Voice~4Voice"] = generateUnisonSW()
 
 
 // TODO: the hard lookup values to parse can be generated and put in refs beforehand
@@ -118,7 +135,7 @@ let timbreParameters = () => {
   return [
     // Voice
     createParam("| +0        | Voice Assign      | 0~2:Mono1,Mono2,Poly                 | +0:00    |", "Voice"),
-    createParam(null,  1, "Unison SW",            0x00, 0x01, null, "Voice", "unison_sw"),
+    createParam("| +1        | Unison SW         | 0,1~3:OFF,2Voice~4Voice              | +0:01    |"),
     createParam("| +2        | Unison Detune     | 0~99:0~99[cent]                      | +0:02    |", "Voice"),
     createParam("| +3        | Unison Spread     | 0~127                                | +0:03    |", "Voice"),
 
