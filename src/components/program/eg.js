@@ -36,11 +36,11 @@ class EG extends React.Component {
           <ADSR width={240} height={80} A={A} D={D} S={S} R={R}/>
         </div>
         <div className="eg__controls">
-          <Control id="attack_time" data={this.props.data} parentParameter={parameter} />
-          <Control id="decay_time" data={this.props.data} parentParameter={parameter} />
-          <Control id="sustain_level" data={this.props.data} parentParameter={parameter} />
-          <Control id="release_time" data={this.props.data} parentParameter={parameter} />
-          <Control id="level_velo_int" data={this.props.data} parentParameter={parameter} />
+          <Control id="attack_time" data={this.props.data} parentParameter={parameter} type="knob" />
+          <Control id="decay_time" data={this.props.data} parentParameter={parameter} type="knob" />
+          <Control id="sustain_level" data={this.props.data} parentParameter={parameter} type="knob" />
+          <Control id="release_time" data={this.props.data} parentParameter={parameter} type="knob" />
+          <Control id="level_velo_int" data={this.props.data} parentParameter={parameter} type="knob" />
         </div>
       </div>
     );

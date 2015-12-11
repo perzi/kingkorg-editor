@@ -69,13 +69,13 @@ class Osc extends React.Component {
     let ctrl2Name = oscTypeDef ? oscTypeDef.ctrl2Name : undefined;
 
     return (
-        <div className="osc">
-          <div className="osc__control">{this.renderSimple(0, true)}</div>
-          <div className="osc__control">{this.renderSimple(1, visible)}</div>
-          <div className="osc__control">{this.renderSimple(2, visible)}</div>
-          <div className="osc__control">{this.renderSimple(3, visible, ctrl1Name)}</div>
-          <div className="osc__control">{this.renderSimple(4, visible, ctrl2Name)}</div>
-        </div>
+      <div className="osc">
+        <div className="osc__control">{this.renderSimple(0, true)}</div>
+        <div className="osc__control">{this.renderSimple(1, visible)}</div>
+        <div className="osc__control">{this.renderSimple(2, visible)}</div>
+        <div className="osc__control">{this.renderSimple(3, visible, ctrl1Name)}</div>
+        <div className="osc__control">{this.renderSimple(4, visible, ctrl2Name)}</div>
+      </div>
     );
   }
 }
