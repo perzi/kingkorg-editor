@@ -104,6 +104,20 @@ class Parameter {
 
     return new String(value);
   }
+
+  getAllValues() {
+    let lookup = this.lookup;
+
+    if (lookup && typeof lookup === "object") {
+      if (typeof lookup.values === "object") {
+        return lookup;
+      }
+    }
+  }
+
+
+
 }
+
 
 export default Parameter;
