@@ -48,38 +48,87 @@
     display: inline-block
     margin-left: 2em
 
+
+$knob_size: 70px
+$knob_control_size: 30px
+$knob_inset: 7px
+$knob_color_bg: #333
+$knob_color_stop: #999
+$knob_color_indicator: #fff
+
 .knob
-  width: 56px
+  width: $knob_size
+  display: block
+  display: inline-block
+  font-size: 10px
+  font-weight: 300
+
+.knob__title
   text-align: center
-  -webkit-user-select: none
-
-.knob__name
-  line-height: 16px
-
-.knob__scale
-  width: 32px
-  height: 32px
-  border-radius: 50%
-  border-color: darkgreen
-  border-width: 4px
-  border-style: solid
-  border-bottom-color: transparent
-  position: relative
-  margin: 4px auto -4px
-
-.knob__dot
-  width: 0px
-  height: 0px
-  position: absolute
-  top: 12px
-  left: 12px
-  border-color: transparent
-  border-right-color: lightgreen
-  border-width: 4px
-  border-style: solid
-  transform: translate(-15px, 0)
+  line-height: 15px
+  padding: 5px
+  text-transform: uppercase
+  text-overflow: ellipsis
 
 .knob__value
+  text-align: center
+  line-height: 20px
+  padding: 0 5px
+  text-transform: uppercase
+
+.knob__container
+  width: $knob_control_size + $knob_inset + $knob_inset
+  height: $knob_control_size + $knob_inset + $knob_inset
+  position: relative
+  background: transparent
+  margin: 0 auto
+
+.knob__control
+  width: $knob_control_size
+  height: $knob_control_size
+  background: $knob_color_bg
+  border-radius: $knob_control_size
+  transform: rotate(0deg)
+  position: absolute
+  top: $knob_inset
+  left: $knob_inset
+
+.knob__indicator
+  border-radius: $knob_inset
+  width: $knob_inset / 2.5
+  height: $knob_inset
+  background: $knob_color_indicator
+  position: absolute
+  left: $knob_control_size / 2 - ($knob_inset / 5)
+  top: $knob_inset / 2
+
+.knob__stopmin
+  border-radius: $knob_inset
+  width: $knob_inset / 2
+  height: $knob_inset / 2
+  position: absolute
+  top: $knob_control_size + $knob_inset / 2
+  left: $knob_inset
+  background: $knob_color_stop
+
+.knob__stopmax
+  border-radius: $knob_inset
+  width: $knob_inset / 2
+  height: $knob_inset / 2
+  position: absolute
+  top: $knob_control_size + $knob_inset / 2
+  left: $knob_control_size + $knob_inset / 2
+  background: $knob_color_stop
+
+.knob__stopcenter
+  border-radius: $knob_inset
+  width: $knob_inset / 2
+  height: $knob_inset / 2
+  position: absolute
+  top: $knob_inset / 4
+  left: ($knob_control_size / 2) + $knob_inset - ($knob_inset / 4)
+  background: $knob_color_stop
+
 
 
 .simple

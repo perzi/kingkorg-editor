@@ -14,9 +14,9 @@ class Knob extends React.Component {
     }
   }
 
-  calculateDotRotation() {
+  calculateControlRotation() {
     let f = this.props.value / (this.props.max - this.props.min);
-    return Math.round(f * 270 - 45);
+    return Math.round(f * 270 - (this.props.center ? 0 : 135));
   }
 
   handleMouseDown(e) {
@@ -49,27 +49,30 @@ class Knob extends React.Component {
   }
 
   render() {
-
-    // TODO: solve structure so we don't need the translate in this transform,
-    // maybe wrap dot in a container
-    let dotStyle = {
-        transform: "rotate(" + this.calculateDotRotation() + "deg) translate(-15px, 0)"
+    let controlStyleRotation = {
+      transform: "rotate(" + this.calculateControlRotation() + "deg)"
     };
 
     return (
-      <div className="knob">
-        <div className="knob__name">{this.props.name}</div>
-        <div className="knob__scale"
-          onMouseDown={this.handleMouseDown.bind(this)}
-          onDragStart={this.handleDragStart.bind(this)}
-          onDrag={this.handleDrag.bind(this)}
-          onDragEnd={this.handleDragEnd.bind(this)}
-          draggable="true"
+      <div
+        className="knob"
+        onMouseDown={this.handleMouseDown.bind(this)}
+        onDragStart={this.handleDragStart.bind(this)}
+        onDrag={this.handleDrag.bind(this)}
+        onDragEnd={this.handleDragEnd.bind(this)}
+        draggable="true"
         >
-          <div className="knob__dot" style={dotStyle}></div>
+        <div className="knob__title">{this.props.name}</div>
+        <div className="knob__container">
+          <div className="knob__control" style={controlStyleRotation}>
+            <div className="knob__indicator"></div>
+          </div>
+          <div className="knob__stopmin"></div>
+          <div className="knob__stopmax"></div>
+          {this.props.center ? (<div className="knob__stopcenter"></div>) : null}
         </div>
         <div className="knob__value">{this.props.value}</div>
-        <img ref="dragPreview" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP4Xw8AAoABf5/NhYYAAAAASUVORK5CYII=" />
+        <img ref="dragPreview" style={{visibility: "hidden"}} src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP4Xw8AAoABf5/NhYYAAAAASUVORK5CYII=" />
       </div>
     );
   }
@@ -79,16 +82,17 @@ Knob.propTypes = {
   onChange: React.PropTypes.func,
   name: React.PropTypes.string.isRequired,
   value: React.PropTypes.number.isRequired,
-  className: React.PropTypes.string.isRequired,
   min: React.PropTypes.number,
   max: React.PropTypes.number,
+  center: React.PropTypes.bool
 };
 
 
 Knob.defaultProps = {
   value: 0,
   min: 0,
-  max: 127
+  max: 127,
+  center: false
 };
 
 
