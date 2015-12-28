@@ -1,13 +1,17 @@
-import React from 'react';
-import {Route} from 'react-router';
+import React                 from 'react';
+import { Router, Route, IndexRoute } from 'react-router';
 
-import Main from 'components/main';
-import Example from 'components/example';
+import App                   from 'components/app';
+import CurrentProgram        from 'components/currentprogram';
+
 
 const routes = (
-  <Route handler={Main}>
-    <Route name='example' handler={Example}/>
-  </Route>
+  <Router>
+    <Route path="/" component={App}>
+      <IndexRoute component={CurrentProgram} />
+      <Route path='currentprogram' component={CurrentProgram}/>
+    </Route>
+  </Router>
 );
 
 export default routes;

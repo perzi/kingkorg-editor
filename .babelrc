@@ -1,5 +1,7 @@
 {
-  "optional": ["runtime"],
-  "stage": 0,
-  "comments": false
+  "plugins": ["transform-react-jsx"],
+  "ignore": [
+    "foo.js",
+    "bar/**/*.js"
+  ]
 }

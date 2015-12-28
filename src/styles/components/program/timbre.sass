@@ -1,0 +1,46 @@
+@import "styles/base"
+
+.timbre
+  margin: 0 0 10px
+
+.timbre__blocks
+  border-left: 1px solid $color-secondary
+  display: flex
+  flex-direction: row
+  justify-content: flex-start
+
+.timbre__oscillators
+  margin-right: $control-gutter
+
+.timbre__oscillators-title
+  width: 20px
+  border: 1px solid $color-secondary
+  position: relative
+
+.timbre__oscillators-title div
+  line-height: 20px
+  transform: translate(-15px, -20px) rotate(-90deg)
+  position: absolute
+  bottom: 0
+  left: 0
+
+.timbre__block
+  border: 1px solid $color-secondary
+  border-left: none
+  padding: $control-gutter
+  // margin-right: $control-gutter
+
+
+
+.osc
+  flex-direction: row
+  display: flex
+  border: 1px solid $color-secondary
+  width: ($simple-width + $control-gutter * 2) * 5
+
+
+.osc__name
+  width: $simple-width
+  padding: $control-gutter
+
+.osc__control
