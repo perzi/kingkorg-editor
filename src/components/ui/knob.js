@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
+import "styles/ui/knob";
+
 class Knob extends React.Component {
   constructor(props) {
     super(props);

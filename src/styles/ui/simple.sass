@@ -1,0 +1,26 @@
+@import "styles/variables"
+
+$simple-border-radius: 4
+$simple-bg-hover: $color-hover-bg
+$simple-color-title: $color-secondary
+$simple-color-value: $color-primary
+
+.simple
+  border-radius: $simple-border-radius
+  cursor: pointer
+  padding: $control-gutter
+  width: $simple-width
+
+.simple:hover
+  background-color: $simple-bg-hover
+
+.simple__name
+  color: $simple-color-title
+
+.simple__value
+  color: $simple-color-value
+  font-weight: bold
+  margin-top: $control-gutter / 2
+
+.simple:hover .simple__value
+  background-color: $simple-bg-hover
