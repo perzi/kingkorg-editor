@@ -1,12 +1,11 @@
 import React from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import Param   from './param';
-import Osc     from './osc';
-import Control from './control';
-import EG      from './eg';
-import LFO     from './lfo';
-import Simple  from 'components/ui/simple';
 
+import Osc     from 'components/program/Osc';
+import Control from 'components/program/Control';
+import EG      from 'components/program/EG';
+import LFO     from 'components/program/LFO';
+import Simple  from 'components/ui/Simple';
 import program from 'data/program_parameters';
 
 import 'styles/components/program/timbre';
@@ -39,26 +38,6 @@ class Timbre extends React.Component {
       type
     }
   }
-
-//   getParameterProps(id) {
-//     let parameter = this.props.parameter.getParameter(id);
-// //    let parameter = this.props.parameter.parameters[index];
-//     let data = this.props.data;
-//     let offset = parameter.getOffset();
-//     let props = {
-//       name: parameter.name,
-//       value: parameter.getValue(data),
-//       text: parameter.getValueAsText(data),
-//       offset: offset,
-//       category: parameter.category,
-//       allValues: parameter.lookup instanceof Array ? parameter.lookup : null,
-//       onChange: ((value) => {
-//         this.props.onChange(offset, value);
-//       }).bind(this)
-//     };
-//
-//     return props;
-//   }
 
   render() {
     return (

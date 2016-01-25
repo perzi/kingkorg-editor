@@ -1,6 +1,8 @@
 import React            from 'react';
 import PureRenderMixin  from 'react-addons-pure-render-mixin';
-import Control          from './control';
+
+import Control          from 'components/program/Control';
+
 
 class EG extends React.Component {
   constructor(props) {

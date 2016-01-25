@@ -1,7 +1,8 @@
 import React from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import KingKORG from 'components/kingkorg';
-import Timbre from 'components/program/timbre';
+
+import KingKORG from 'components/KingKORG';
+import Timbre from 'components/program/Timbre';
 import program from 'data/program_parameters';
 
 import { connect } from 'react-redux';

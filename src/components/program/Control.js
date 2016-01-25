@@ -2,9 +2,9 @@ import React      from 'react';
 import { connect } from 'react-redux';
 
 import { updateCurrentProgramParam } from 'actions/actions';
-import Knob       from 'components/ui/knob';
-import Simple     from 'components/ui/simple';
-import Select     from 'components/ui/select';
+import Knob       from 'components/ui/Knob';
+import Simple     from 'components/ui/Simple';
+import Select     from 'components/ui/Select';
 import program    from 'data/program_parameters';
 
 

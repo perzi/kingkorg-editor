@@ -1,10 +1,11 @@
 import React                from 'react';
 import PureRenderMixin      from 'react-addons-pure-render-mixin';
-import Parameter            from 'components/program/parameter';
-import Simple               from 'components/ui/simple';
+
+import Simple               from 'components/ui/Simple';
 import {oscTypeDictionary}  from 'data/program_parameters';
 
 import 'styles/components/program/osc';
+
 
 class Osc extends React.Component {
   constructor(props) {
@@ -12,28 +13,6 @@ class Osc extends React.Component {
     let { shouldComponentUpdate } = PureRenderMixin;
     this.shouldComponentUpdate    = shouldComponentUpdate.bind(this);
   }
-
-  // renderParameter(index, name, visible) {
-  //
-  //   let parameter = this.props.parameter.parameters[index];
-  //
-  //   if (name === "-") return false;
-  //
-  //   let data = this.props.data;
-  //   let props = {
-  //     name: name || parameter.name,
-  //     value: parameter.getValue(data),
-  //     text: parameter.getValueAsText(data),
-  //     offset: parameter.getOffset(),
-  //     category: parameter.category,
-  //     allValues: parameter.lookup instanceof Array ? parameter.lookup : null,
-  //     onChange: this.props.onChange
-  //   };
-  //
-  //   return (
-  //     <Parameter key={props.offset} {...props} />
-  //   )
-  // }
 
   renderSimple(index, visible, name) {
 
