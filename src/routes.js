@@ -1,9 +1,8 @@
 import React                 from 'react';
 import { Router, Route, IndexRoute } from 'react-router';
 
-import App                   from 'components/app';
-import CurrentProgram        from 'components/currentprogram';
-
+import App                   from 'components/App';
+import CurrentProgram        from 'components/CurrentProgram';
 
 const routes = (
   <Router>

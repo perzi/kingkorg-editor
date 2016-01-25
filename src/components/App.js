@@ -9,6 +9,7 @@ import "styles/app";
 
 let store = createStore(kingkorgApp);
 
+
 class App extends React.Component {
 
   constructor(props) {

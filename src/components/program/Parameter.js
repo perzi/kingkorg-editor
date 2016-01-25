@@ -1,7 +1,8 @@
 import React from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
-import "styles/components/program/param";
+import "styles/components/program/parameter";
+
 
 class Parameter extends React.Component {
   constructor(props) {

@@ -1,9 +1,11 @@
 import React from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import Control from './control';
-import ADSR    from 'components/ui/adsr';
+
+import Control from 'components/program/Control';
+import ADSR    from 'components/ui/ADSR';
 
 import 'styles/components/program/eg';
+
 
 class EG extends React.Component {
   constructor(props) {
