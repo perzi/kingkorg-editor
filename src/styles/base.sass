@@ -1,21 +1,17 @@
-$simple-width: 72px
-$color-primary: lightgreen
-$color-secondary: darkgreen
-$color-highlight: lightskyblue
-$control-gutter: 8px
+@import "variables"
 
 body
-  font-family: "SourceSansPro-ExtraLight";
-  font-size: 11px;
-  margin: 2em 5em;
-  background: rgb(39, 43, 49)
-  color: lightgreen;
-
+  font-family: "SourceSansPro-ExtraLight"
+  font-size: 11px
+  margin: 2em 5em
+  background: #eeeeee
+  background: radial-gradient(ellipse at center, #fff 0%, #ddd 75%, #999 100%)
+  color: $color-primary
 
 h1, h2, h3, h4, h5, h6
   font-family: "SourceSansPro-Regular"
   font-weight: normal
-  color: lightgreen
+  color: $color-primary
 
 a
   color: red
