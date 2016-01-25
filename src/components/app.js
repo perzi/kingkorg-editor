@@ -5,9 +5,9 @@ import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import kingkorgApp from 'reducers/reducers';
 
-let store = createStore(kingkorgApp);
-
 import "styles/app";
+
+let store = createStore(kingkorgApp);
 
 class App extends React.Component {
 
@@ -28,6 +28,5 @@ class App extends React.Component {
     );
   }
 }
-
 
 export default App;
