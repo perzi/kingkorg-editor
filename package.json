@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "webpack --progress --profile --colors",
-    "watch": "webpack-dev-server --hot --inline --progress --colors",
+    "start": "webpack-dev-server --hot --inline --progress --colors",
     "test": "echo \"No unit tests and e2e tests yet\" && exit 1"
   },
   "repository": {
