@@ -6,7 +6,6 @@ import Control from 'components/program/Control';
 import EG      from 'components/program/EG';
 import LFO     from 'components/program/LFO';
 import Simple  from 'components/ui/Simple';
-import program from 'data/program_parameters';
 
 import 'styles/components/program/timbre';
 

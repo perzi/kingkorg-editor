@@ -1,8 +1,8 @@
 import React                from 'react';
 import PureRenderMixin      from 'react-addons-pure-render-mixin';
 
-import Simple               from 'components/ui/Simple';
-import {oscTypeDictionary}  from 'data/program_parameters';
+import Simple                 from 'components/ui/Simple';
+import { oscTypeDictionary }  from 'data/programParameters';
 
 import 'styles/components/program/osc';
 

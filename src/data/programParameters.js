@@ -1,9 +1,9 @@
-import Parameter from './parameter';
-import ParamGroup from './parametergroup';
-import source_data from './program_source_data';
-import parser from './parser'
+import Parameter          from 'data/Parameter';
+import ParamGroup         from 'data/ParameterGroup';
+import parser             from 'data/parser'
+import programSourceData  from 'data/programSourceData';
 
-var refs = {};
+let refs = {};
 
 let generateSplitKeyMap = () => {
 
@@ -54,7 +54,7 @@ let parseValueString = (s) => {
 }
 
 // Add parsed values to string
-source_data.refs.forEach((dataString) => {
+programSourceData.refs.forEach((dataString) => {
   let data = parser.parseValueTable(dataString);
   refs[data.id] = data;
 });

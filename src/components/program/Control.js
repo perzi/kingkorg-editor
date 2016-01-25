@@ -5,7 +5,6 @@ import { updateCurrentProgramParam } from 'actions/actions';
 import Knob       from 'components/ui/Knob';
 import Simple     from 'components/ui/Simple';
 import Select     from 'components/ui/Select';
-import program    from 'data/program_parameters';
 
 
 class Control extends React.Component {
