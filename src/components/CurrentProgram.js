@@ -1,13 +1,11 @@
 import React from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-
-import KingKORG from 'components/KingKORG';
-import Timbre from 'components/program/Timbre';
-import program from 'data/program_parameters';
-
 import { connect } from 'react-redux';
 
 import { setCurrentProgramName, updateCurrentProgramParam, loadCurrentProgram } from 'actions/actions';
+import KingKORG from 'components/KingKORG';
+import Timbre from 'components/program/Timbre';
+import programParameters from 'data/programParameters';
 
 
 class CurrentProgram extends React.Component {
@@ -79,7 +77,7 @@ class CurrentProgram extends React.Component {
 
 
   getTimbreProps(id, data) {
-    let parameter = program.getParameter(id);
+    let parameter = programParameters.getParameter(id);
 
     return {
       name: parameter.name,
@@ -97,10 +95,8 @@ class CurrentProgram extends React.Component {
   render() {
 
     const { dispatch, currentProgram } = this.props;
+    const { name, data } = currentProgram;
 
-    let {program} = this.state;
-    let name = currentProgram.name;
-    let data = currentProgram.data;
     let handleProgramChange = (index) => () => dispatch(loadCurrentProgram(this.state.exampleData[index]));
 
     return (
