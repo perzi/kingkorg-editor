@@ -22,7 +22,6 @@
   "license": "MIT",
   "homepage": "https://github.com/perzi/kingkorg-editor#readme",
   "dependencies": {
-    "alt": "^0.17.9",
     "babel-runtime": "6.3.13",
     "bootstrap": "^3.3.5",
     "csstyle": "^1.5.0",
