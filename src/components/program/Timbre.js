@@ -1,5 +1,4 @@
 import React from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import Osc     from 'components/program/Osc';
 import Control from 'components/program/Control';
@@ -13,9 +12,6 @@ import 'styles/components/program/timbre';
 class Timbre extends React.Component {
   constructor(props) {
     super(props);
-
-    let { shouldComponentUpdate } = PureRenderMixin;
-    this.shouldComponentUpdate    = shouldComponentUpdate.bind(this);
   }
 
   getOscParameter(id) {

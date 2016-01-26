@@ -1,5 +1,4 @@
 import React from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import "styles/components/program/parameter";
 
@@ -7,9 +6,6 @@ import "styles/components/program/parameter";
 class Parameter extends React.Component {
   constructor(props) {
     super(props);
-
-    let { shouldComponentUpdate } = PureRenderMixin;
-    this.shouldComponentUpdate    = shouldComponentUpdate.bind(this);
   }
 
   renderValue() {

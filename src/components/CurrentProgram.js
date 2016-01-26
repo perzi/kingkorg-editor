@@ -1,5 +1,4 @@
 import React from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 import { connect } from 'react-redux';
 
 import { setCurrentProgramName, updateCurrentProgramParam, loadCurrentProgram } from 'actions/actions';
@@ -11,9 +10,6 @@ import programParameters from 'data/programParameters';
 class CurrentProgram extends React.Component {
   constructor(props) {
     super(props);
-
-    let { shouldComponentUpdate } = PureRenderMixin;
-    this.shouldComponentUpdate    = shouldComponentUpdate.bind(this);
 
     this.state = {
       exampleData: [
