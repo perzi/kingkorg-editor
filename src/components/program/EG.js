@@ -51,7 +51,7 @@ class EG extends React.Component {
 
 EG.propTypes = {
   id: React.PropTypes.string.isRequired,
-  data: React.PropTypes.object.isRequired,
+  data: React.PropTypes.array.isRequired,
   parentParameter: React.PropTypes.object.isRequired
 }
 

@@ -55,8 +55,9 @@ class Simple extends React.Component {
         onDragEnd={this.handleDragEnd.bind(this)}
         draggable="true"
       >
-        <div className="simple__name">{this.props.name} ({this.props.value})</div>
-        <div className="simple__value">{this.props.text}</div>
+        <div className="simple__name">{this.props.name}</div>
+        <div className="simple__text">{this.props.text}</div>
+        <div className="simple__value">{this.props.value}</div>
         <div ref="dragPreview" style={{display: "none", visibility: "hidden"}} />
       </div>
     );
@@ -75,6 +76,7 @@ Simple.propTypes = {
 
 
 Simple.defaultProps = {
+  className: "",
   value: 0,
   min: 0,
   max: 127,
