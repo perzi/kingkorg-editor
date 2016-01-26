@@ -38,6 +38,9 @@ export function loadCurrentProgram(sysexData) {
   }
 }
 
+//
+// Helpers
+//
 function convertSysexDataToProgram(sysexData) {
   let name = "";
 

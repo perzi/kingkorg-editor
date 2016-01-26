@@ -17,27 +17,6 @@ class Parameter {
 
         // just output raw value for now
         this.lookup = null;
-        // // range:  x~y or x~y~z
-        // if (lookup.indexOf(":") > 0) {
-        //   // there's a mapping here here
-        //
-        //
-        // } else {
-        //   // just map it
-        //   let values = lookup.split("~");
-        //
-        //   let min = parseInt(values[0]);
-        //   let max = parseInt(values[values.length - 1]);
-        //
-        //   this.lookup = (value, programData) => {
-        //     let total = max - min;
-        //     return value / 127 * total + min;
-        //   };
-        // }
-        //
-        // this.lookup = (value, programData) => {
-        //   return value;
-        // };
       } else {
         // expect it to be comma separated
         this.lookup = lookup.split(",");
@@ -82,8 +61,14 @@ class Parameter {
   }
 
   getValueAsText(programData) {
-    let value = this.getByte(programData, this.getOffset());
+    let offset = this.getOffset();
+    let value = this.getByte(programData, offset);
     let lookup = this.lookup;
+    let text = "";
+
+    if (value === undefined) {
+      return "";
+    }
 
     if (lookup && typeof lookup === "object") {
       // use last value if array and out of bounds
@@ -92,17 +77,22 @@ class Parameter {
       }
 
       if (typeof lookup.values === "object") {
-        return lookup.values[value];
+        text = lookup.values[value];
       } else {
-        return lookup[value];
+        text = lookup[value];
       }
     }
 
     if (typeof lookup === "function") {
-      return lookup(value, programData);
+      text = lookup(value, programData);
     }
 
-    return new String(value);
+    if (text === undefined || text === null) {
+      console.warn("Parameter value lookup mismatch", this, value);
+      text = "";
+    }
+
+    return text;
   }
 
   getAllValues() {
@@ -114,10 +104,6 @@ class Parameter {
       }
     }
   }
-
-
-
 }
-
 
 export default Parameter;
