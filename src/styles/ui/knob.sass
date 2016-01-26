@@ -1,6 +1,6 @@
 @import "styles/variables"
 
-$knob_size: 70px
+$knob_size: $simple-width
 $knob_control_size: 30px
 $knob_inset: 7px
 $knob_color_bg: #333
@@ -8,24 +8,31 @@ $knob_color_stop: #999
 $knob_color_indicator: #fff
 
 .knob
-  width: $knob_size
-  display: block
+  border-radius: $control-border-radius
   display: inline-block
   font-size: 10px
-  font-weight: 300
+  width: $knob_size
+
+.knob:hover
+  background: $color-hover-bg
 
 .knob__title
-  text-align: center
+  color: $color-secondary
+  font-weight: 600
   line-height: 15px
-  padding: 5px
-  text-transform: uppercase
+  text-align: center
   text-overflow: ellipsis
 
 .knob__value
-  text-align: center
-  line-height: 20px
+  font-weight: 600
+  line-height: 1em
   padding: 0 5px
+  text-align: center
   text-transform: uppercase
+  visibility: hidden
+
+.knob:hover .knob__value
+  visibility: visible
 
 .knob__container
   width: $knob_control_size + $knob_inset + $knob_inset

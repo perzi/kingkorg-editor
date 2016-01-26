@@ -1,6 +1,6 @@
 @import "styles/variables"
 
-$simple-border-radius: 4
+$simple-border-radius: $control-border-radius
 $simple-bg-hover: $color-hover-bg
 $simple-color-title: $color-secondary
 $simple-color-value: $color-primary
@@ -9,6 +9,7 @@ $simple-color-value: $color-primary
   border-radius: $simple-border-radius
   cursor: pointer
   padding: $control-gutter
+  text-align: center
   width: $simple-width
 
 .simple:hover
@@ -17,10 +18,14 @@ $simple-color-value: $color-primary
 .simple__name
   color: $simple-color-title
 
+.simple__text,
 .simple__value
   color: $simple-color-value
   font-weight: bold
   margin-top: $control-gutter / 2
 
+.simple__value
+  visibility: hidden
+
 .simple:hover .simple__value
-  background-color: $simple-bg-hover
+  visibility: visible

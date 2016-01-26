@@ -1,43 +1,19 @@
-@import "styles/base"
+@import "styles/variables"
+
+$timbre-color-bg: #eee
 
 .timbre
   margin: 0 0 10px
 
 .timbre__blocks
-  border-left: 1px solid $color-secondary
-  display: flex
-  flex-direction: row
-  justify-content: flex-start
+  background: $timbre-color-bg
+  border-radius: 5px
 
-.timbre__oscillators
-  margin-right: $control-gutter
-
-.timbre__oscillators-title
-  width: 20px
-  border: 1px solid $color-secondary
-  position: relative
-
-.timbre__oscillators-title div
-  line-height: 20px
-  transform: translate(-15px, -20px) rotate(-90deg)
-  position: absolute
-  bottom: 0
-  left: 0
+// .timbre__oscillators
+//   margin-right: $control-gutter
 
 .timbre__block
-  border: 1px solid $color-secondary
-  border-left: none
   padding: $control-gutter
 
-
-.osc
-  flex-direction: row
-  display: flex
-  border: 1px solid $color-secondary
-  width: ($simple-width + $control-gutter * 2) * 5
-
-.osc__name
-  width: $simple-width
-  padding: $control-gutter
-
-.osc__control
+.timbre__block-title
+  padding: 0 15px
