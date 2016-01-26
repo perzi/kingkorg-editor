@@ -1,5 +1,4 @@
 import React                from 'react';
-import PureRenderMixin      from 'react-addons-pure-render-mixin';
 
 import Control                from 'components/program/Control';
 import Simple                 from 'components/ui/Simple';
@@ -11,8 +10,6 @@ import 'styles/components/program/osc';
 class Osc extends React.Component {
   constructor(props) {
     super(props);
-    let { shouldComponentUpdate } = PureRenderMixin;
-    this.shouldComponentUpdate    = shouldComponentUpdate.bind(this);
   }
 
   renderSimple(index, visible, name) {

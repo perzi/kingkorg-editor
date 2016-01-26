@@ -41,7 +41,7 @@ class Control extends React.Component {
   }
 
   render() {
-    var props = this.getParameterProps();
+    let props = this.getParameterProps();
 
     if (this.props.type === "knob" || this.props.type === "cknob") {
       return (

@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import "styles/ui/simple";
 
@@ -8,13 +7,16 @@ import "styles/ui/simple";
 class Simple extends React.Component {
   constructor(props) {
     super(props);
-
-    let { shouldComponentUpdate } = PureRenderMixin;
-    this.shouldComponentUpdate    = shouldComponentUpdate.bind(this);
-
     this.state = {
       dragInfo: null
     }
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    let value = this.props.value;
+    let nextValue = nextProps.value;
+
+    return nextValue !== value;
   }
 
   handleMouseDown(e) {

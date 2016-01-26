@@ -1,14 +1,11 @@
 import React            from 'react';
-import PureRenderMixin  from 'react-addons-pure-render-mixin';
 
 import Control          from 'components/program/Control';
 
 
-class EG extends React.Component {
+class LFO extends React.Component {
   constructor(props) {
     super(props);
-    let { shouldComponentUpdate } = PureRenderMixin;
-    this.shouldComponentUpdate    = shouldComponentUpdate.bind(this);
   }
 
   render() {
@@ -27,10 +24,10 @@ class EG extends React.Component {
   }
 }
 
-EG.propTypes = {
+LFO.propTypes = {
   id: React.PropTypes.string.isRequired,
-  data: React.PropTypes.object.isRequired,
+  data: React.PropTypes.array.isRequired,
   parentParameter: React.PropTypes.object.isRequired
 }
 
-export default EG;
+export default LFO;
