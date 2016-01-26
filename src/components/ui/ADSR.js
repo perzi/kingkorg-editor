@@ -75,8 +75,8 @@ ADSR.propTypes = {
 ADSR.defaultProps = {
   width: 400,
   height: 200,
-  backgroundColor: "darkgreen",
-  foregroundColor: "lightgreen",
+  backgroundColor: "#ccc",
+  foregroundColor: "#999",
   strokeWidth: 1,
   A: 0,
   D: 0.2,
