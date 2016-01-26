@@ -24,10 +24,13 @@ class Control extends React.Component {
     let parameter = this.props.parentParameter.getParameter(this.props.id);
     let data = this.props.data;
     let offset = parameter.getOffset();
+    let text = parameter.getValueAsText(data);
+    let value = parameter.getValue(data);
+
     let props = {
       name: parameter.name,
-      value: parameter.getValue(data),
-      text: parameter.getValueAsText(data),
+      value: value,
+      text: text,
       offset: offset,
       category: parameter.category,
       lookup: parameter.lookup,
@@ -43,11 +46,11 @@ class Control extends React.Component {
   render() {
     let props = this.getParameterProps();
 
-    if (this.props.type === "knob" || this.props.type === "cknob") {
+    if (this.props.type === "knob" || this.props.type === "cknob") {
       return (
         <Knob {...props} center={this.props.type === "cknob"} className="control" />
       );
-    } else if (this.props.type === "select") {
+    } else if (this.props.type === "select") {
       return (
         <Select {...props} className="control" />
       );
