@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import "styles/ui/simple";
 
@@ -8,13 +7,16 @@ import "styles/ui/simple";
 class Simple extends React.Component {
   constructor(props) {
     super(props);
-
-    let { shouldComponentUpdate } = PureRenderMixin;
-    this.shouldComponentUpdate    = shouldComponentUpdate.bind(this);
-
     this.state = {
       dragInfo: null
     }
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    let value = this.props.value;
+    let nextValue = nextProps.value;
+
+    return nextValue !== value;
   }
 
   handleMouseDown(e) {
@@ -55,8 +57,9 @@ class Simple extends React.Component {
         onDragEnd={this.handleDragEnd.bind(this)}
         draggable="true"
       >
-        <div className="simple__name">{this.props.name} ({this.props.value})</div>
-        <div className="simple__value">{this.props.text}</div>
+        <div className="simple__name">{this.props.name}</div>
+        <div className="simple__text">{this.props.text}</div>
+        <div className="simple__value">{this.props.value}</div>
         <div ref="dragPreview" style={{display: "none", visibility: "hidden"}} />
       </div>
     );
@@ -75,6 +78,7 @@ Simple.propTypes = {
 
 
 Simple.defaultProps = {
+  className: "",
   value: 0,
   min: 0,
   max: 127,

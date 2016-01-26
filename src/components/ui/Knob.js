@@ -58,7 +58,7 @@ class Knob extends React.Component {
 
     return (
       <div
-        className="knob"
+        className={`knob ${this.props.className}`}
         onMouseDown={this.handleMouseDown.bind(this)}
         onDragStart={this.handleDragStart.bind(this)}
         onDrag={this.handleDrag.bind(this)}
@@ -82,6 +82,7 @@ class Knob extends React.Component {
 }
 
 Knob.propTypes = {
+  className: React.PropTypes.string,
   onChange: React.PropTypes.func,
   name: React.PropTypes.string.isRequired,
   value: React.PropTypes.number.isRequired,
@@ -92,6 +93,7 @@ Knob.propTypes = {
 
 
 Knob.defaultProps = {
+  className: "",
   value: 0,
   min: 0,
   max: 127,

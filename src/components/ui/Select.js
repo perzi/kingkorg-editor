@@ -12,7 +12,7 @@ class Select extends React.Component {
     let values = [];
 
     // should not be done here, already computed in lookup
-    for (var p in this.props.lookup.values) {
+    for (let p in this.props.lookup.values) {
       values.push({
         value: parseInt(p, 10),
         text: this.props.lookup.values[p]
@@ -36,13 +36,14 @@ class Select extends React.Component {
   }
 
   render() {
-
+    const { props } = this;
 
     return (
       <OverlayTrigger trigger="click" rootClose placement="bottom" overlay={this.renderPopover()}>
-        <div className={`simple ${this.props.className}`}>
-          <div className="simple__name">{this.props.name} ({this.props.value})</div>
-          <div className="simple__value">{this.props.text}</div>
+        <div className={`simple ${props.className}`}>
+          <div className="simple__name">{props.name}</div>
+          <div className="simple__text">{props.text}</div>
+          <div className="simple__value">{props.value}</div>
         </div>
       </OverlayTrigger>
     );
@@ -57,7 +58,7 @@ Select.propTypes = {
   className: React.PropTypes.string,
   min: React.PropTypes.number,
   max: React.PropTypes.number,
-  allValues: React.PropTypes.object,
+  allValues: React.PropTypes.array,
   lookup: React.PropTypes.object
 };
 
@@ -66,6 +67,7 @@ Select.defaultProps = {
   value: 0,
   min: 0,
   max: 127,
+  className: "",
   onChange: () => {}
 };
 

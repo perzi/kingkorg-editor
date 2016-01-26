@@ -41,19 +41,19 @@ class Control extends React.Component {
   }
 
   render() {
-    // TODO: add props to render different type of controls
+    let props = this.getParameterProps();
 
     if (this.props.type === "knob" || this.props.type === "cknob") {
       return (
-        <Knob {...this.getParameterProps()} center={this.props.type === "cknob"} />
+        <Knob {...props} center={this.props.type === "cknob"} className="control" />
       );
     } else if (this.props.type === "select") {
       return (
-        <Select {...this.getParameterProps()} />
+        <Select {...props} className="control" />
       );
     } else {
       return (
-        <Simple {...this.getParameterProps()} />
+        <Select {...props} className="control" />
       );
     }
   }
@@ -61,7 +61,7 @@ class Control extends React.Component {
 
 Control.propTypes = {
   id: React.PropTypes.string.isRequired,
-  data: React.PropTypes.object.isRequired,
+  data: React.PropTypes.array.isRequired,
   parentParameter: React.PropTypes.object.isRequired,
   type: React.PropTypes.string
 }

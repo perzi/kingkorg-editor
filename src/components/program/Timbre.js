@@ -44,14 +44,14 @@ class Timbre extends React.Component {
         <h3>{this.props.name}</h3>
         <div className="timbre__blocks">
           <div className="timbre__block">
-            <h4>Voice</h4>
+            <h4 className="timbre__block-title">Voice</h4>
             <Control {...this.getControlParameter("voice_assign", "select")} />
             <Control {...this.getControlParameter("unison_sw", "select")} />
             <Control {...this.getControlParameter("unison_detune", "knob")} />
             <Control {...this.getControlParameter("unison_spread", "knob")} />
           </div>
           <div className="timbre__block">
-            <h4>Pitch</h4>
+            <h4 className="timbre__block-title">Pitch</h4>
             <Control {...this.getControlParameter("pitch_transpose", "knob")} />
             <Control {...this.getControlParameter("pitch_detune", "knob")} />
             <Control {...this.getControlParameter("pitch_lfo2modint", "knob")} />
@@ -62,7 +62,7 @@ class Timbre extends React.Component {
             <Control {...this.getControlParameter("pitch_analog_tuning", "knob")} />
           </div>
           <div className="timbre__block">
-            <h4>Filter</h4>
+            <h4 className="timbre__block-title">Filter</h4>
             <Control {...this.getControlParameter("type", "select")} />
             <Control {...this.getControlParameter("cutoff", "knob")} />
             <Control {...this.getControlParameter("resonance", "knob")} />
@@ -73,42 +73,45 @@ class Timbre extends React.Component {
             <Control {...this.getControlParameter("velocity_sens", "cknob")} />
           </div>
           <div className="timbre__block">
-            <h4>Mixer</h4>
+            <h4 className="timbre__block-title">Mixer</h4>
             <Control {...this.getControlParameter("osc1_level", "knob")} />
             <Control {...this.getControlParameter("osc2_level", "knob")} />
             <Control {...this.getControlParameter("osc3_level", "knob")} />
           </div>
           <div className="timbre__block">
-            <h4>Amp</h4>
+            <h4 className="timbre__block-title">Amp</h4>
             <Control {...this.getControlParameter("level", "knob")} />
             <Control {...this.getControlParameter("panpot", "knob")} />
             <Control {...this.getControlParameter("punch_level", "knob")} />
             <Control {...this.getControlParameter("key_track", "knob")} />
           </div>
           <div className="timbre__block">
-            <h4>LFO 1</h4>
+            <h4 className="timbre__block-title">LFO 1</h4>
             <LFO {...this.getControlParameter("lfo_1")} />
           </div>
           <div className="timbre__block">
-            <h4>LFO 2</h4>
+            <h4 className="timbre__block-title">LFO 2</h4>
             <LFO {...this.getControlParameter("lfo_2")} />
           </div>
-        </div>
-        <div className="timbre__blocks">
-          <div className="timbre__oscillators-title"><div>Oscillators</div></div>
-          <div className="timbre__oscillators">
+          <div className="timbre__block">
+            <h4 className="timbre__block-title">Oscillator 1</h4>
             <Osc {...this.getOscParameter("osc_1")} />
+          </div>
+          <div className="timbre__block">
+            <h4 className="timbre__block-title">Oscillator 2</h4>
             <Osc {...this.getOscParameter("osc_2")} />
+          </div>
+          <div className="timbre__block">
+            <h4 className="timbre__block-title">Oscillator 3</h4>
             <Osc {...this.getOscParameter("osc_3")} />
           </div>
           <div className="timbre__block">
-            <h4>EG 1 (Filter)</h4>
+            <h4 className="timbre__block-title">EG 1 (Filter)</h4>
             <EG {...this.getControlParameter("eg_1")} />
           </div>
           <div className="timbre__block">
-            <h4>EG 2 (Amp)</h4>
+            <h4 className="timbre__block-title">EG 2 (Amp)</h4>
             <EG {...this.getControlParameter("eg_2")} />
-
           </div>
         </div>
       </div>
