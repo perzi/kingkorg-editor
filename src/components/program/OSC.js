@@ -1,6 +1,7 @@
 import React                from 'react';
 import PureRenderMixin      from 'react-addons-pure-render-mixin';
 
+import Control                from 'components/program/Control';
 import Simple                 from 'components/ui/Simple';
 import { oscTypeDictionary }  from 'data/programParameters';
 
@@ -34,8 +35,22 @@ class Osc extends React.Component {
     };
 
     return (
-      <Simple key={props.offset} {...props} />
+      <Simple key={props.offset} {...props} className="control" />
     )
+  }
+
+  getControlParameter(offset, type, hidden = false, name) {
+
+    if (hidden || name === "-") return null;
+
+    let id = this.props.parameter.parameters[offset].id;
+
+    return {
+      data: this.props.data,
+      parentParameter: this.props.parameter,
+      id: id,
+      type: "select"
+    }
   }
 
   render() {
@@ -43,30 +58,28 @@ class Osc extends React.Component {
     let oscTypeValue = oscTypeParameter.getValue(this.props.data);
 
     let visible = oscTypeValue !== 0;
+    let hidden = oscTypeValue === 0;
     let oscTypeDef = oscTypeDictionary[oscTypeValue];
     let ctrl1Name = oscTypeDef ? oscTypeDef.ctrl1Name : undefined;
     let ctrl2Name = oscTypeDef ? oscTypeDef.ctrl2Name : undefined;
 
     return (
       <div className="osc">
-        <div className="osc__control">{this.renderSimple(0, true)}</div>
-        <div className="osc__control">{this.renderSimple(1, visible)}</div>
-        <div className="osc__control">{this.renderSimple(2, visible)}</div>
-        <div className="osc__control">{this.renderSimple(3, visible, ctrl1Name)}</div>
-        <div className="osc__control">{this.renderSimple(4, visible, ctrl2Name)}</div>
+        <Control {...this.getControlParameter(0, "select", false)} />
+        {this.renderSimple(1, visible)}
+        {this.renderSimple(2, visible)}
+        {this.renderSimple(3, visible, ctrl1Name)}
+        {this.renderSimple(4, visible, ctrl2Name)}
       </div>
     );
   }
 }
 
-//          <div className="osc__name"><b>{this.props.parameter.name}</b></div>
-
-
 Osc.propTypes = {
   onChange: React.PropTypes.func,
   offset: React.PropTypes.number.isRequired,
   parameter: React.PropTypes.object.isRequired,
-  data: React.PropTypes.object.isRequired
+  data: React.PropTypes.array.isRequired
 };
 
 
