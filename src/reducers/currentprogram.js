@@ -2,7 +2,7 @@ import { SET_CURRENT_PROGRAM_NAME, CHANGE_CURRENT_PROGRAM_PARAMETER, LOAD_CURREN
 
 const initialState = {
   name: "",
-  data: new Int32Array(316)
+  data: []
 };
 
 
