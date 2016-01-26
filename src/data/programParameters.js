@@ -3,8 +3,52 @@ import ParamGroup         from 'data/ParameterGroup';
 import parser             from 'data/parser'
 import programSourceData  from 'data/programSourceData';
 
+//
+// Map for reference
+//
+// When parsing a parameter, there can be a reference to a value lookup, that unparsed value will be the key
+// and value will be an object, for instance:
+// {
+//   id: "unison_sw",
+//   name: "Unison SW",
+//   min: 0,
+//   max: 1,
+//   values: {
+//      "0": "Off",
+//      "1": "On"
+//    }
+// }
+//
 let refs = {};
 
+//
+// Lookups
+//
+let lookupName = (value, data) => {
+  var name = "";
+  for (let i = 0; i < 12; i++) {
+    if (data[i] !== 0)
+      name = name + String.fromCharCode(data[i]);
+  }
+  return name;
+};
+
+let lookupSplitKey = (value, data) => {
+
+  let keys = "C,C#,D,D#,E,F,F#,G,G#,A,A#,B".split(",");
+
+  let getKey = (value) => {
+    let k = value % 12;
+    let o = Math.floor(value / 12) + 1;
+    return keys[k] + "-" + o;
+  }
+
+  return getKey(value);
+};
+
+//
+// Lookup generators
+//
 let generateSplitKeyMap = () => {
 
   let keys = "C,C#,D,D#,E,F,F#,G,G#,A,A#,B".split(",");
@@ -25,7 +69,7 @@ let generateSplitKeyMap = () => {
   };
 };
 
-let generateUnisonSW= () => {
+let generateUnisonSW = () => {
 
   return {
     id: "unison_sw",
@@ -41,19 +85,24 @@ let generateUnisonSW= () => {
   };
 };
 
+// Value string parser
 let parseValueString = (s) => {
 
+  // get value from refs if it already exist
   if (refs[s]) {
     return refs[s];
   }
 
+  // parse value and add to refs
   let result = parser.parseValueString(s, refs);
   refs[s] = result;
 
   return result;
 }
 
-// Add parsed values to string
+//
+// Populate refs with data
+//
 programSourceData.refs.forEach((dataString) => {
   let data = parser.parseValueTable(dataString);
   refs[data.id] = data;
@@ -63,56 +112,6 @@ programSourceData.refs.forEach((dataString) => {
 refs["0~127:C-1~G9"] = generateSplitKeyMap()
 refs["0,1~3:OFF,2Voice~4Voice"] = generateUnisonSW()
 
-
-// TODO: the hard lookup values to parse can be generated and put in refs beforehand
-
-
-
-let createParam = function(sourceString, offset, name, midiId, midiSubId, lookup, category, id, length) {
-
-  // sourceString
-  // sourceString, category
-  // sourceString, category, id
-
-  const rangeOffset = [1, 12];
-  const rangeParameter = [13, 32];
-  const rangeValue = [33, 71];
-  const rangeMidiId = [72, 82];
-
-  // TODO: change this later when we can parse almost anything
-  // and deal with arguments in a nices way
-  if ((arguments.length === 2) || (arguments.length === 3)) {
-    category = offset;
-  }
-
-  if (arguments.length === 3) {
-    id = name;
-  }
-
-  if (typeof sourceString === "string" && sourceString.length > 0) {
-
-    let offsetString = sourceString.substring.apply(sourceString, rangeOffset).trim();
-    let nameString = sourceString.substring.apply(sourceString, rangeParameter).trim();
-    let valueString = sourceString.substring.apply(sourceString, rangeValue).trim();
-    let midiIdString = sourceString.substring.apply(sourceString, rangeMidiId).trim();
-
-    offset = parseInt(offsetString, 10);
-    name = nameString;
-    lookup = parseValueString(valueString);
-
-    [midiId, midiSubId] = midiIdString.split(":");
-
-    midiId = parseInt(midiId, 16);
-    midiSubId = parseInt(midiSubId, 16);
-
-    // No id supplied
-    if (typeof id === "undefined") {
-      id = name.toLowerCase().replace(/[^\s\w_-]*/g, "").replace(/\s+/g, "_");
-    }
-  }
-
-  return new Parameter(offset, name, midiId, midiSubId, lookup, category, id, length);
-};
 
 let oscTypeRawDictionary = [
   // NAME          CTRL1           CTRL2           CATEGORY
@@ -247,15 +246,16 @@ let oscTypeRawDictionary = [
 ];
 
 let oscTypeDictionary = oscTypeRawDictionary.map((row, index) => {
-    return {
-      value:     index,
-      name:      row.substr( 0, 16).trim(),
-      ctrl1Name: row.substr(16, 16).trim(),
-      ctrl2Name: row.substr(32, 16).trim(),
-      category:  row.substr(48, 16).trim()
-    }
+  return {
+    value:     index,
+    name:      row.substr( 0, 16).trim(),
+    ctrl1Name: row.substr(16, 16).trim(),
+    ctrl2Name: row.substr(32, 16).trim(),
+    category:  row.substr(48, 16).trim()
+  }
 });
 
+// TODO: add to refs somehow?
 let oscTypeLookup = (() => {
   let lookup = {
     id: "osc_type",
@@ -268,6 +268,56 @@ let oscTypeLookup = (() => {
 
   return lookup;
 })();
+
+
+//
+// Parameter generator functions
+//
+let createParam = function(sourceString, offset, name, midiId, midiSubId, lookup, category, id, length) {
+
+  // sourceString
+  // sourceString, category
+  // sourceString, category, id
+
+  const rangeOffset = [1, 12];
+  const rangeParameter = [13, 32];
+  const rangeValue = [33, 71];
+  const rangeMidiId = [72, 82];
+
+  // TODO: change this later when we can parse almost anything
+  // and deal with arguments in a nices way
+  if ((arguments.length === 2) || (arguments.length === 3)) {
+    category = offset;
+  }
+
+  if (arguments.length === 3) {
+    id = name;
+  }
+
+  if (typeof sourceString === "string" && sourceString.length > 0) {
+
+    let offsetString = sourceString.substring.apply(sourceString, rangeOffset).trim();
+    let nameString = sourceString.substring.apply(sourceString, rangeParameter).trim();
+    let valueString = sourceString.substring.apply(sourceString, rangeValue).trim();
+    let midiIdString = sourceString.substring.apply(sourceString, rangeMidiId).trim();
+
+    offset = parseInt(offsetString, 10);
+    name = nameString;
+    lookup = parseValueString(valueString);
+
+    [midiId, midiSubId] = midiIdString.split(":");
+
+    midiId = parseInt(midiId, 16);
+    midiSubId = parseInt(midiSubId, 16);
+
+    // No id supplied
+    if (typeof id === "undefined") {
+      id = name.toLowerCase().replace(/[^\s\w_-]*/g, "").replace(/\s+/g, "_");
+    }
+  }
+
+  return new Parameter(offset, name, midiId, midiSubId, lookup, category, id, length);
+};
 
 let programParameters = () => {
   return new ParamGroup(0, "Program", 0x00, 0x00, [
@@ -340,7 +390,6 @@ let timbreParameters = () => {
     new ParamGroup( 60, "EG 2", 0x00, 0x2F, egParameters(), "EG", "eg_2"),
 
     // LFO
-//    new ParamGroup( 68, "LFO 1", 0x00, 0x34, [
     new ParamGroup( 0, "LFO 1", 0x00, 0x00, [
       createParam("| +68       | Wave              | 0~4:Saw,Square,Triangle,S/H,Random   | +0:34    |", "LFO 1"),
       createParam("| +69       | Frequency         | 0~127:0.01~100[kHz]           *T02-4 | +0:35    |", "LFO 1"),
@@ -349,7 +398,6 @@ let timbreParameters = () => {
       createParam("| +72       | Sync Note         | 0~16:8/1~1/64                 *T02-5 | +0:38    |", "LFO 1")
     ], "LFO", "lfo_1"),
 
-//    new ParamGroup( 76, "LFO 2", 0x00, 0x39, [
     new ParamGroup( 0, "LFO 2", 0x00, 0x00, [
       createParam("| +76       | Wave              | 0~4:Saw,Square+,Sine,S/H,Random      | +0:39    |", "LFO 2"),
       createParam("| +77       | Frequency         | 0~127:0.01~100[kHz]           *T02-4 | +0:3A    |", "LFO 2"),
@@ -380,17 +428,6 @@ let egParameters = () => {
   ]
 };
 
-// let lfoParameters = (lfoNum) => {
-//   // TODO: different wave lookups for each LFO
-//   return [
-//     createParam("",  0, "Wave",       0x00, 0x00, null, "LFO", "wave"),
-//     createParam("",  1, "Freqency",   0x00, 0x01, null, "LFO", "frequency"),
-//     createParam("",  2, "Key Sync",   0x00, 0x02, null, "LFO", "key_sync"),
-//     createParam("",  3, "Tempo Sync", 0x00, 0x03, null, "LFO", "tempo_sync"),
-//     createParam("",  4, "Sync Note",  0x00, 0x04, null, "LFO", "sync_note")
-//   ]
-// };
-
 let vPatchParameters = () => [
   new ParamGroup( 0, "V.Patch 1", 0x00, 0x00, vPatchParameter(), "VPATCH", "vpatch_1"),
   new ParamGroup( 4, "V.Patch 2", 0x00, 0x03, vPatchParameter(), "VPATCH", "vpatch_2"),
@@ -418,17 +455,6 @@ let fxParameters = () => [
   createParam("| +8        | Rev/Dly SW        | 0~3:Off,TimbreA,TimbreB,TimbreA+B    | 06:08    |", "FX"),
   createParam("| +9        | Rev/Dly Depth     | 0~127                                | 06:09    |", "FX"),
   createParam("| +10       | Rev/Dly Time      | 0~127                          *4-10 | 06:0A    |", "FX")
-  // createParam("",  0, "PreFX Type",        0x00, 0x00, null, "FX", "prefx_type"),
-  // createParam("",  1, "PreFX SW",          0x00, 0x01, "Off,TimbreA,TimbreB,TimbreA+B", "FX", "prefx_sw"),
-  // createParam("",  2, "PreFX Drive/Freq",  0x00, 0x02, null, "FX", "prefx_drive"),
-  // createParam("",  3, "ModFX Type",        0x00, 0x03, null, "FX", "modfx_type"),
-  // createParam("",  4, "ModFX SW",          0x00, 0x04, "Off,TimbreA,TimbreB,TimbreA+B", "FX", "modfx_sw"),
-  // createParam("",  5, "ModFX Depth",       0x00, 0x05, null, "FX", "modfx_depth"),
-  // createParam("",  6, "ModFX Speed",       0x00, 0x06, null, "FX", "modfx_speed"),
-  // createParam("",  7, "Rev/Dly Type",      0x00, 0x07, null, "FX", "revdly_type"),
-  // createParam("",  8, "Rev/Dly SW",        0x00, 0x08, "Off,TimbreA,TimbreB,TimbreA+B", "FX", "revdly_sw"),
-  // createParam("",  9, "Rev/Dly Depth",     0x00, 0x09, null, "FX", "revdly_depth"),
-  // createParam("", 10, "Rev/Dly Speed",     0x00, 0x0A, null, "FX", "revdly_speed")
 ];
 
 let vocoderParameters = () => [
@@ -496,35 +522,6 @@ let arpeggioParameters = () => [
   // Step
   createParam("", 12, "Step",                0x00, 0x0B, "Off,On", null, "step")
 ];
-
-
-
-
-
-//
-// Lookups
-//
-let lookupName = (value, data) => {
-  var name = "";
-  for (let i = 0; i < 12; i++) {
-    if (data[i] !== 0)
-      name = name + String.fromCharCode(data[i]);
-  }
-  return name;
-};
-
-let lookupSplitKey = (value, data) => {
-
-  let keys = "C,C#,D,D#,E,F,F#,G,G#,A,A#,B".split(",");
-
-  let getKey = (value) => {
-    let k = value % 12;
-    let o = Math.floor(value / 12) + 1;
-    return keys[k] + "-" + o;
-  }
-
-  return getKey(value);
-};
 
 
 export { oscTypeDictionary };
