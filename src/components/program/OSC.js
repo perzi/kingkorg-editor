@@ -41,10 +41,11 @@ class Osc extends React.Component {
     if (hidden || name === "-") return null;
 
     let id = this.props.parameter.parameters[offset].id;
+    let parameter = this.props.parameter.getParameter(id);
 
     return {
       data: this.props.data,
-      parentParameter: this.props.parameter,
+      parameter: parameter,
       id: id,
       type: "select"
     }

@@ -2,6 +2,7 @@ import React from 'react';
 
 import Control from 'components/program/Control';
 import ADSR    from 'components/ui/ADSR';
+import { getControlParameter } from 'util/component-helpers';
 
 import 'styles/components/program/eg';
 
@@ -12,19 +13,18 @@ class EG extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    let parameter = this.props.parentParameter.getParameter(this.props.id);
+    let parameter = this.props.parameter.getParameter(this.props.id);
     let data = this.props.data;
     let nextData = nextProps.data;
 
-    let ADSR = this.getChildValues(parameter, data);
-    let nextADSR = this.getChildValues(parameter, nextData);
+    let ADSR = this.getChildValues(this.props.parameter, data);
+    let nextADSR = this.getChildValues(this.props.parameter, nextData);
 
     return ADSR.A !== nextADSR.A
       || ADSR.D !== nextADSR.D
       || ADSR.S !== nextADSR.S
       || ADSR.R !== nextADSR.R;
   }
-
 
   getChildValue(parentParameter, data, id) {
     let parameter = parentParameter.getParameter(id);
@@ -42,9 +42,10 @@ class EG extends React.Component {
   }
 
   render() {
-    let parameter = this.props.parentParameter.getParameter(this.props.id);
+    let props = this.props;
+    let parameter = this.props.parameter.getParameter(this.props.id);
     let data = this.props.data;
-    let adsr = this.getChildValues(parameter, data);
+    let adsr = this.getChildValues(this.props.parameter, data);
 
     let A = adsr.A / 127.0;
     let D = adsr.D / 127.0;
@@ -57,11 +58,11 @@ class EG extends React.Component {
           <ADSR width={240} height={80} A={A} D={D} S={S} R={R} />
         </div>
         <div className="eg__controls">
-          <Control id="attack_time" data={this.props.data} parentParameter={parameter} type="knob" />
-          <Control id="decay_time" data={this.props.data} parentParameter={parameter} type="knob" />
-          <Control id="sustain_level" data={this.props.data} parentParameter={parameter} type="knob" />
-          <Control id="release_time" data={this.props.data} parentParameter={parameter} type="knob" />
-          <Control id="level_velo_int" data={this.props.data} parentParameter={parameter} type="knob" />
+          <Control {...getControlParameter(props, "attack_time", "knob")} />
+          <Control {...getControlParameter(props, "decay_time", "knob")} />
+          <Control {...getControlParameter(props, "sustain_level", "knob")} />
+          <Control {...getControlParameter(props, "release_time", "knob")} />
+          <Control {...getControlParameter(props, "level_velo_int", "knob")} />
         </div>
       </div>
     );
@@ -71,7 +72,7 @@ class EG extends React.Component {
 EG.propTypes = {
   id: React.PropTypes.string.isRequired,
   data: React.PropTypes.array.isRequired,
-  parentParameter: React.PropTypes.object.isRequired
+  parameter: React.PropTypes.object.isRequired
 }
 
 export default EG;

@@ -10,6 +10,22 @@ let parser = {
     }
   },
 
+  getMin: function(a, b) {
+    if (a !== null) {
+      return Math.min(a, b);
+    } else {
+      return b;
+    }
+  },
+
+  getMax: function(a, b) {
+    if (a !== null) {
+      return Math.max(a, b);
+    } else {
+      return b;
+    }
+  },
+
   parseValueTable: function(s) {
 
     let pairs = s.split(this.valueReg);
@@ -27,17 +43,8 @@ let parser = {
       let text = this.trim(pair[1]);
       let intValue = parseInt(value, 10);
 
-      if (min !== null) {
-        min = Math.min(min, intValue);
-      } else {
-        min = intValue;
-      }
-
-      if (max !== null) {
-        max = Math.max(max, intValue);
-      } else {
-        max = intValue;
-      }
+      min = this.getMin(min, intValue);
+      max = this.getMax(max, intValue);
 
       values[intValue.toString()] = text;
     }
@@ -53,6 +60,7 @@ let parser = {
   },
 
   parseValueString: function(s, refs) {
+    // TODO: make this function smaller with helper methods
 
     let ref = s.match(/\*T\d+\-\d+/);
     let hasRef = ref && ref.length > 0;
@@ -73,7 +81,7 @@ let parser = {
     var max = 0;
     var i;
 
-    valueParts.forEach(function(valuePart) {
+    valueParts.forEach((valuePart) => {
 
       let range = valuePart.match(rangeReg);
 
@@ -86,16 +94,8 @@ let parser = {
           maxValue = parseInt(rangeParts[rangeParts.length - 1], 10);
         }
 
-        if (min !== null) {
-          min = Math.min(min, minValue);
-        } else {
-          min = minValue;
-        }
-        if (max !== null) {
-          max = Math.max(max, maxValue);
-        } else {
-          max = maxValue;
-        }
+        min = this.getMin(min, minValue);
+        max = this.getMax(max, maxValue);
 
         for (i = minValue; i <= maxValue; i++) {
           values.push(i);
@@ -105,7 +105,7 @@ let parser = {
       }
     });
 
-    textParts.forEach(function(textPart) {
+    textParts.forEach((textPart) => {
 
       let range = textPart.match(rangeReg);
 
