@@ -1,6 +1,7 @@
 import React            from 'react';
 
 import Control          from 'components/program/Control';
+import { getControlParameter } from 'util/component-helpers';
 
 
 class LFO extends React.Component {
@@ -9,16 +10,15 @@ class LFO extends React.Component {
   }
 
   render() {
-    let parameter = this.props.parentParameter.getParameter(this.props.id);
-    let data = this.props.data;
+    let props = this.props;
 
     return (
       <div className="lfo__controls">
-        <Control id="wave" data={this.props.data} parentParameter={parameter} />
-        <Control id="frequency" data={this.props.data} parentParameter={parameter} />
-        <Control id="key_sync" data={this.props.data} parentParameter={parameter} />
-        <Control id="tempo_sync" data={this.props.data} parentParameter={parameter} />
-        <Control id="sync_note" data={this.props.data} parentParameter={parameter} />
+        <Control {...getControlParameter(props, "wave", "knob")} />
+        <Control {...getControlParameter(props, "frequency", "knob")} />
+        <Control {...getControlParameter(props, "key_sync", "knob")} />
+        <Control {...getControlParameter(props, "tempo_sync", "knob")} />
+        <Control {...getControlParameter(props, "sync_note", "knob")} />
       </div>
     );
   }
@@ -27,7 +27,7 @@ class LFO extends React.Component {
 LFO.propTypes = {
   id: React.PropTypes.string.isRequired,
   data: React.PropTypes.array.isRequired,
-  parentParameter: React.PropTypes.object.isRequired
+  parameter: React.PropTypes.object.isRequired
 }
 
 export default LFO;

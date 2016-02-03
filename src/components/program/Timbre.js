@@ -5,6 +5,7 @@ import Control from 'components/program/Control';
 import EG      from 'components/program/EG';
 import LFO     from 'components/program/LFO';
 import Simple  from 'components/ui/Simple';
+import { getControlParameter } from 'util/component-helpers';
 
 import 'styles/components/program/timbre';
 
@@ -25,69 +26,62 @@ class Timbre extends React.Component {
     };
   }
 
-  getControlParameter(id, type = "select") {
-    return {
-      data: this.props.data,
-      parentParameter: this.props.parameter,
-      id,
-      type
-    }
-  }
-
   render() {
+    let props = this.props;
+
     return (
       <div className="timbre">
         <h3>{this.props.name}</h3>
         <div className="timbre__blocks">
           <div className="timbre__block">
             <h4 className="timbre__block-title">Voice</h4>
-            <Control {...this.getControlParameter("voice_assign", "select")} />
-            <Control {...this.getControlParameter("unison_sw", "select")} />
-            <Control {...this.getControlParameter("unison_detune", "knob")} />
-            <Control {...this.getControlParameter("unison_spread", "knob")} />
+            <Control {...getControlParameter(props, "voice_assign")} />
+            <Control {...getControlParameter(props, "unison_sw")} />
+            <Control {...getControlParameter(props, "unison_detune", "knob")} />
+            <Control {...getControlParameter(props, "unison_spread", "knob")} />
           </div>
           <div className="timbre__block">
             <h4 className="timbre__block-title">Pitch</h4>
-            <Control {...this.getControlParameter("pitch_transpose", "knob")} />
-            <Control {...this.getControlParameter("pitch_detune", "knob")} />
-            <Control {...this.getControlParameter("pitch_lfo2modint", "knob")} />
-            <Control {...this.getControlParameter("pitch_lfo2jsy", "knob")} />
-            <Control {...this.getControlParameter("pitch_bendrange")} />
-            <Control {...this.getControlParameter("pitch_portamento_sw")} />
-            <Control {...this.getControlParameter("pitch_portamento_time", "knob")} />
-            <Control {...this.getControlParameter("pitch_analog_tuning", "knob")} />
+            <Control {...getControlParameter(props, "pitch_transpose", "knob")} />
+            <Control {...getControlParameter(props, "pitch_detune", "knob")} />
+            <Control {...getControlParameter(props, "pitch_lfo2modint", "knob")} />
+            <Control {...getControlParameter(props, "pitch_lfo2jsy", "knob")} />
+            <Control {...getControlParameter(props, "pitch_bendrange")} />
+            <Control {...getControlParameter(props, "pitch_portamento_sw", "pushbuttons")} />
+            <Control {...getControlParameter(props, "pitch_portamento_time", "knob")} />
+            <Control {...getControlParameter(props, "pitch_analog_tuning", "knob")} />
           </div>
           <div className="timbre__block">
             <h4 className="timbre__block-title">Filter</h4>
-            <Control {...this.getControlParameter("type", "select")} />
-            <Control {...this.getControlParameter("cutoff", "knob")} />
-            <Control {...this.getControlParameter("resonance", "knob")} />
-            <Control {...this.getControlParameter("eg1_intensity", "cknob")} />
-            <Control {...this.getControlParameter("lfo1_mod_int", "cknob")} />
-            <Control {...this.getControlParameter("lfo1_js-y", "cknob")} />
-            <Control {...this.getControlParameter("keyboard_track", "cknob")} />
-            <Control {...this.getControlParameter("velocity_sens", "cknob")} />
+            <Control {...getControlParameter(props, "type")} />
+            <Control {...getControlParameter(props, "cutoff", "knob")} />
+            <Control {...getControlParameter(props, "resonance", "knob")} />
+            <Control {...getControlParameter(props, "eg1_intensity", "cknob")} />
+            <Control {...getControlParameter(props, "lfo1_mod_int", "cknob")} />
+            <Control {...getControlParameter(props, "lfo1_js-y", "cknob")} />
+            <Control {...getControlParameter(props, "keyboard_track", "cknob")} />
+            <Control {...getControlParameter(props, "velocity_sens", "cknob")} />
           </div>
           <div className="timbre__block">
             <h4 className="timbre__block-title">Mixer</h4>
-            <Control {...this.getControlParameter("osc1_level", "knob")} />
-            <Control {...this.getControlParameter("osc2_level", "knob")} />
-            <Control {...this.getControlParameter("osc3_level", "knob")} />
+            <Control {...getControlParameter(props, "osc1_level", "knob")} />
+            <Control {...getControlParameter(props, "osc2_level", "knob")} />
+            <Control {...getControlParameter(props, "osc3_level", "knob")} />
           </div>
           <div className="timbre__block">
             <h4 className="timbre__block-title">Amp</h4>
-            <Control {...this.getControlParameter("level", "knob")} />
-            <Control {...this.getControlParameter("panpot", "knob")} />
-            <Control {...this.getControlParameter("punch_level", "knob")} />
-            <Control {...this.getControlParameter("key_track", "knob")} />
+            <Control {...getControlParameter(props, "level", "knob")} />
+            <Control {...getControlParameter(props, "panpot", "knob")} />
+            <Control {...getControlParameter(props, "punch_level", "knob")} />
+            <Control {...getControlParameter(props, "key_track", "knob")} />
           </div>
           <div className="timbre__block">
             <h4 className="timbre__block-title">LFO 1</h4>
-            <LFO {...this.getControlParameter("lfo_1")} />
+            <LFO {...getControlParameter(props, "lfo_1")} />
           </div>
           <div className="timbre__block">
             <h4 className="timbre__block-title">LFO 2</h4>
-            <LFO {...this.getControlParameter("lfo_2")} />
+            <LFO {...getControlParameter(props, "lfo_2")} />
           </div>
           <div className="timbre__block">
             <h4 className="timbre__block-title">Oscillator 1</h4>
@@ -103,11 +97,11 @@ class Timbre extends React.Component {
           </div>
           <div className="timbre__block">
             <h4 className="timbre__block-title">EG 1 (Filter)</h4>
-            <EG {...this.getControlParameter("eg_1")} />
+            <EG {...getControlParameter(props, "eg_1")} />
           </div>
           <div className="timbre__block">
             <h4 className="timbre__block-title">EG 2 (Amp)</h4>
-            <EG {...this.getControlParameter("eg_2")} />
+            <EG {...getControlParameter(props, "eg_2")} />
           </div>
         </div>
       </div>
