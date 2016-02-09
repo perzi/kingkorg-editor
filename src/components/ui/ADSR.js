@@ -52,7 +52,7 @@ class ADSR extends React.Component {
     return (
       <svg width={width} height={height} >
         <path d={d} stroke={foregroundColor} strokeWidth={strokeWidth} fill={backgroundColor} />
-        <g stroke={foregroundColor} stroke-width={strokeWidth} fill={foregroundColor}>
+        <g stroke={foregroundColor} strokeWidth={strokeWidth} fill={foregroundColor}>
           <circle cx={x1} cy={y1} r={strokeWidth} />
           <circle cx={x2} cy={y2} r={strokeWidth} />
           <circle cx={x3} cy={y3} r={strokeWidth} />
