@@ -20,12 +20,12 @@ const CURRENT_PROGRAM_DATA_DUMP_REQUEST = 0x10;
 const PROGRAM_DATA_DUMP_REQUEST         = 0x1C;
 const GLOBAL_DATA_DUMP_REQUEST          = 0x0E;
 const PROGRAM_WRITE_REQUEST             = 0x11;
+const PROGRAM_PARAMETER_CHANGE          = 0x41;
 
 // Replies
 const CURRENT_PROGRAM_DATA_DUMP  = 0x40;
 const PROGRAM_DATA_DUMP          = 0x4C;
 const GLOBAL_DATA_DUMP           = 0x51;
-const PROGRAM_PARAMETER_CHANGE   = 0x41;
 
 // Respsonse result
 const DATA_FORMAT_ERROR          = 0x26;
@@ -128,14 +128,15 @@ export default class KingKORG {
       scanned: false,
       devicePresent: false,
       canConnect: false, // user granted access
-
       midiAvailable: false,
+
       midiAccess: null,
       midiIn: null,
       midiKbd: null,
       midiOut: null,
       midiSound: null,
       midiChannel: 1, // default to 1
+
       kingKorgConnected: false,
     }
   }
@@ -396,14 +397,32 @@ export default class KingKORG {
     }
   }
 
+  currentProgramDataDump(channel) {
+    this.exclusiveMessage(channel, CURRENT_PROGRAM_DATA_DUMP_REQUEST);
+  }
+
+  programDataDump(channel, programNumber) {
+    let [pLsb = 0, pMsb = 0] = splitIntIn7BitsValues(programNumber);
+
+    this.exclusiveMessage(channel, PROGRAM_DATA_DUMP_REQUEST, [pLsb, pMsb]);
+  }
+
+  globalDataDump(channel) {
+    this.exclusiveMessage(channel, GLOBAL_DATA_DUMP_REQUEST);
+  }
+
+  programWrite(channel, programNumber) {
+    let [pLsb = 0, pMsb = 0] = splitIntIn7BitsValues(programNumber);
+
+    this.exclusiveMessage(channel, PROGRAM_DATA_DUMP_REQUEST, [pLsb, pMsb]);
+  }
+
   parameterChange(channel, parameterId, parameterSubId, value) {
     let [pLsb = 0, pMsb = 0] = splitIntIn7BitsValues(parameterId);
     let [sLsb = 0, sMsb = 0] = splitIntIn7BitsValues(parameterSubId);
     let [vvl = 0, vvm = 0, vvh = 0] = splitIntIn7BitsValues(value);
 
-    console.log(pLsb, pMsb, sLsb, sMsb, vvl, vvm, vvh);
-
-    this.exclusiveMessage(channel, PROGRAM_PARAMETER_CHANGE, [pLsb, pMsb, sLsb, sMsb, vvl, vvm, vvh])
+    this.exclusiveMessage(channel, PROGRAM_PARAMETER_CHANGE, [pLsb, pMsb, sLsb, sMsb, vvl, vvm, vvh]);
   }
 
 }
