@@ -14,11 +14,11 @@ class LFO extends React.Component {
 
     return (
       <div className="lfo__controls">
-        <Control {...getControlParameter(props, "wave", "knob")} />
-        <Control {...getControlParameter(props, "frequency", "knob")} />
-        <Control {...getControlParameter(props, "key_sync", "knob")} />
-        <Control {...getControlParameter(props, "tempo_sync", "knob")} />
-        <Control {...getControlParameter(props, "sync_note", "knob")} />
+        <Control {...getControlParameter(props, "wave", "slider", "")} />
+        <Control {...getControlParameter(props, "frequency", "slider", "")} />
+        <Control {...getControlParameter(props, "key_sync", "slider", "")} />
+        <Control {...getControlParameter(props, "tempo_sync", "pushbuttons", "")} />
+        <Control {...getControlParameter(props, "sync_note", "slider")} />
       </div>
     );
   }
