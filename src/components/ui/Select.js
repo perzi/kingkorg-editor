@@ -58,7 +58,6 @@ Select.propTypes = {
   className: React.PropTypes.string,
   min: React.PropTypes.number,
   max: React.PropTypes.number,
-  allValues: React.PropTypes.array,
   lookup: React.PropTypes.object
 };
 
