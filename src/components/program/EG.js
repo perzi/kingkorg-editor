@@ -55,14 +55,14 @@ class EG extends React.Component {
     return (
       <div className="eg">
         <div className="eg__adsr">
-          <ADSR width={240} height={80} A={A} D={D} S={S} R={R} />
+          <ADSR width={170} height={60} A={A} D={D} S={S} R={R} />
         </div>
         <div className="eg__controls">
-          <Control {...getControlParameter(props, "attack_time", "knob")} />
-          <Control {...getControlParameter(props, "decay_time", "knob")} />
-          <Control {...getControlParameter(props, "sustain_level", "knob")} />
-          <Control {...getControlParameter(props, "release_time", "knob")} />
-          <Control {...getControlParameter(props, "level_velo_int", "knob")} />
+          <Control {...getControlParameter(props, "attack_time", "slider", "")} />
+          <Control {...getControlParameter(props, "decay_time", "slider", "")} />
+          <Control {...getControlParameter(props, "sustain_level", "slider", "")} />
+          <Control {...getControlParameter(props, "release_time", "slider", "")} />
+          <Control {...getControlParameter(props, "level_velo_int", "slider", "")} />
         </div>
       </div>
     );
