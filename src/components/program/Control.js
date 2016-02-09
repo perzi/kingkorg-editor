@@ -5,6 +5,7 @@ import { updateCurrentProgramParam } from 'actions/actions';
 import Knob         from 'components/ui/Knob';
 import Simple       from 'components/ui/Simple';
 import Select       from 'components/ui/Select';
+import Slider       from 'components/ui/Slider';
 import PushButtons  from 'components/ui/PushButtons';
 
 
@@ -29,13 +30,15 @@ class Control extends React.Component {
     let value = parameter.getValue(data);
 
     let props = {
+      id: parameter.id,
       name: parameter.name,
       value: value,
       text: text,
       offset: offset,
       category: parameter.category,
+      min: parameter.lookup.min,
+      max: parameter.lookup.max,
       lookup: parameter.lookup,
-      allValues: parameter.lookup instanceof Array ? parameter.lookup : null,
       onChange: ((value) => {
         this.props.dispatch(updateCurrentProgramParam(offset, value));
       }).bind(this)
@@ -63,6 +66,10 @@ class Control extends React.Component {
         ControlToRender = Select;
         break;
 
+      case "slider":
+        ControlToRender = Slider;
+        break;
+
       case "pushbuttons":
         ControlToRender = PushButtons;
         break;
@@ -72,7 +79,7 @@ class Control extends React.Component {
     }
 
     return (
-      <ControlToRender {...props} className="control" />
+      <ControlToRender {...props} className={this.props.className} />
     );
   }
 }
@@ -81,11 +88,13 @@ Control.propTypes = {
   id: React.PropTypes.string.isRequired,
   data: React.PropTypes.array.isRequired,
   parameter: React.PropTypes.object.isRequired,
-  type: React.PropTypes.oneOf(["knob", "select", "cknob", "simple", "pushbuttons"])
+  type: React.PropTypes.oneOf(["knob", "select", "cknob", "simple", "pushbuttons", "slider"]),
+  className: React.PropTypes.string
 }
 
 Control.defaultProps = {
-  type: "select"
+  type: "select",
+  className: "control"
 }
 
 export default connect()(Control);
