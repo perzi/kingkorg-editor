@@ -1,0 +1,23 @@
+@import "styles/variables"
+
+$slider_control_size: 290px
+$slider_label_size: $simple-width
+$slider_range_size: 127px
+
+.slider
+  height: 30px
+  vertical-align: top
+  width: $slider_control_size
+
+.slider__label
+  vertical-align: baseline
+  width: $slider_label_size
+
+input[type=range].slider__range
+  display: inline-block
+  margin: 0 10px
+  vertical-align: middle
+  width: $slider_range_size
+
+.slider__text
+  vertical-align: baseline
