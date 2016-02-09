@@ -1,6 +1,8 @@
 import React from 'react';
 import { Button, ButtonGroup } from 'react-bootstrap';
 
+import 'styles/ui/pushbuttons';
+
 
 class PushButtons extends React.Component {
   constructor(props) {
@@ -39,10 +41,9 @@ class PushButtons extends React.Component {
     const { props } = this;
 
     return (
-      <div className={`simple ${props.className}`}>
-        <div className="simple__name">{props.name}</div>
-        <div className="simple__text">{this.renderOptions()}</div>
-        <div className="simple__value">{props.value}</div>
+      <div className={`pushbuttons ${props.className}`}>
+        <label className="pushbuttons__label">{props.name}</label>
+        <div className="pushbuttons__options">{this.renderOptions()}</div>
       </div>
     );
   }
@@ -56,7 +57,6 @@ PushButtons.propTypes = {
   className: React.PropTypes.string,
   min: React.PropTypes.number,
   max: React.PropTypes.number,
-  allValues: React.PropTypes.array,
   lookup: React.PropTypes.object
 };
 
