@@ -23,7 +23,7 @@ export function convert7BitDataToBytes(sourceData) {
     let r = i % 8; // get order of item
     if (r !== 0) {
       let highbitIndex = Math.floor(i / 8) * 8;
-      let highbits = programData[highbitIndex];
+      let highbits = sourceData[highbitIndex];
       let highbit = (highbits << (8 - r)) & 0b10000000;
       let value = highbit | x;
 
