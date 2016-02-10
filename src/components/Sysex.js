@@ -20,7 +20,7 @@ class Sysex extends React.Component {
       kbdData: []
     }
 
-    this.midi = new KingKORGMidi(this.onKKChange.bind(this), this.onMidi.bind(this), this.onKbd.bind(this));
+    this.midi = new KingKORGMidi(this.onKKChange.bind(this), this.onMidi.bind(this), this.onKbd.bind(this), this.onSysex.bind(this));
 
     window.kkmidi = this.midi;
 
@@ -57,6 +57,10 @@ class Sysex extends React.Component {
 
     // TODO: dispatch actions
     this.setState({ kbdData: [...this.state.kbdData, evt.data] });
+  }
+
+  onSysex(evt) {
+    console.log("onSysex", evt);    
   }
 
   intArrayToHexString(data) {

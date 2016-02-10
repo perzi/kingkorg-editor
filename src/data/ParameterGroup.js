@@ -25,6 +25,21 @@ class ParamGroup {
     }
   }
 
+  getMidiId() {
+    if (this.parent) {
+      let { midiId, midiSubId } = this.parent.getMidiId()
+      return {
+        midiId: this.midiId + midiId,
+        midiSubId: this.midiSubId + midiSubId
+      };
+    } else {
+      return {
+        midiId: this.midiId,
+        midiSubId: this.midiSubId
+      };
+    }
+  }
+
   getParameter(id) {
     let parameters = this.parameters.filter((parameter) => {
       return parameter.id === id;

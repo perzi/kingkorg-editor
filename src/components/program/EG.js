@@ -70,6 +70,7 @@ class EG extends React.Component {
 }
 
 EG.propTypes = {
+  onChange: React.PropTypes.func.isRequired,
   id: React.PropTypes.string.isRequired,
   data: React.PropTypes.array.isRequired,
   parameter: React.PropTypes.object.isRequired

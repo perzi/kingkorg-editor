@@ -1,4 +1,4 @@
-export function getControlParameter({ parameter, data }, id, type, className) {
+export function getControlParameter({ parameter, data, onChange }, id, type, className) {
   let constrolParameter = parameter.getParameter(id);
 
   return {
@@ -6,6 +6,7 @@ export function getControlParameter({ parameter, data }, id, type, className) {
     parameter: constrolParameter,
     id,
     type,
-    className
+    className,
+    onChange
   }
 }

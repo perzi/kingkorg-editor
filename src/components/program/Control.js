@@ -1,8 +1,8 @@
 import React      from 'react';
-import { connect } from 'react-redux';
 
 import { updateCurrentProgramParam } from 'actions/actions';
 import Knob         from 'components/ui/Knob';
+import Toggle       from 'components/ui/Toggle';
 import Simple       from 'components/ui/Simple';
 import Select       from 'components/ui/Select';
 import Slider       from 'components/ui/Slider';
@@ -23,15 +23,15 @@ class Control extends React.Component {
   }
 
   getParameterProps() {
-    let parameter = this.props.parameter;
-    let data = this.props.data;
+    let { parameter, data, onChange, name } = this.props;
     let offset = parameter.getOffset();
     let text = parameter.getValueAsText(data);
     let value = parameter.getValue(data);
+    let { midiId, midiSubId } = parameter.getMidiId();
 
     let props = {
       id: parameter.id,
-      name: parameter.name,
+      name: name || parameter.name,
       value: value,
       text: text,
       offset: offset,
@@ -39,9 +39,9 @@ class Control extends React.Component {
       min: parameter.lookup.min,
       max: parameter.lookup.max,
       lookup: parameter.lookup,
-      onChange: ((value) => {
-        this.props.dispatch(updateCurrentProgramParam(offset, value));
-      }).bind(this)
+      onChange: (value) => {
+        onChange(offset, value, midiId, midiSubId);
+      }
     };
 
     return props;
@@ -74,6 +74,10 @@ class Control extends React.Component {
         ControlToRender = PushButtons;
         break;
 
+      case "toggle":
+        ControlToRender = Toggle;
+        break;
+
       default:
         break;
     }
@@ -85,10 +89,12 @@ class Control extends React.Component {
 }
 
 Control.propTypes = {
+  onChange: React.PropTypes.func.isRequired,
   id: React.PropTypes.string.isRequired,
   data: React.PropTypes.array.isRequired,
+  name: React.PropTypes.string,
   parameter: React.PropTypes.object.isRequired,
-  type: React.PropTypes.oneOf(["knob", "select", "cknob", "simple", "pushbuttons", "slider"]),
+  type: React.PropTypes.oneOf(["knob", "select", "cknob", "simple", "pushbuttons", "slider", "toggle"]),
   className: React.PropTypes.string
 }
 
@@ -97,4 +103,5 @@ Control.defaultProps = {
   className: "control"
 }
 
-export default connect()(Control);
+// export default connect()(Control);
+export default Control;

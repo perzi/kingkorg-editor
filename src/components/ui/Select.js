@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Popover, OverlayTrigger } from 'react-bootstrap';
+import { ButtonGroup, Button, Popover, OverlayTrigger } from 'react-bootstrap';
 
 
 class Select extends React.Component {
@@ -28,11 +28,28 @@ class Select extends React.Component {
       return (<Button key={index} bsStyle={bsStyle} bsSize="xsmall" onClick={handleClick}>{item.text}</Button>);
     }, this);
 
+    // TODO: use generated id for Popover
     return (
       <Popover id="popoverid">
+        <ButtonGroup>
+          <Button bsStyle="default" bsSize="xsmall" onClick={this.handlePrev.bind(this)}>&lt;</Button>
+          <Button bsStyle="default" bsSize="xsmall" onClick={this.handleNext.bind(this)}>&gt;</Button>
+        </ButtonGroup>
         {options}
       </Popover>
     );
+  }
+
+  handlePrev(e) {
+    let length = this.props.max - this.props.min + 1
+    let newValue = (this.props.value - 1 + length) % length;
+    this.props.onChange(newValue);
+  }
+
+  handleNext(e) {
+    let length = this.props.max - this.props.min + 1
+    let newValue = (this.props.value + 1) % length;
+    this.props.onChange(newValue);
   }
 
   render() {
@@ -40,10 +57,9 @@ class Select extends React.Component {
 
     return (
       <OverlayTrigger trigger="click" rootClose placement="bottom" overlay={this.renderPopover()}>
-        <div className={`simple ${props.className}`}>
-          <div className="simple__name">{props.name}</div>
-          <div className="simple__text">{props.text}</div>
-          <div className="simple__value">{props.value}</div>
+        <div className={`pushbuttons ${props.className}`}>
+          <label className="pushbuttons__label">{props.name}</label>
+          <Button bsStyle="default" bsSize="xsmall">{props.text}</Button>
         </div>
       </OverlayTrigger>
     );

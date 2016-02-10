@@ -23,16 +23,16 @@ const PROGRAM_WRITE_REQUEST             = 0x11;
 const PROGRAM_PARAMETER_CHANGE          = 0x41;
 
 // Replies
-const CURRENT_PROGRAM_DATA_DUMP  = 0x40;
-const PROGRAM_DATA_DUMP          = 0x4C;
-const GLOBAL_DATA_DUMP           = 0x51;
+export const CURRENT_PROGRAM_DATA_DUMP  = 0x40;
+export const PROGRAM_DATA_DUMP          = 0x4C;
+export const GLOBAL_DATA_DUMP           = 0x51;
 
 // Respsonse result
-const DATA_FORMAT_ERROR          = 0x26;
-const DATA_LOAD_COMPLETED        = 0x23;
-const DATA_LOAD_ERROR            = 0x24;
-const WRITE_COMPLETED            = 0x21;
-const WRITE_ERROR                = 0x22;
+export const DATA_FORMAT_ERROR          = 0x26;
+export const DATA_LOAD_COMPLETED        = 0x23;
+export const DATA_LOAD_ERROR            = 0x24;
+export const WRITE_COMPLETED            = 0x21;
+export const WRITE_ERROR                = 0x22;
 
 
 function intArrayToHexString(data) {
@@ -119,10 +119,13 @@ function getResponseVariables(data, signature) {
 
 export default class KingKORG {
 
-  constructor(onChange, onMidi, onKbd) {
+  constructor(onChange, onMidi, onKbd, onSysex, onDeviceInquiry, onDeviceSearch) {
     this.onChange = onChange;
     this.onMidi = onMidi;
     this.onKbd = onKbd;
+    this.onSysex = onSysex;
+    this.onDeviceInquiry = onDeviceInquiry;
+    this.onDeviceSearch = onDeviceSearch;
 
     this.state = {
       scanned: false,
@@ -135,7 +138,7 @@ export default class KingKORG {
       midiKbd: null,
       midiOut: null,
       midiSound: null,
-      midiChannel: 1, // default to 1
+      midiChannel: 0, // default to 1
 
       kingKorgConnected: false,
     }
@@ -335,36 +338,53 @@ export default class KingKORG {
             console.log(KK_DEVICE_INQUIRY);
             [channel, majorVersion, minorVersion, releaseVersion, reserved] = replyVariables;
             globalChannel = channel & 0x0F;
-            console.log(globalChannel, majorVersion, minorVersion, releaseVersion, reserved);
+            this.onDeviceInquiry(globalChannel, majorVersion, minorVersion, releaseVersion);
             break;
+
           case KK_DEVICE_SEARCH:
             console.log(KK_DEVICE_SEARCH);
             [channel, echoBackId, majorVersion, minorVersion, releaseVersion, reserved] = replyVariables;
 
             globalChannel = channel & 0x0F;
             sysexEnabled = channel & 0b10000;
-
-            console.log(globalChannel, sysexEnabled, echoBackId, majorVersion, minorVersion, releaseVersion, reserved);
+            this.onDeviceSearch(globalChannel, sysexEnabled, echoBackId, majorVersion, minorVersion, releaseVersion);
             break;
+
           case KK_EXCLUSIVE_MESSAGE:
             console.log(KK_EXCLUSIVE_MESSAGE);
             [channel, command, ...responseData] = replyVariables;
             globalChannel = channel & 0x0F;
 
             // TODO: parse responseData differently depending on command
-
-
-
-            console.log(globalChannel, command, data);
-
+            this.handleExclusiveMessage(channel, command, responseData);
             break;
+
           default:
             break;
         }
-
-        // console.log("SYSEX RESPONSE", def.id, intArrayToHexString(replyVariables).join(", "));
       }
     });
+  }
+
+  handleExclusiveMessage(channel, command, responseData) {
+
+    let data = responseData;
+    let evt = {
+      command,
+      channel: channel & 0x0f
+    };
+
+    if (command === CURRENT_PROGRAM_DATA_DUMP || command === GLOBAL_DATA_DUMP) {
+      evt["data"] = convert7BitDataToBytes(responseData);
+    }
+
+    if (command === PROGRAM_DATA_DUMP) {
+        let [programNoLsb, programNoMsb, programData] = responseData;
+        evt["programNo"] = programNoMsb << 7 + programNoLsb;
+        evt["data"] = convert7BitDataToBytes(programData);
+    }
+
+    this.onSysex(evt);
   }
 
   deviceInquiry(channel) {

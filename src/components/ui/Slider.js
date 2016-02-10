@@ -33,7 +33,7 @@ class Slider extends React.Component {
           value={this.props.value}
           min={this.props.min}
           max={this.props.max}
-          onInput={this.handleChange.bind(this)}
+          onChange={this.handleChange.bind(this)}
           step={this.props.step}
           list={rangeListId}
           />

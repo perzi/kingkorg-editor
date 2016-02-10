@@ -4,7 +4,6 @@ import Osc     from 'components/program/Osc';
 import Control from 'components/program/Control';
 import EG      from 'components/program/EG';
 import LFO     from 'components/program/LFO';
-import Simple  from 'components/ui/Simple';
 import { getControlParameter } from 'util/component-helpers';
 
 import 'styles/components/program/timbre';
@@ -47,7 +46,7 @@ class Timbre extends React.Component {
             <Control {...getControlParameter(props, "pitch_lfo2modint", "slider", "")} />
             <Control {...getControlParameter(props, "pitch_lfo2jsy", "slider", "")} />
             <Control {...getControlParameter(props, "pitch_bendrange", "slider", "")} />
-            <Control {...getControlParameter(props, "pitch_portamento_sw", "pushbuttons")} />
+            <Control {...getControlParameter(props, "pitch_portamento_sw", "toggle")} />
             <Control {...getControlParameter(props, "pitch_portamento_time", "slider", "")} />
             <Control {...getControlParameter(props, "pitch_analog_tuning", "slider", "")} />
           </div>
@@ -110,12 +109,7 @@ class Timbre extends React.Component {
 };
 
 Timbre.propTypes = {
-  onChange: React.PropTypes.func
+  onChange: React.PropTypes.func.isRequired
 };
-
-Timbre.defaultProps = {
-  onChange: (offset, value) => { }
-};
-
 
 export default Timbre;
