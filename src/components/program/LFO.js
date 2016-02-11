@@ -1,7 +1,7 @@
 import React            from 'react';
 
 import Control          from 'components/program/Control';
-import { getControlParameter } from 'util/component-helpers';
+import { getControlParameter, willParametersChange } from 'util/component-helpers';
 
 
 class LFO extends React.Component {
@@ -10,14 +10,11 @@ class LFO extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    let data = this.props.data;
+
+    let { parameter, data } = this.props;
     let nextData = nextProps.data;
 
-    return this.willParameterChange("wave", data, nextData) ||
-      this.willParameterChange("tempo_sync", data, nextData) ||
-      this.willParameterChange("key_sync", data, nextData) ||
-      this.willParameterChange("sync_note", data, nextData) ||
-      this.willParameterChange("frequency", data, nextData);
+    return willParametersChange(parameter, data, nextData, ["wave", "tempo_sync", "key_sync", "sync_note", "frequency"]);
   }
 
   willParameterChange(propertyId, data, nextData) {
@@ -26,6 +23,9 @@ class LFO extends React.Component {
   }
 
   render() {
+
+    console.log("LFO RENDER", this.props.parameter.id);
+
     let props = this.props;
     let { data, parameter } = props;
 

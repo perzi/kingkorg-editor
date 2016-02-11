@@ -55,9 +55,11 @@ let generateSplitKeyMap = () => {
   let map = {};
 
   for (let value = 0; value <= 127; value++) {
-    let k = value % 12;
-    let o = Math.floor(value / 12) + 1;
-    map[value] = keys[k] + "-" + o;
+    let keyIndex = value % 12;
+    let octave = Math.floor(value / 12) - 1;
+    let key = keys[keyIndex];
+
+    map[value] = `${key}${octave}`;
   }
 
   return {
@@ -334,9 +336,11 @@ let programParameters = () => {
       new ParamGroup(100, "V.Patch A",         0x03, 0x00, vPatchParameters(),    null, "vpatch_a"),
       new ParamGroup(124, "Timbre B",          0x04, 0x00, timbreParameters(),    null, "timbre_b"),
       new ParamGroup(208, "V.Patch B",         0x05, 0x00, vPatchParameters(),    null, "vpatch_b"),
-      new ParamGroup(232, "FX",                0x06, 0x00, fxParameters(),        null, "fx"),
-      new ParamGroup(244, "Vocoder",           0x07, 0x00, vocoderParameters(),   null, "vocoder"),
-      new ParamGroup(296, "Arpeggio",          0x08, 0x00, arpeggioParameters(),  null, "arpeggio"),
+
+      // These groups are absolutely defined in spec, so use
+      new ParamGroup(232, "FX",                0x00, 0x00, fxParameters(),        null, "fx"),
+      new ParamGroup(244, "Vocoder",           0x00, 0x00, vocoderParameters(),   null, "vocoder"),
+      new ParamGroup(296, "Arpeggio",          0x00, 0x00, arpeggioParameters(),  null, "arpeggio"),
       createParam("| 312       | Key Response      | 0~2:Normal,Shallow,Deep              | 01:00    |")
   ]);
 }
@@ -385,6 +389,8 @@ let timbreParameters = () => {
 
     // Amp
     createParam("| +47       | Level             | 0~127                                | +0:26    |", "Amp"),
+
+    // TODO: handle tri-state definitions
     createParam("| +48       | Panpot            | 0,1~64~127:L63,L63~CNT~R63           | +0:27    |", "Amp"),
     createParam("| +49       | Punch Level       | 0~127                                | +0:28    |", "Amp"),
     createParam("| +50       | Key Track         | -63~0~63                             | +0:29    |", "Amp"),
@@ -485,22 +491,22 @@ let vocoderParameters = () => [
   createParam("", 13, "E.F.Sens",            0x00, 0x12, null, "Filter", "ef_sens"),
 
   // Formant Hold Data
-  createParam("", 16, "Band 1",              0x00, 0x0E, null, "Formant Hold", "band1", 2),
-  createParam("", 18, "Band 2",              0x00, 0x0F, null, "Formant Hold", "band2", 2),
-  createParam("", 20, "Band 3",              0x00, 0x10, null, "Formant Hold", "band1", 2),
-  createParam("", 22, "Band 4",              0x00, 0x11, null, "Formant Hold", "band2", 2),
-  createParam("", 24, "Band 5",              0x00, 0x12, null, "Formant Hold", "band1", 2),
-  createParam("", 26, "Band 6",              0x00, 0x13, null, "Formant Hold", "band2", 2),
-  createParam("", 28, "Band 7",              0x00, 0x14, null, "Formant Hold", "band1", 2),
-  createParam("", 30, "Band 8",              0x00, 0x15, null, "Formant Hold", "band2", 2),
-  createParam("", 32, "Band 9",              0x00, 0x16, null, "Formant Hold", "band1", 2),
-  createParam("", 34, "Band 10",             0x00, 0x17, null, "Formant Hold", "band2", 2),
-  createParam("", 36, "Band 11",             0x00, 0x18, null, "Formant Hold", "band1", 2),
-  createParam("", 38, "Band 12",             0x00, 0x19, null, "Formant Hold", "band2", 2),
-  createParam("", 40, "Band 13",             0x00, 0x1A, null, "Formant Hold", "band1", 2),
-  createParam("", 42, "Band 14",             0x00, 0x1B, null, "Formant Hold", "band2", 2),
-  createParam("", 44, "Band 15",             0x00, 0x1C, null, "Formant Hold", "band1", 2),
-  createParam("", 46, "Band 16",             0x00, 0x1D, null, "Formant Hold", "band2", 2),
+  createParam("", 16, "Band 1",              0x00, 0x0E, null, "Formant Hold", "band_1", 2),
+  createParam("", 18, "Band 2",              0x00, 0x0F, null, "Formant Hold", "band_2", 2),
+  createParam("", 20, "Band 3",              0x00, 0x10, null, "Formant Hold", "band_3", 2),
+  createParam("", 22, "Band 4",              0x00, 0x11, null, "Formant Hold", "band_4", 2),
+  createParam("", 24, "Band 5",              0x00, 0x12, null, "Formant Hold", "band_5", 2),
+  createParam("", 26, "Band 6",              0x00, 0x13, null, "Formant Hold", "band_6", 2),
+  createParam("", 28, "Band 7",              0x00, 0x14, null, "Formant Hold", "band_7", 2),
+  createParam("", 30, "Band 8",              0x00, 0x15, null, "Formant Hold", "band_8", 2),
+  createParam("", 32, "Band 9",              0x00, 0x16, null, "Formant Hold", "band_9", 2),
+  createParam("", 34, "Band 10",             0x00, 0x17, null, "Formant Hold", "band_10", 2),
+  createParam("", 36, "Band 11",             0x00, 0x18, null, "Formant Hold", "band_11", 2),
+  createParam("", 38, "Band 12",             0x00, 0x19, null, "Formant Hold", "band_12", 2),
+  createParam("", 40, "Band 13",             0x00, 0x1A, null, "Formant Hold", "band_13", 2),
+  createParam("", 42, "Band 14",             0x00, 0x1B, null, "Formant Hold", "band_14", 2),
+  createParam("", 44, "Band 15",             0x00, 0x1C, null, "Formant Hold", "band_15", 2),
+  createParam("", 46, "Band 16",             0x00, 0x1D, null, "Formant Hold", "band_16", 2),
 
   // Amp
   createParam("", 48, "Vocoder Level",       0x00, 0x1E, null, "Amp", "vocoder_level"),
@@ -511,20 +517,23 @@ let vocoderParameters = () => [
 
 let arpeggioParameters = () => [
   createParam("",  0, "Tempo",               0x00, 0x01, null,     null, "tempo", 2),
-  createParam("",  2, "Arp SW",              0x00, 0x00, "Off,On", null, "arp_sw"),
-  createParam("",  3, "Latch",               0x00, 0x02, "Off,On", null, "latch"),
-  createParam("",  4, "Key Sync",            0x00, 0x03, "Off,On", null, "key_sync"),
-  createParam("",  5, "Timbre Assign",       0x00, 0x04, "Off,On", null, "timbre_assign"),
-  createParam("",  6, "Type",                0x00, 0x05, null,     null, "type"),
-  createParam("",  7, "Resolution",          0x00, 0x06, null,     null, "resolution"),
-  createParam("",  8, "gate time",           0x00, 0x07, null,     null, "gate_time"),
-  createParam("",  9, "Swing",               0x00, 0x08, null,     null, "swing"),
-  createParam("", 10, "Last step",           0x00, 0x09, null,     null, "last_step"),
-  createParam("", 11, "Octave Range",        0x00, 0x0A, null,     null, "octave_range"),
+  createParam("| +2        | Arp SW            | 0,1:Off,On                           | 08:00    |", "Arpeggio"),
+  createParam("| +3        | Latch             | 0,1:Off,On                           | 08:02    |", "Arpeggio"),
+  createParam("| +4        | Key Sync          | 0,1:Off,On                           | 08:03    |", "Arpeggio"),
 
-  // TODO: implement bit parameter? this is a group of bits
-  // Step
-  createParam("", 12, "Step",                0x00, 0x0B, "Off,On", null, "step")
+  // TODO: what values?
+  createParam("",  5, "Timbre Assign",       0x00, 0x04, "Off,On", null, "timbre_assign"),
+
+  createParam("| +6        | Type              | 0~5:Up~Trigger                *T06-1 | 08:05    |", "Arpeggio"),
+  createParam("| +7        | Resolution        | 0~8:1/32~1/1                  *T06-2 | 08:06    |", "Arpeggio"),
+  createParam("| +8        | gate time         | 0~100:0~100[%]                       | 08:07    |", "Arpeggio"),
+  createParam("| +9        | Swing             | -100~0~100[%]                        | 08:08    |", "Arpeggio"),
+  createParam("| +10       | Last step         | 1~8:1~8 step                         | 08:09    |", "Arpeggio"),
+  createParam("| +11       | Octave Range      | 1~4:1~4 Octave                       | 08:0A    |", "Arpeggio"),
+
+
+  // TODO: implement bit support in parameter this is a group of bits
+  createParam("", 12, "Step",                0x00, 0x0B, "", null, "step")
 ];
 
 

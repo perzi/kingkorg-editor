@@ -31,11 +31,12 @@ class Select extends React.Component {
     // TODO: use generated id for Popover
     return (
       <Popover id="popoverid">
+        {options}
+        <br />
         <ButtonGroup>
           <Button bsStyle="default" bsSize="xsmall" onClick={this.handlePrev.bind(this)}>&lt;</Button>
           <Button bsStyle="default" bsSize="xsmall" onClick={this.handleNext.bind(this)}>&gt;</Button>
         </ButtonGroup>
-        {options}
       </Popover>
     );
   }

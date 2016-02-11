@@ -1,12 +1,16 @@
 import React from 'react';
-import { ButtonGroup, Button } from 'react-bootstrap';
+import { ButtonGroup, Button, Panel } from 'react-bootstrap';
 import { connect } from 'react-redux';
 
 import { setCurrentProgramName, updateCurrentProgramParam, setCurrentProgram, loadCurrentProgram } from 'actions/actions';
 import Timbre from 'components/program/Timbre';
 import Control from 'components/program/Control';
+import FX from 'components/program/FX';
+import VPatches from 'components/program/VPatches';
+import Arpeggio from 'components/program/Arpeggio';
 import KingKORGMidi, { CURRENT_PROGRAM_DATA_DUMP } from 'midi/KingKORG';
 import programParameters from 'data/programParameters';
+import { getControlParameter } from 'util/component-helpers';
 
 
 class CurrentProgram extends React.Component {
@@ -92,16 +96,8 @@ class CurrentProgram extends React.Component {
     this.setState({ channel });
   }
 
-  getTimbreProps(id, data) {
-    let parameter = programParameters.getParameter(id);
-
-    return {
-      name: parameter.name,
-      parameters: parameter.parameters,
-      parameter: parameter,
-      data: data,
-      onChange: this.handleChange.bind(this)
-    };
+  getControlProps(id, data, type) {
+    return getControlParameter({ parameter: programParameters, data, onChange: this.handleChange.bind(this)}, id, type)
   }
 
   handleChange(offset, value, midiId, midiSubId) {
@@ -121,23 +117,41 @@ class CurrentProgram extends React.Component {
 
     const { dispatch, currentProgram } = this.props;
     const { name, data } = currentProgram;
+    const props = {
+      parameter: programParameters,
+      data,
+      onChange: this.handleChange.bind(this)
+    }
 
     let handleProgramChange = (index) => () => dispatch(loadCurrentProgram(this.state.exampleData[index]));
 
     return (
       <div>
-        <ButtonGroup bsSize="xsmall">
-          <Button onClick={handleProgramChange(0)}>Stab King</Button>
-          <Button onClick={handleProgramChange(1)}>Classic Lead</Button>
-          <Button onClick={handleProgramChange(2)}>DistModLead</Button>
-        </ButtonGroup>
+        <div>
+          <ButtonGroup bsSize="xsmall">
+            <Button onClick={handleProgramChange(0)}>Stab King</Button>
+            <Button onClick={handleProgramChange(1)}>Classic Lead</Button>
+            <Button onClick={handleProgramChange(2)}>DistModLead</Button>
+          </ButtonGroup>
 
-        <Button bsSize="xsmall" onClick={this.handleGetCurrentProgram.bind(this)}>Get Current Program</Button>
-
+          <Button bsSize="xsmall" onClick={this.handleGetCurrentProgram.bind(this)}>Get Current Program</Button>
+        </div>
 
         <h2>{name}</h2>
-        <Timbre {...this.getTimbreProps("timbre_a", data) } />
-        <Timbre {...this.getTimbreProps("timbre_b", data)} />
+        <div style={{color: "red"}}>TODO: Text input control for PROGRAM NAME</div>
+        <Control {...getControlParameter(props, "category", "select", "")} />
+        <Control {...getControlParameter(props, "voice_mode", "pushbuttons", "")} />
+        <Control {...getControlParameter(props, "timbreb_midi_ch", "select", "")} />
+        <Control {...getControlParameter(props, "split_key", "select", "")} />
+
+        <FX {...getControlParameter(props, "fx")} />
+        <Arpeggio {...getControlParameter(props, "arpeggio")} />
+        <Timbre {...getControlParameter(props, "timbre_a")} />
+        <VPatches {...getControlParameter(props, "vpatch_a")} />
+        <Timbre {...getControlParameter(props, "timbre_b")} />
+        <VPatches {...getControlParameter(props, "vpatch_b")} />
+
+        <Control {...getControlParameter(props, "key_response", "pushbuttons", "")} />
       </div>
     );
 
