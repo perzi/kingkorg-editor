@@ -8,7 +8,7 @@ import Control from 'components/program/Control';
 import FX from 'components/program/FX';
 import VPatches from 'components/program/VPatches';
 import Arpeggio from 'components/program/Arpeggio';
-import KingKORGMidi, { CURRENT_PROGRAM_DATA_DUMP } from 'midi/KingKORG';
+import KingKORGMidi, { CURRENT_PROGRAM_DATA_DUMP, PROGRAM_PARAMETER_CHANGE } from 'midi/KingKORG';
 import programParameters from 'data/programParameters';
 import { getControlParameter } from 'util/component-helpers';
 
@@ -127,6 +127,11 @@ class CurrentProgram extends React.Component {
     if (evt.command === CURRENT_PROGRAM_DATA_DUMP) {
       console.log("CurrentProgram.onSysex CURRENT_PROGRAM_DATA_DUMP", evt);
       this.props.dispatch(setCurrentProgram(evt.data));
+    }
+
+    if (evt.command === PROGRAM_PARAMETER_CHANGE) {
+      console.log("CurrentProgram.onSysex PROGRAM_PARAMETER_CHANGE", evt);
+      this.getCurrentProgram();
     }
   }
 
