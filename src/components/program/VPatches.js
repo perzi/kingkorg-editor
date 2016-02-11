@@ -4,6 +4,9 @@ import { Panel } from 'react-bootstrap';
 import VPatch from 'components/program/VPatch';
 import { getControlParameter } from 'util/component-helpers';
 
+import 'styles/components/program/vpatches';
+
+
 class VPatches extends React.Component {
   constructor(props) {
     super(props);
@@ -15,25 +18,23 @@ class VPatches extends React.Component {
     return (
       <Panel collapsible defaultExpanded header={props.parameter.name}>
         <h3>VPatches</h3>
-
-        <h4>VPatch 1</h4>
-        <VPatch {...getControlParameter(props, "vpatch_1")} />
-
-        <h4>VPatch 2</h4>
-        <VPatch {...getControlParameter(props, "vpatch_2")} />
-
-        <h4>VPatch 3</h4>
-        <VPatch {...getControlParameter(props, "vpatch_3")} />
-
-        <h4>VPatch 4</h4>
-        <VPatch {...getControlParameter(props, "vpatch_4")} />
-
-        <h4>VPatch 5</h4>
-        <VPatch {...getControlParameter(props, "vpatch_5")} />
-
-        <h4>VPatch 6</h4>
-        <VPatch {...getControlParameter(props, "vpatch_6")} />
-
+        <table className="vpatches">
+          <thead>
+            <tr>
+              <th>Source</th>
+              <th>Destination</th>
+              <th>Intensity</th>
+            </tr>
+          </thead>
+          <tbody>
+            <VPatch {...getControlParameter(props, "vpatch_1")} />
+            <VPatch {...getControlParameter(props, "vpatch_2")} />
+            <VPatch {...getControlParameter(props, "vpatch_3")} />
+            <VPatch {...getControlParameter(props, "vpatch_4")} />
+            <VPatch {...getControlParameter(props, "vpatch_5")} />
+            <VPatch {...getControlParameter(props, "vpatch_6")} />
+          </tbody>
+        </table>
       </Panel>
     );
   }

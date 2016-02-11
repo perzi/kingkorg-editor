@@ -1,5 +1,5 @@
 import React from 'react';
-import { ButtonGroup, Button, Panel } from 'react-bootstrap';
+import { ButtonGroup, Button, Panel, Grid, Row, Col } from 'react-bootstrap';
 import { connect } from 'react-redux';
 
 import { setCurrentProgramName, updateCurrentProgramParam, setCurrentProgram, loadCurrentProgram } from 'actions/actions';
@@ -76,6 +76,7 @@ class CurrentProgram extends React.Component {
     // TODO: listen to program change to load new data from synth
 
     let kbdLog = [...this.state.kbdLog, evt.data];
+    let channel = this.state.channel;
 
     // max 3 in log
     if (kbdLog.length > 3) {
@@ -84,7 +85,6 @@ class CurrentProgram extends React.Component {
 
     if (kbdLog.length === 3) {
       let [[status1, second1, third1], [status2, second2, third2], [status3, second3, third3]] = kbdLog;
-      let channel = this.state.channel;
 
       if (status3 === (0xC0 + channel) && status2 === (0xB0 + channel) && status1 === (0xB0 + channel)) {
 
@@ -98,15 +98,25 @@ class CurrentProgram extends React.Component {
           // TODO: dispatch program number to store
 
           console.log("PROGRAM CHANGED ON SYNTH", programNumber);
-          if (this.programDataDumpDebounce) {
-            window.clearTimeout(this.programDataDumpDebounce);
-          }
-          this.programDataDumpDebounce = window.setTimeout(() => this.midi.currentProgramDataDump(this.state.channel), 100);
+          this.getCurrentProgram();
         }
+      }
+
+      let [status, second, third] = evt.data;
+      if (status === (0xB0 + channel) && second !== 0x00 && second !== 0x20) {
+        // Any change of parameter on the synth should trigger a reload of current program, except when doing a program change
+        this.getCurrentProgram();
       }
     }
 
     this.setState({ kbdLog });
+  }
+
+  getCurrentProgram() {
+    if (this.programDataDumpDebounce) {
+      window.clearTimeout(this.programDataDumpDebounce);
+    }
+    this.programDataDumpDebounce = window.setTimeout(() => this.midi.currentProgramDataDump(this.state.channel), 100);
   }
 
   onSysex(evt) {
@@ -179,15 +189,28 @@ class CurrentProgram extends React.Component {
         <Control {...getControlParameter(props, "voice_mode", "pushbuttons", "")} />
         <Control {...getControlParameter(props, "timbreb_midi_ch", "select", "")} />
         <Control {...getControlParameter(props, "split_key", "select", "")} />
-
-        <FX {...getControlParameter(props, "fx")} />
-        <Arpeggio {...getControlParameter(props, "arpeggio")} />
-        <Timbre {...getControlParameter(props, "timbre_a")} />
-        <VPatches {...getControlParameter(props, "vpatch_a")} />
-        <Timbre {...getControlParameter(props, "timbre_b")} />
-        <VPatches {...getControlParameter(props, "vpatch_b")} />
-
         <Control {...getControlParameter(props, "key_response", "pushbuttons", "")} />
+
+        <Grid fluid={true}>
+          <Row className="show-grid">
+            <Col lg={6} md={6} sm={6} xs={6} >
+              <FX {...getControlParameter(props, "fx")} />
+            </Col>
+            <Col lg={6} md={6} sm={6} xs={6} >
+              <Arpeggio {...getControlParameter(props, "arpeggio")} />
+            </Col>
+          </Row>
+          <Row className="show-grid">
+            <Col lg={6} md={6} sm={6} xs={6} >
+              <Timbre {...getControlParameter(props, "timbre_a")} />
+              <VPatches {...getControlParameter(props, "vpatch_a")} />
+            </Col>
+            <Col lg={6} md={6} sm={6} xs={6} >
+              <Timbre {...getControlParameter(props, "timbre_b")} />
+              <VPatches {...getControlParameter(props, "vpatch_b")} />
+            </Col>
+          </Row>
+        </Grid>
       </div>
     );
 

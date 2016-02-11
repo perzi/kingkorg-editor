@@ -18,12 +18,14 @@ class VPatch extends React.Component {
   render() {
     let props = this.props;
 
+    // TODO: render dimmed if Intensity is 0, ie patch has no effect
+
     return (
-      <div>
-        <Control {...getControlParameter(props, "patch_source", "select", "")} />
-        <Control {...getControlParameter(props, "patch_destination", "select", "")} />
-        <Control {...getControlParameter(props, "patch_intensity", "slider", "")} />
-      </div>
+      <tr>
+        <td><Control {...getControlParameter(props, "patch_source", "select", "")} /></td>
+        <td><Control {...getControlParameter(props, "patch_destination", "select", "")} /></td>
+        <td><Control {...getControlParameter(props, "patch_intensity", "slider", "")} /></td>
+      </tr>
     );
   }
 }
