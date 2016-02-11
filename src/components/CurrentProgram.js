@@ -98,7 +98,10 @@ class CurrentProgram extends React.Component {
           // TODO: dispatch program number to store
 
           console.log("PROGRAM CHANGED ON SYNTH", programNumber);
-          window.setTimeout(() => this.midi.currentProgramDataDump(this.state.channel), 100);
+          if (this.programDataDumpDebounce) {
+            window.clearTimeout(this.programDataDumpDebounce);
+          }
+          this.programDataDumpDebounce = window.setTimeout(() => this.midi.currentProgramDataDump(this.state.channel), 100);
         }
       }
     }
