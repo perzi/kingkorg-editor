@@ -20,7 +20,9 @@ const CURRENT_PROGRAM_DATA_DUMP_REQUEST = 0x10;
 const PROGRAM_DATA_DUMP_REQUEST         = 0x1C;
 const GLOBAL_DATA_DUMP_REQUEST          = 0x0E;
 const PROGRAM_WRITE_REQUEST             = 0x11;
-const PROGRAM_PARAMETER_CHANGE          = 0x41;
+
+// Request & Reply
+export const PROGRAM_PARAMETER_CHANGE   = 0x41;
 
 // Replies
 export const CURRENT_PROGRAM_DATA_DUMP  = 0x40;
@@ -379,9 +381,22 @@ export default class KingKORG {
     }
 
     if (command === PROGRAM_DATA_DUMP) {
-        let [programNoLsb, programNoMsb, programData] = responseData;
-        evt["programNo"] = programNoMsb << 7 + programNoLsb;
-        evt["data"] = convert7BitDataToBytes(programData);
+      let [programNoLsb, programNoMsb, programData] = responseData;
+      evt["programNo"] = programNoMsb << 7 + programNoLsb;
+      evt["data"] = convert7BitDataToBytes(programData);
+    }
+
+    if (command === PROGRAM_PARAMETER_CHANGE) {
+      let [pLsb, pMsb, sLsb, sMsb, vvl, vvm, vvh] = responseData;
+
+      let parameterId = (pMsb << 7) + pLsb;
+      let parameterSubId = (sMsb << 7) + sLsb;
+      let parameterValue = (vvh << 14) + (vvm << 7) + vvl;
+
+      console.log("PROGRAM_PARAMETER_CHANGE", parameterId, parameterSubId, parameterValue, responseData);
+      evt["parameterId"] = parameterId;
+      evt["parameterSubId"] = parameterSubId;
+      evt["parameterValue"] = parameterValue;
     }
 
     this.onSysex(evt);
