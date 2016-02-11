@@ -20,7 +20,7 @@ class Arpeggio extends React.Component {
         <Control {...getControlParameter(props, "arp_sw", "toggle", "")} />
         <Control {...getControlParameter(props, "latch", "toggle", "")} />
         <Control {...getControlParameter(props, "key_sync", "toggle", "")} />
-        <div style={{color: "red"}}>TODO: TIMBRE ASSIGN VALUES</div>
+        <Control {...getControlParameter(props, "timbre_assign", "pushbuttons", "")} />
         <Control {...getControlParameter(props, "type", "pushbuttons", "")} />
         <Control {...getControlParameter(props, "resolution", "select", "")} />
         <Control {...getControlParameter(props, "gate_time", "slider", "")} />
@@ -37,7 +37,6 @@ class Arpeggio extends React.Component {
 tempo (LSB)
       (MSB)
 
-        <Control {...getControlParameter(props, "timbre_assign", "select", "")} />
 
 
 */
