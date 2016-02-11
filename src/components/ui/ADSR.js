@@ -11,9 +11,11 @@ class ADSR extends React.Component {
 
   calculatePoints() {
 
-    let offset = this.props.strokeWidth;
-    let h = this.props.height - offset * 2;
-    let { A, D, S, R, width } = this.props;
+    let { A, D, S, R, width, height, strokeWidth } = this.props;
+    let offset = strokeWidth * 2;
+    let w = width - offset * 2;
+    let h = height - offset * 2;
+    let w3 = Math.round(w / 3);
 
     let x0 = 0;
     let y0 = 0;
@@ -32,29 +34,30 @@ class ADSR extends React.Component {
       [x2, y2],
       [x3, y3],
       [x4, y4]
-    ].map(p => [Math.round(p[0] * h) + offset, this.props.height - Math.round(p[1] * h)]);
+    ].map(([x, y]) => [Math.round(x * w3) + offset, height - Math.round(y * h) - offset]);
   }
 
   render() {
 
-    let points = this.calculatePoints().map(points => points.join(",")).join(" ")
-    let polygonStyle = {
-      fill: this.props.backgroundColor,
-    };
-    let polylineStyle = {
-      strokeWidth: this.props.strokeWidth,
-      stroke: this.props.foregroundColor,
-      fill: "transparent"
-    };
+    let { width, height, strokeWidth, backgroundColor, foregroundColor } = this.props;
+    let cpoints = this.calculatePoints();
+    let [[x0, y0], [x1, y1], [x2, y2], [x3, y3], [x4, y4]] = cpoints;
 
-    let scale = this.props.height - 2 * this.props.strokeWidth;
-    let transform = `scale(${scale})`;
-
+    let d = `M ${x0} ${y0}
+      Q ${x0} ${y1} ${x1} ${y1}
+      Q ${x1} ${y2} ${x2} ${y2}
+      L ${x3} ${y3}
+      Q ${x3} ${y4} ${x4} ${y4}`;
 
     return (
-      <svg width={this.props.width} height={this.props.height} >
-        <polygon points={points} style={polygonStyle} />
-        <polyline points={points} style={polylineStyle}/>
+      <svg width={width} height={height} >
+        <path d={d} stroke={foregroundColor} strokeWidth={strokeWidth} fill={backgroundColor} />
+        <g stroke={foregroundColor} strokeWidth={strokeWidth} fill={foregroundColor}>
+          <circle cx={x1} cy={y1} r={strokeWidth} />
+          <circle cx={x2} cy={y2} r={strokeWidth} />
+          <circle cx={x3} cy={y3} r={strokeWidth} />
+          <circle cx={x4} cy={y4} r={strokeWidth} />
+        </g>
       </svg>
     );
   }

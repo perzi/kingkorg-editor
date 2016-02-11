@@ -1,10 +1,10 @@
 import React from 'react';
 import { Button, ButtonGroup } from 'react-bootstrap';
 
-import 'styles/ui/pushbuttons';
+import 'styles/ui/toggle';
 
 
-class PushButtons extends React.Component {
+class Toggle extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -22,12 +22,20 @@ class PushButtons extends React.Component {
     }
 
     let options = values.map((item, index) => {
+      let nextIndex = (index + 1) % values.length;
+      let nextValue = values[nextIndex].value;
+
       let handleClick = () => {
-        this.props.onChange(item.value);
+        this.props.onChange(nextValue);
       };
       let selected = item.value === this.props.value;
-      let bsStyle = selected ? "primary" : "default";
-      return (<Button key={index} bsStyle={bsStyle} onClick={handleClick}>{item.text}</Button>);
+      let bsStyle = index === values.length - 1 ? "primary" : "default";
+
+      if (selected) {
+        return (<Button key={index} bsStyle={bsStyle} onClick={handleClick}>{item.text}</Button>);
+      } else {
+        return null;
+      }
     }, this);
 
     return (
@@ -41,15 +49,15 @@ class PushButtons extends React.Component {
     const { props } = this;
 
     return (
-      <div className={`pushbuttons ${props.className}`}>
-        <label className="pushbuttons__label">{props.name}</label>
-        <div className="pushbuttons__options">{this.renderOptions()}</div>
+      <div className={`toggle ${props.className}`}>
+        <label className="toggle__label">{props.name}</label>
+        <div className="toggle__options">{this.renderOptions()}</div>
       </div>
     );
   }
 }
 
-PushButtons.propTypes = {
+Toggle.propTypes = {
   onChange: React.PropTypes.func,
   name: React.PropTypes.string.isRequired,
   value: React.PropTypes.number.isRequired,
@@ -61,7 +69,7 @@ PushButtons.propTypes = {
 };
 
 
-PushButtons.defaultProps = {
+Toggle.defaultProps = {
   value: 0,
   min: 0,
   max: 127,
@@ -70,4 +78,4 @@ PushButtons.defaultProps = {
 };
 
 
-export default PushButtons;
+export default Toggle;

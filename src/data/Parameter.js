@@ -11,8 +11,10 @@ class Parameter {
     this.length = length || 1;
     this.isGroup = false;
 
+    // TODO: remove?
     if (typeof lookup === "string") {
 
+      console.error("Lookup as string", name);
       if (/^-?\d+~\d+/.test(lookup)) {
 
         // just output raw value for now
@@ -33,6 +35,21 @@ class Parameter {
       return this.offset + this.parent.getOffset();
     } else {
       return this.offset;
+    }
+  }
+
+  getMidiId() {
+    if (this.parent) {
+      let { midiId, midiSubId } = this.parent.getMidiId()
+      return {
+        midiId: this.midiId + midiId,
+        midiSubId: this.midiSubId + midiSubId
+      };
+    } else {
+      return {
+        midiId: this.midiId,
+        midiSubId: this.midiSubId
+      };
     }
   }
 

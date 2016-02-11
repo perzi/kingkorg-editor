@@ -38,11 +38,29 @@ export function loadCurrentProgram(sysexData) {
   }
 }
 
+export function setCurrentProgram(data) {
+  return {
+    type: LOAD_CURRENT_PROGRAM,
+    payload: {
+      name: getProgramName(data),
+      data
+    }
+  }
+}
+
 //
 // Helpers
 //
+function getProgramName(data) {
+  let name = ""
+  for (let i = 0; i < 12; i++) {
+    name = name + String.fromCharCode(data[i]);
+  }
+
+  return name;
+}
+
 function convertSysexDataToProgram(sysexData) {
-  let name = "";
 
   // remove first bytes and the last one
   let programData = sysexData.slice(7, sysexData.length - 1);
@@ -62,9 +80,7 @@ function convertSysexDataToProgram(sysexData) {
     }
   }
 
-  for (let i = 0; i < 12; i++) {
-    name = name + String.fromCharCode(data[i]);
-  }
+  let name = getProgramName(data);
 
   return {
     name,

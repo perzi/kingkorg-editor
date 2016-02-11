@@ -106,7 +106,7 @@ let refTableStrings = [
        2: 1/16      5: 1/6       8: 1/1`,
 
 ` *T09-1 : Patch1~6 Destination
-       0: 0ff              10: OSC2 Control2   20: EG2 Decay       30: Panpot          40: Rev/Delay Depth
+       0: Off              10: OSC2 Control2   20: EG2 Decay       30: Panpot          40: Rev/Delay Depth
        1: Pitch            11: OSC3 Control2   21: EG2 Sustain     31: Patch1 Int.     41: Rev/Delay Time
        2: Portamento       12: OSC1 Level      22: EG2 Release     32: Patch2 Int.
        3: OSC1 Tune        13: OSC2 Level      23: EG2 Attack      33: Patch3 Int.
