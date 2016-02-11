@@ -520,10 +520,7 @@ let arpeggioParameters = () => [
   createParam("| +2        | Arp SW            | 0,1:Off,On                           | 08:00    |", "Arpeggio"),
   createParam("| +3        | Latch             | 0,1:Off,On                           | 08:02    |", "Arpeggio"),
   createParam("| +4        | Key Sync          | 0,1:Off,On                           | 08:03    |", "Arpeggio"),
-
-  // TODO: what values?
-  createParam("",  5, "Timbre Assign",       0x00, 0x04, "Off,On", null, "timbre_assign"),
-
+  createParam("| +5        | Timbre Assign     | 0~2:TimbreA,TimbreB,TimbreA+B        | 08:04    |", "Arpeggio"),
   createParam("| +6        | Type              | 0~5:Up~Trigger                *T06-1 | 08:05    |", "Arpeggio"),
   createParam("| +7        | Resolution        | 0~8:1/32~1/1                  *T06-2 | 08:06    |", "Arpeggio"),
   createParam("| +8        | gate time         | 0~100:0~100[%]                       | 08:07    |", "Arpeggio"),
