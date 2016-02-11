@@ -17,15 +17,7 @@ class LFO extends React.Component {
     return willParametersChange(parameter, data, nextData, ["wave", "tempo_sync", "key_sync", "sync_note", "frequency"]);
   }
 
-  willParameterChange(propertyId, data, nextData) {
-    let parameter = this.props.parameter.getParameter(propertyId);
-    return parameter.getValue(data) !== parameter.getValue(nextData);
-  }
-
   render() {
-
-    console.log("LFO RENDER", this.props.parameter.id);
-
     let props = this.props;
     let { data, parameter } = props;
 
