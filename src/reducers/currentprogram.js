@@ -17,14 +17,12 @@ export default function currentProgram(state = initialState, action) {
       );
 
     case CHANGE_CURRENT_PROGRAM_PARAMETER:
-
-      // TODO: enable update of more than one byte
       return Object.assign({}, state,
         {
           data: [
             ...state.data.slice(0, action.payload.index),
-            action.payload.value,
-            ...state.data.slice(action.payload.index + 1)
+            ...action.payload.values,
+            ...state.data.slice(action.payload.index + action.payload.values.length)
           ]
         }
       );

@@ -11,15 +11,7 @@ class Toggle extends React.Component {
 
   renderOptions() {
 
-    let values = [];
-
-    // should not be done here, already computed in lookup
-    for (let p in this.props.lookup.values) {
-      values.push({
-        value: parseInt(p, 10),
-        text: this.props.lookup.values[p]
-      })
-    }
+    let values = this.props.lookup.mappings;
 
     let options = values.map((item, index) => {
       let nextIndex = (index + 1) % values.length;

@@ -9,15 +9,7 @@ class Select extends React.Component {
 
   renderPopover() {
 
-    let values = [];
-
-    // should not be done here, already computed in lookup
-    for (let p in this.props.lookup.values) {
-      values.push({
-        value: parseInt(p, 10),
-        text: this.props.lookup.values[p]
-      })
-    }
+    let values = this.props.lookup.mappings;
 
     let options = values.map((item, index) => {
       let handleClick = () => {
@@ -57,12 +49,12 @@ class Select extends React.Component {
     const { props } = this;
 
     return (
-      <OverlayTrigger trigger="click" rootClose placement="bottom" overlay={this.renderPopover()}>
         <div className={`pushbuttons ${props.className}`}>
           <label className="pushbuttons__label">{props.name}</label>
-          <Button bsStyle="default" bsSize="xsmall">{props.text}</Button>
+          <OverlayTrigger trigger="click" rootClose placement="bottom" overlay={this.renderPopover()}>
+            <Button bsStyle="default" bsSize="xsmall">{props.text}</Button>
+          </OverlayTrigger>
         </div>
-      </OverlayTrigger>
     );
   }
 }

@@ -14,13 +14,13 @@ class Slider extends React.Component {
   }
 
   handleChange(e) {
-    //console.log(e.target.value);
     this.props.onChange(parseInt(e.target.value, 10));
   }
 
   render() {
     let rangeId = `slider__${this.props.id}`;
     let rangeListId = `slider_list__${this.props.id}`;
+    let centerOption = this.props.center !== undefined ? <option>{this.props.center}</option> : null;
 
     return (
       <div className={`slider ${this.props.className}`}>
@@ -41,6 +41,7 @@ class Slider extends React.Component {
 
         <datalist id={rangeListId}>
           <option>{this.props.min}</option>
+          { centerOption}
           <option>{this.props.max}</option>
         </datalist>
 
@@ -57,7 +58,7 @@ Slider.propTypes = {
   value: React.PropTypes.number.isRequired,
   min: React.PropTypes.number,
   max: React.PropTypes.number,
-  center: React.PropTypes.bool,
+  center: React.PropTypes.number,
   step: React.PropTypes.number
 };
 
@@ -67,7 +68,7 @@ Slider.defaultProps = {
   value: 0,
   min: 0,
   max: 127,
-  center: false,
+  center: undefined,
   step: 1
 };
 

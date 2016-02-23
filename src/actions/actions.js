@@ -18,12 +18,12 @@ export function setCurrentProgramName(name) {
   }
 }
 
-export function updateCurrentProgramParam(index, value) {
+export function updateCurrentProgramParam(index, values) {
   return {
     type: CHANGE_CURRENT_PROGRAM_PARAMETER,
     payload: {
       index,
-      value
+      values
     }
   }
 }

@@ -23,26 +23,20 @@ class Control extends React.Component {
   }
 
   getParameterProps() {
-    let { parameter, data, onChange, name } = this.props;
-    let offset = parameter.getOffset();
-    let text = parameter.getValueAsText(data);
-    let value = parameter.getValue(data);
-    let { midiId, midiSubId } = parameter.getMidiId();
 
-    let props = {
-      id: parameter.id,
-      name: name || parameter.name,
-      value: value,
-      text: text,
-      offset: offset,
-      category: parameter.category,
-      min: parameter.lookup.min,
-      max: parameter.lookup.max,
-      lookup: parameter.lookup,
-      onChange: (value) => {
-        onChange(offset, value, midiId, midiSubId);
-      }
-    };
+    // TODO: parameter should return all props
+
+    let { parameter, data, onChange, name } = this.props;
+    let { midiId, midiSubId } = parameter.getMidiId();
+    let paramProps = parameter.getProps(data);
+
+    let props = Object.assign(paramProps,
+      {
+        name: name || parameter.name,
+        onChange: (value) => {
+          onChange(parameter, value);
+        }
+      });
 
     return props;
   }
@@ -68,6 +62,7 @@ class Control extends React.Component {
 
       case "slider":
         ControlToRender = Slider;
+        props.center = this.props.parameter.lookup.center;
         break;
 
       case "pushbuttons":
