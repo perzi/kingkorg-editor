@@ -26,6 +26,14 @@ class Arpeggio extends React.Component {
       "swing",
       "last_step",
       "octave_range",
+      "step_0",
+      "step_1",
+      "step_2",
+      "step_3",
+      "step_4",
+      "step_5",
+      "step_6",
+      "step_7",
     ]);
   }
 
@@ -45,7 +53,7 @@ class Arpeggio extends React.Component {
       let nextValue = step.getToggleValue(data);
 
       let onClick = (value) => {
-        onChange(offset, nextValue, midiId, midiSubId);
+        onChange(step, nextValue);
       }
 
       buttons.push(
