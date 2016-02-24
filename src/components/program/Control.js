@@ -7,6 +7,8 @@ import Simple       from 'components/ui/Simple';
 import Select       from 'components/ui/Select';
 import Slider       from 'components/ui/Slider';
 import PushButtons  from 'components/ui/PushButtons';
+import { willParametersChange } from 'util/component-helpers';
+
 
 
 class Control extends React.Component {
@@ -15,27 +17,35 @@ class Control extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    let parameter = this.props.parameter;
-    let data = this.props.data;
+    let { parameter, data, disabled, disabledWhenParameterEmpty } = this.props;
     let nextData = nextProps.data;
+    let ids = disabledWhenParameterEmpty ? [disabledWhenParameterEmpty] : [];
+    ids.push(parameter.id);
 
-    return parameter.getValue(nextData) !== parameter.getValue(data);
+    return willParametersChange(parameter.parent, data, nextData, ids) || disabled !== nextProps.disabled;
   }
 
   getParameterProps() {
 
     // TODO: parameter should return all props
 
-    let { parameter, data, onChange, name } = this.props;
+    let { parameter, data, onChange, name, disabled, disabledWhenParameterEmpty } = this.props;
     let { midiId, midiSubId } = parameter.getMidiId();
     let paramProps = parameter.getProps(data);
+    let disabledByDependentParameterEmpty = false;
+
+    if (disabledWhenParameterEmpty) {
+      // expect dependent parameter to be 0 when disabled
+      disabledByDependentParameterEmpty = parameter.parent.getParameter(disabledWhenParameterEmpty).getValue(data) === 0;
+    }
 
     let props = Object.assign(paramProps,
       {
         name: name || parameter.name,
         onChange: (value) => {
           onChange(parameter, value);
-        }
+        },
+        disabled: disabled || disabledByDependentParameterEmpty,
       });
 
     return props;
@@ -90,12 +100,15 @@ Control.propTypes = {
   name: React.PropTypes.string,
   parameter: React.PropTypes.object.isRequired,
   type: React.PropTypes.oneOf(["knob", "select", "cknob", "simple", "pushbuttons", "slider", "toggle"]),
-  className: React.PropTypes.string
+  className: React.PropTypes.string,
+  disabled: React.PropTypes.bool,
+  disabledWhenParameterEmpty: React.PropTypes.string,
 }
 
 Control.defaultProps = {
   type: "select",
-  className: "control"
+  className: "control",
+  disabled: false,
 }
 
 // export default connect()(Control);

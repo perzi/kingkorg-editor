@@ -62,7 +62,7 @@ export function parseValueTable(s) {
     });
   }
 
-  mappings.sort((a, b) => a < b ? -1 : 1);
+  mappings.sort((a, b) => a.value < b.value ? -1 : 1);
 
   return {
     id: id,

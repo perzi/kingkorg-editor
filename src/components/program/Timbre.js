@@ -74,8 +74,8 @@ class Timbre extends React.Component {
                     <h4 className="timbre__block-title">Voice</h4>
                     <Control {...getControlParameter(props, "voice_assign", "pushbuttons", "")} />
                     <Control {...getControlParameter(props, "unison_sw", "pushbuttons", "")} />
-                    <Control {...getControlParameter(props, "unison_detune", "slider", "")} />
-                    <Control {...getControlParameter(props, "unison_spread", "slider", "")} />
+                    <Control {...getControlParameter(props, "unison_detune", "slider", "", "unison_sw")} />
+                    <Control {...getControlParameter(props, "unison_spread", "slider", "", "unison_sw")} />
                   </div>
                   <div className="timbre__block">
                     <h4 className="timbre__block-title">Pitch</h4>

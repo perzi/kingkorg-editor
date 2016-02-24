@@ -46,13 +46,14 @@ class Select extends React.Component {
   }
 
   render() {
-    const { props } = this;
+    let { props } = this;
+    let labelDisabledClassName = props.disabled ? "pushbuttons__label--disabled" : "";
 
     return (
         <div className={`pushbuttons ${props.className}`}>
-          <label className="pushbuttons__label">{props.name}</label>
+          <label className={`pushbuttons__label ${labelDisabledClassName}`}>{props.name}</label>
           <OverlayTrigger trigger="click" rootClose placement="bottom" overlay={this.renderPopover()}>
-            <Button bsStyle="default" bsSize="xsmall">{props.text}</Button>
+            <Button bsStyle="default" bsSize="xsmall" disabled={props.disabled}>{props.text}</Button>
           </OverlayTrigger>
         </div>
     );
@@ -67,7 +68,8 @@ Select.propTypes = {
   className: React.PropTypes.string,
   min: React.PropTypes.number,
   max: React.PropTypes.number,
-  lookup: React.PropTypes.object
+  lookup: React.PropTypes.object,
+  disabled: React.PropTypes.bool,
 };
 
 
@@ -76,7 +78,8 @@ Select.defaultProps = {
   min: 0,
   max: 127,
   className: "",
-  onChange: () => {}
+  onChange: () => {},
+  disabled: false
 };
 
 
