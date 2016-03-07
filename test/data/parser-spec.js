@@ -2,35 +2,6 @@ import {expect} from "chai";
 import parser, { parseValueDefinition } from "../../src/data/parser";
 
 
-// Ranges
-// 0~127
-
-// Range to pure text
-// 0,1:Off,On
-// 0~2:Off,Timbre,Voice
-
-// Signed ranges with center
-// -63~0~63
-
-// Range with type (ends with some type)
-// -48~0~48[note]
-
-// Mixed range and text and Text in range
-// 0~127:0~126,Hold
-// 0~15,16~:1~16,Global
-// 0,1~64~127:L63,L63~CNT~R63
-// 0~2~4:-2~0~2
-// 0,1~3:OFF,2Voice~4Voice
-// 1~4:1~4 Octave
-// 1~8:1~8 step
-// 0~99:0~99[cent]
-
-// TODO: bit ranges
-// 0~127:C-1~G9
-// 0~32767 (2 bytes)
-
-
-
 describe("parser", () => {
 
   describe ("parseValueDefinition", () => {
@@ -70,6 +41,18 @@ describe("parser", () => {
           { value:  1, text: "1" },
           { value:  2, text: "2" },
         ]
+      });
+    });
+
+    it("parses 0~300", () => {
+      let s = "0~300";
+      let result = parseValueDefinition(s);
+
+      expect(result).to.deep.equal({
+        id: s,
+        min: 0,
+        max: 300,
+        type: "",
       });
     });
 
@@ -113,6 +96,27 @@ describe("parser", () => {
         ]
       });
     });
+
+    // // range to range
+    // it("parses 0~2~4:L2~CNT~R2", () => {
+    //   let s = "0~2~4:L2~CNT~R2";
+    //   let result = parseValueDefinition(s);
+    //
+    //   expect(result).to.deep.equal({
+    //     id: s,
+    //     min: 0,
+    //     max: 4,
+    //     center: 2,
+    //     type: "",
+    //     mappings: [
+    //       { value: 0, text: "L2" },
+    //       { value: 1, text: "L1" },
+    //       { value: 2, text: "CNT" },
+    //       { value: 3, text: "R1" },
+    //       { value: 4, text: "R2" }
+    //     ]
+    //   });
+    // });
 
     // range to range with formatting
     it("parses 1~4:1~4 Octave", () => {

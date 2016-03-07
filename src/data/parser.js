@@ -2,13 +2,13 @@
 const valueReg = /\s{2,}/g;
 const rangeReg = /\D*[\-\d]+\D*(?:~\D*[\-\d]+\D*)+/;
 const formatReg = /^(\D*)(\d+)(\D*)$/;
-const FORMAT_REPLACEMENT = "${{X}}";
+const FORMAT_VALUE = "{{value}}";
 const SEPARATOR_RANGE = "~";
 const SEPARATOR_LIST = ",";
 const SEPARATOR_VALUESTEXT = ":";
 
 const REG_RANGE_VALUE = /^(-?\d+)~(\d+)(\D*)$/;
-const REG_RANGE_WITH_CENTER_VALUE = /^(-?\d+)~(\d+)~(\d+)(\D*)$/;
+const REG_RANGE_WITH_CENTER_VALUE = /^([^-\d]*)(-?\d+)(\D*)~(\D*)(\d*)(\D*)~(\D*)(\d+)(\D*)$/;
 
 
 
@@ -90,6 +90,14 @@ export function getValuesFromRefs(valueString, refs) {
   }
 }
 
+function createFormatString(before, after, defaultFormat) {
+  if (before.length > 0 || after.length > 0) {
+    return `${before}${FORMAT_VALUE}${after}`;
+  } else {
+    return defaultFormat;
+  }
+
+}
 
 function isRange(s) {
   return REG_RANGE_VALUE.test(s) || REG_RANGE_WITH_CENTER_VALUE.test(s);
@@ -109,13 +117,24 @@ function parseRange(range) {
 
   } else if (REG_RANGE_WITH_CENTER_VALUE.test(range)) {
     let match = range.match(REG_RANGE_WITH_CENTER_VALUE);
-    let [, min, center, max, type] = match;
+    let [, minFB, min, minFA, centerFB, center, centerFA, maxFB, max, maxFA] = match;
+    let type = maxFA;
+
+    // Assume format to be after max
+    let maxFormat = createFormatString(maxFB, maxFA, "");
+    let minFormat = createFormatString(minFB, minFA, maxFormat);
+    let centerFormat = createFormatString(centerFB, centerFA, maxFormat);
+
+    console.log(range, minFormat, centerFormat, maxFormat);
 
     return {
       min: parseInt(min, 10),
       center: parseInt(center, 10),
       max: parseInt(max, 10),
-      type
+      // minFormat,
+      // centerFormat,
+      // maxFormat,
+      type,
     }
 
   } else {
@@ -136,17 +155,19 @@ export function parseValueDefinition(s) {
     // Should have a range only
     let lookup = parseRange(trimmed);
     let mappings = [];
-
-    // explode range
-    for (let i = lookup.min; i <= lookup.max; i++) {
-      mappings.push({
-        value: i,
-        text: i.toString(10) + lookup.type
-      })
+    let length = lookup.max - lookup.min;
+    // explode range if range is max 128 values
+    if (length <= 128) {
+      for (let i = lookup.min; i <= lookup.max; i++) {
+        mappings.push({
+          value: i,
+          text: i.toString(10) + lookup.type
+        })
+      }
+      lookup.mappings = mappings;
     }
 
     lookup.id = s;
-    lookup.mappings = mappings;
 
     return lookup;
   } else {
