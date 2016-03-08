@@ -1,8 +1,28 @@
-let refTableStrings = [
+export let referenceTableStrings = [
 ` *T01-1 : Category
          0: Synth        3: Brass        6: Key
          1: Lead         4: Strings      7: SE/Voc
          2: Bass         5: Piano        8: User`,
+
+
+` *T01-2 : Split Key
+       0: C-1      16: E0       32: G#1      48: C3       64: E4       80: G#5      96: C7      112: E8
+       1: C#-1     17: F0       33: A1       49: C#3      65: F4       81: A5       97: C#7     113: F8
+       2: D-1      18: F#0      34: A#1      50: D3       66: F#4      82: A#5      98: D7      114: F#8
+       3: D#-1     19: G0       35: B1       51: D#3      67: G4       83: B5       99: D#7     115: G8
+       4: E-1      20: G#0      36: C2       52: E3       68: G#4      84: C6      100: E7      116: G#8
+       5: F-1      21: A0       37: C#2      53: F3       69: A4       85: C#6     101: F7      117: A8
+       6: F#-1     22: A#0      38: D2       54: F#3      70: A#4      86: D6      102: F#7     118: A#8
+       7: G-1      23: B0       39: D#2      55: G3       71: B4       87: D#6     103: G7      119: B8
+       8: G#-1     24: C1       40: E2       56: G#3      72: C5       88: E6      104: G#7     120: C9
+       9: A-1      25: C#1      41: F2       57: A3       73: C#5      89: F6      105: A7      121: C#9
+      10: A#-1     26: D1       42: F#2      58: A#3      74: D5       90: F#6     106: A#7     122: D9
+      11: B-1      27: D#1      43: G2       59: B3       75: D#5      91: G6      107: B7      123: D#9
+      12: C0       28: E1       44: G#2      60: C4       76: E5       92: G#6     108: C8      124: E9
+      13: C#0      29: F1       45: A2       61: C#4      77: F5       93: A6      109: C#8     125: F9
+      14: D0       30: F#1      46: A#2      62: D4       78: F#5      94: A#6     110: D8      126: F#9
+      15: D#0      31: G1       47: B2       63: D#4      79: G5       95: B6      111: D#8     127: G9`,
+
 
 ` *T02-1 : Vibrato Int
                   -48: +1200   -32: -0800,  -16: -0160,    0: +0000,  +16: +0160,  +32: +0800,  +48: +1200,
@@ -104,6 +124,40 @@ let refTableStrings = [
        0: 1/32      3: 1/12      6: 1/4
        1: 1/24      4: 1/8       7: 1/2
        2: 1/16      5: 1/6       8: 1/1`,
+
+` *T07-3 : OSC Type
+     0: Off           32: VPM Sine      64: Digital 1     96: Syn Vox 2
+     1: Saw           33: Syn Sine 1    65: Digital 2     97: A.Piano
+     2: Pulse         34: Syn Sine 2    66: Digital 3     98: E.Grand
+     3: Triangle      35: Syn Sine 3    67: Digital 4     99: Tine EP
+     4: Sine          36: Syn Sine 4    68: Digital 5    100: Dyno EP
+     5: White Noise   37: Syn Sine 5    69: Digital 6    101: Wurly EP
+     6: Pink Noise    38: Syn Sine 6    70: Digital 7    102: Clav 1
+     7: Blue Noise    39: Syn Sine 7    71: Digital 8    103: Clav 2
+     8: Res. Noise    40: Syn Sine 8    72: Digital 9    104: Organ 1
+     9: Dual Saw      41: Syn Sine 9    73: E.Piano 1    105: Organ 2
+    10: Dual Square   42: Syn Wave 1    74: E.Piano 2    106: Organ 3
+    11: Dual Tri.     43: Syn Wave 2    75: E.Piano 3    107: M1 Organ
+    12: Dual Sine     44: Syn Wave 3    76: E.Piano 4    108: Vox Organ
+    13: Unison Saw    45: Syn Wave 4    77: Organ 1      109: Marimba
+    14: Unison Squ.   46: Syn Wave 5    78: Organ 2      110: Bell 1
+    15: Unison Tri.   47: Syn Wave 6    79: Organ 3      111: Bell 2
+    16: Unison Sine   48: Syn Wave 7    80: Organ 4      112: Tape Flute
+    17: Sync Saw      49: Syn Wire 1    81: Organ 5      113: Brass 1
+    18: Sync Square   50: Syn Wire 2    82: Organ 6      114: Brass 2
+    19: Sync Tri.     51: Syn Wire 3    83: Organ 7      115: Trumpet
+    20: Sync Sine     52: Syn Wire 4    84: Clav 1       116: Strings
+    21: Ring Saw      53: 5th Saw       85: Clav 2       117: Tape Str.
+    22: Ring Square   54: 5th Square    86: Guitar 1     118: Choir 1
+    23: Ring Tri.     55: Inharm 1      87: Guitar 2     119: Choir 2
+    24: Ring Sine     56: Inharm 2      88: E.Bass 1     120: Choir 3
+    25: XMod Saw      57: Inharm 3      89: E.Bass 2     121: A.Guitar
+    26: XMod Square   58: Inharm 4      90: E.Bass 3     122: E.Guitar
+    27: XMod Tri.     59: Inharm 5      91: Bell 1       123: A.Bass
+    28: XMod Sine     60: Inharm 6      92: Bell 2       124: E.Bass 1
+    29: VPM Saw       61: Inharm 7      93: Bell 3       125: E.Bass 2
+    30: VPM Square    62: Inharm 8      94: Bell 4       126: E.Bass 3
+    31: VPM Tri.      63: Inharm 9      95: Syn Vox 1    127: Mic In`,
 
 ` *T09-1 : Patch1~6 Destination
        0: Off              10: OSC2 Control2   20: EG2 Decay       30: Panpot          40: Rev/Delay Depth
@@ -208,8 +262,136 @@ let refTableStrings = [
        9: 2.80     19: 10.0`
 ];
 
-
-
-export default {
-  refs: refTableStrings
-}
+// TODO: create ref table for these and generats
+// CTRL1 and CTRL2 needs a solution
+export let oscTypeRawDictionary = [
+  // NAME          CTRL1 Name      CTRL1 Lookup    CTRL2 Name           CTRL2 Lookup    CATEGORY
+  "Off             -               -               -                                    ",
+  "Saw             Waveform        0~127           -                                    Analog",
+  "Pulse           PulseWidth      0~127           -                                    Analog",
+  "Triangle        Waveform        0~127           -                                    Analog",
+  "Sine            Waveform        0~127           -                                    Analog",
+  "White Noise     Decimator Fc    0~127           Noise Decay          0~127           Analog",
+  "Pink Noise      LPF Cutoff      0~127           Noise Decay          0~127           Analog",
+  "Blue Noise      HPF Cutoff      0~127           Noise Decay          0~127           Analog",
+  "Res. Noise      Resonance       0~127           Noise Decay          0~127           Analog",
+  "Dual Saw        Detune          -63~0~63        -                    -               Analog",
+  "Dual Square     Detune          -63~0~63        -                    -               Analog",
+  "Dual Tri.       Detune          -63~0~63        -                    -               Analog",
+  "Dual Sine       Detune          -63~0~63        -                    -               Analog",
+  "Unison Saw      Detune          -63~0~63        -                    -               Analog",
+  "Unison Squ.     Detune          -63~0~63        -                    -               Analog",
+  "Unison Tri.     Detune          -63~0~63        -                    -               Analog",
+  "Unison Sine     Detune          -63~0~63        -                    -               Analog",
+  "Sync Saw        Mod Pitch       0~127           -                    -               Analog",
+  "Sync Square     Mod Pitch       0~127           -                    -               Analog",
+  "Sync Tri.       Mod Pitch       0~127           -                    -               Analog",
+  "Sync Sine       Mod Pitch       0~127           -                    -               Analog",
+  "Ring Saw        Mod Pitch       -63~0~63        -                    -               Analog",
+  "Ring Square     Mod Pitch       -63~0~63        -                    -               Analog",
+  "Ring Tri.       Mod Pitch       -63~0~63        -                    -               Analog",
+  "Ring Sine       Mod Pitch       -63~0~63        -                    -               Analog",
+  "XMod Saw        Mod Depth       0~127           Mod Pitch            -63~0~63        Analog",
+  "XMod Square     Mod Depth       0~127           Mod Pitch            -63~0~63        Analog",
+  "XMod Tri.       Mod Depth       0~127           Mod Pitch            -63~0~63        Analog",
+  "XMod Sine       Mod Depth       0~127           Mod Pitch            -63~0~63        Analog",
+  "VPM Saw         Mod Depth       0~127           Mod Harm             0~32            Analog",
+  "VPM Square      Mod Depth       0~127           Mod Harm             0~32            Analog",
+  "VPM Tri.        Mod Depth       0~127           Mod Harm             0~32            Analog",
+  "VPM Sine        Mod Depth       0~127           Mod Harm             0~32            Analog",
+  "Syn Sine 1      Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Syn Sine 2      Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Syn Sine 3      Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Syn Sine 4      Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Syn Sine 5      Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Syn Sine 6      Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Syn Sine 7      Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Syn Sine 8      Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Syn Sine 9      Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Syn Wave 1      Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Syn Wave 2      Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Syn Wave 3      Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Syn Wave 4      Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Syn Wave 5      Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Syn Wave 6      Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Syn Wave 7      Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Syn Wire 1      Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Syn Wire 2      Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Syn Wire 3      Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Syn Wire 4      Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "5th Saw         Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "5th Square      Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Inharm 1        Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Inharm 2        Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Inharm 3        Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Inharm 4        Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Inharm 5        Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Inharm 6        Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Inharm 7        Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Inharm 8        Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Inharm 9        Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Digital 1       Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Digital 2       Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Digital 3       Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Digital 4       Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Digital 5       Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Digital 6       Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Digital 7       Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Digital 8       Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Digital 9       Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "E.Piano 1       Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "E.Piano 2       Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "E.Piano 3       Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "E.Piano 4       Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Organ 1         Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Organ 2         Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Organ 3         Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Organ 4         Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Organ 5         Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Organ 6         Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Organ 7         Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Clav 1          Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Clav 2          Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Guitar 1        Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Guitar 2        Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "E.Bass 1        Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "E.Bass 2        Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "E.Bass 3        Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Bell 1          Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Bell 2          Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Bell 3          Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Bell 4          Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Syn Vox 1       Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "Syn Vox 2       Detune          -63~0~63        Mod Depth            0~127           DWGS",
+  "A.Piano         -               -               -                    -               PCM",
+  "E.Grand         -               -               -                    -               PCM",
+  "Tine EP         -               -               -                    -               PCM",
+  "Dyno EP         -               -               -                    -               PCM",
+  "Wurly EP        -               -               -                    -               PCM",
+  "Clav 1          -               -               -                    -               PCM",
+  "Clav 2          -               -               -                    -               PCM",
+  "Organ 1         -               -               -                    -               PCM",
+  "Organ 2         -               -               -                    -               PCM",
+  "Organ 3         -               -               -                    -               PCM",
+  "M1 Organ        -               -               -                    -               PCM",
+  "Vox Organ       -               -               -                    -               PCM",
+  "Marimba         -               -               -                    -               PCM",
+  "Bell 1          -               -               -                    -               PCM",
+  "Bell 2          -               -               -                    -               PCM",
+  "Tape Flute      -               -               -                    -               PCM",
+  "Brass 1         -               -               -                    -               PCM",
+  "Brass 2         -               -               -                    -               PCM",
+  "Trumpet         -               -               -                    -               PCM",
+  "Strings         -               -               -                    -               PCM",
+  "Tape Str.       -               -               -                    -               PCM",
+  "Choir 1         -               -               -                    -               PCM",
+  "Choir 2         -               -               -                    -               PCM",
+  "Choir 3         -               -               -                    -               PCM",
+  "A.Guitar        -               -               -                    -               PCM",
+  "E.Guitar        -               -               -                    -               PCM",
+  "A.Bass          -               -               -                    -               PCM",
+  "E.Bass 1        -               -               -                    -               PCM",
+  "E.Bass 2        -               -               -                    -               PCM",
+  "E.Bass 3        -               -               -                    -               PCM",
+  "Mic In          Gain            -63~0~63        -                    -               MIC IN"
+];

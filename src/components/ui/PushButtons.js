@@ -11,15 +11,7 @@ class PushButtons extends React.Component {
 
   renderOptions() {
 
-    let values = [];
-
-    // should not be done here, already computed in lookup
-    for (let p in this.props.lookup.values) {
-      values.push({
-        value: parseInt(p, 10),
-        text: this.props.lookup.values[p]
-      })
-    }
+    let values = this.props.lookup.mappings;
 
     let options = values.map((item, index) => {
       let handleClick = () => {
@@ -27,7 +19,7 @@ class PushButtons extends React.Component {
       };
       let selected = item.value === this.props.value;
       let bsStyle = selected ? "primary" : "default";
-      return (<Button key={index} bsStyle={bsStyle} onClick={handleClick}>{item.text}</Button>);
+      return (<Button key={index} bsStyle={bsStyle} onClick={handleClick} disabled={this.props.disabled}>{item.text}</Button>);
     }, this);
 
     return (
@@ -38,11 +30,12 @@ class PushButtons extends React.Component {
   }
 
   render() {
-    const { props } = this;
+    let { props } = this;
+    let labelDisabledClassName = props.disabled ? "pushbuttons__label--disabled" : "";
 
     return (
       <div className={`pushbuttons ${props.className}`}>
-        <label className="pushbuttons__label">{props.name}</label>
+        <label className={`pushbuttons__label ${labelDisabledClassName}`}>{props.name}</label>
         <div className="pushbuttons__options">{this.renderOptions()}</div>
       </div>
     );
@@ -57,7 +50,8 @@ PushButtons.propTypes = {
   className: React.PropTypes.string,
   min: React.PropTypes.number,
   max: React.PropTypes.number,
-  lookup: React.PropTypes.object
+  lookup: React.PropTypes.object,
+  disabled: React.PropTypes.bool,
 };
 
 
@@ -66,7 +60,8 @@ PushButtons.defaultProps = {
   min: 0,
   max: 127,
   className: "",
-  onChange: () => {}
+  onChange: () => {},
+  disabled: false,
 };
 
 

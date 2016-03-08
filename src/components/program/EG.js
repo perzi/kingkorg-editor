@@ -2,7 +2,7 @@ import React from 'react';
 
 import Control from 'components/program/Control';
 import ADSR    from 'components/ui/ADSR';
-import { getControlParameter } from 'util/component-helpers';
+import { getControlParameter, willParametersChange } from 'util/component-helpers';
 
 import 'styles/components/program/eg';
 
@@ -13,44 +13,23 @@ class EG extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    let parameter = this.props.parameter.getParameter(this.props.id);
-    let data = this.props.data;
+    let { parameter, data } = this.props;
     let nextData = nextProps.data;
 
-    let ADSR = this.getChildValues(this.props.parameter, data);
-    let nextADSR = this.getChildValues(this.props.parameter, nextData);
-
-    return ADSR.A !== nextADSR.A
-      || ADSR.D !== nextADSR.D
-      || ADSR.S !== nextADSR.S
-      || ADSR.R !== nextADSR.R;
+    return willParametersChange(parameter, data, nextData, ["attack_time", "decay_time", "sustain_level", "release_time", "level_velo_int"]);
   }
 
-  getChildValue(parentParameter, data, id) {
-    let parameter = parentParameter.getParameter(id);
-    let value = parameter.getValue(data) || 0;
-    return value;
-  }
-
-  getChildValues(parentParameter, data) {
-    return {
-      A: this.getChildValue(parentParameter, data, "attack_time"),
-      D: this.getChildValue(parentParameter, data, "decay_time"),
-      S: this.getChildValue(parentParameter, data, "sustain_level"),
-      R: this.getChildValue(parentParameter, data, "release_time")
-    }
+  getValue(id) {
+    return this.props.parameter.getParameter(id).getValue(this.props.data) || 0;
   }
 
   render() {
     let props = this.props;
-    let parameter = this.props.parameter.getParameter(this.props.id);
-    let data = this.props.data;
-    let adsr = this.getChildValues(this.props.parameter, data);
 
-    let A = adsr.A / 127.0;
-    let D = adsr.D / 127.0;
-    let S = adsr.S / 127.0;
-    let R = adsr.R / 127.0;
+    let A = this.getValue("attack_time") / 127.0;
+    let D = this.getValue("decay_time") / 127.0;
+    let S = this.getValue("sustain_level") / 127.0;
+    let R = this.getValue("release_time") / 127.0;
 
     return (
       <div className="eg">

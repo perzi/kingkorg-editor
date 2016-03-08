@@ -9,15 +9,7 @@ class Select extends React.Component {
 
   renderPopover() {
 
-    let values = [];
-
-    // should not be done here, already computed in lookup
-    for (let p in this.props.lookup.values) {
-      values.push({
-        value: parseInt(p, 10),
-        text: this.props.lookup.values[p]
-      })
-    }
+    let values = this.props.lookup.mappings;
 
     let options = values.map((item, index) => {
       let handleClick = () => {
@@ -54,15 +46,16 @@ class Select extends React.Component {
   }
 
   render() {
-    const { props } = this;
+    let { props } = this;
+    let labelDisabledClassName = props.disabled ? "pushbuttons__label--disabled" : "";
 
     return (
-      <OverlayTrigger trigger="click" rootClose placement="bottom" overlay={this.renderPopover()}>
         <div className={`pushbuttons ${props.className}`}>
-          <label className="pushbuttons__label">{props.name}</label>
-          <Button bsStyle="default" bsSize="xsmall">{props.text}</Button>
+          <label className={`pushbuttons__label ${labelDisabledClassName}`}>{props.name}</label>
+          <OverlayTrigger trigger="click" rootClose placement="bottom" overlay={this.renderPopover()}>
+            <Button bsStyle="default" bsSize="xsmall" disabled={props.disabled}>{props.text}</Button>
+          </OverlayTrigger>
         </div>
-      </OverlayTrigger>
     );
   }
 }
@@ -75,7 +68,8 @@ Select.propTypes = {
   className: React.PropTypes.string,
   min: React.PropTypes.number,
   max: React.PropTypes.number,
-  lookup: React.PropTypes.object
+  lookup: React.PropTypes.object,
+  disabled: React.PropTypes.bool,
 };
 
 
@@ -84,7 +78,8 @@ Select.defaultProps = {
   min: 0,
   max: 127,
   className: "",
-  onChange: () => {}
+  onChange: () => {},
+  disabled: false
 };
 
 

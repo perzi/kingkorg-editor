@@ -28,7 +28,7 @@ class Timbre extends React.Component {
 
   render() {
     let props = this.props;
-
+    let { disabled } = props;
     return (
       <Panel collapsible defaultExpanded header={props.parameter.name}>
          <Grid fluid={true}>
@@ -38,11 +38,11 @@ class Timbre extends React.Component {
                 <div className="timbre__blocks">
                   <div className="timbre__block">
                     <h4 className="timbre__block-title">EG 1 (Filter)</h4>
-                    <EG {...getControlParameter(props, "eg_1")} />
+                    <EG disabled={disabled} {...getControlParameter(props, "eg_1")} />
                   </div>
                   <div className="timbre__block">
                     <h4 className="timbre__block-title">EG 2 (Amp)</h4>
-                    <EG {...getControlParameter(props, "eg_2")} />
+                    <EG disabled={disabled} {...getControlParameter(props, "eg_2")} />
                   </div>
                   <div className="timbre__block">
                     <h4 className="timbre__block-title">Oscillator 1</h4>
@@ -58,11 +58,11 @@ class Timbre extends React.Component {
                   </div>
                   <div className="timbre__block">
                     <h4 className="timbre__block-title">LFO 1</h4>
-                    <LFO {...getControlParameter(props, "lfo_1")} />
+                    <LFO disabled={disabled} {...getControlParameter(props, "lfo_1")} />
                   </div>
                   <div className="timbre__block">
                     <h4 className="timbre__block-title">LFO 2</h4>
-                    <LFO {...getControlParameter(props, "lfo_2")} />
+                    <LFO disabled={disabled} {...getControlParameter(props, "lfo_2")} />
                   </div>
                 </div>
               </div>
@@ -72,45 +72,45 @@ class Timbre extends React.Component {
                 <div className="timbre__blocks">
                   <div className="timbre__block">
                     <h4 className="timbre__block-title">Voice</h4>
-                    <Control {...getControlParameter(props, "voice_assign", "pushbuttons", "")} />
-                    <Control {...getControlParameter(props, "unison_sw", "pushbuttons", "")} />
-                    <Control {...getControlParameter(props, "unison_detune", "slider", "")} />
-                    <Control {...getControlParameter(props, "unison_spread", "slider", "")} />
+                    <Control disabled={disabled} {...getControlParameter(props, "voice_assign", "pushbuttons", "")} />
+                    <Control disabled={disabled} {...getControlParameter(props, "unison_sw", "pushbuttons", "")} />
+                    <Control disabled={disabled} {...getControlParameter(props, "unison_detune", "slider", "", "unison_sw")} />
+                    <Control disabled={disabled} {...getControlParameter(props, "unison_spread", "slider", "", "unison_sw")} />
                   </div>
                   <div className="timbre__block">
                     <h4 className="timbre__block-title">Pitch</h4>
-                    <Control {...getControlParameter(props, "pitch_transpose", "slider", "")} />
-                    <Control {...getControlParameter(props, "pitch_detune", "slider", "")} />
-                    <Control {...getControlParameter(props, "pitch_lfo2modint", "slider", "")} />
-                    <Control {...getControlParameter(props, "pitch_lfo2jsy", "slider", "")} />
-                    <Control {...getControlParameter(props, "pitch_bendrange", "slider", "")} />
-                    <Control {...getControlParameter(props, "pitch_portamento_sw", "toggle")} />
-                    <Control {...getControlParameter(props, "pitch_portamento_time", "slider", "")} />
-                    <Control {...getControlParameter(props, "pitch_analog_tuning", "slider", "")} />
+                    <Control disabled={disabled} {...getControlParameter(props, "pitch_transpose", "slider", "")} />
+                    <Control disabled={disabled} {...getControlParameter(props, "pitch_detune", "slider", "")} />
+                    <Control disabled={disabled} {...getControlParameter(props, "pitch_lfo2modint", "slider", "")} />
+                    <Control disabled={disabled} {...getControlParameter(props, "pitch_lfo2jsy", "slider", "")} />
+                    <Control disabled={disabled} {...getControlParameter(props, "pitch_bendrange", "slider", "")} />
+                    <Control disabled={disabled} {...getControlParameter(props, "pitch_portamento_sw", "toggle")} />
+                    <Control disabled={disabled} {...getControlParameter(props, "pitch_portamento_time", "slider", "")} />
+                    <Control disabled={disabled} {...getControlParameter(props, "pitch_analog_tuning", "slider", "")} />
                   </div>
                   <div className="timbre__block">
                     <h4 className="timbre__block-title">Filter</h4>
-                    <Control {...getControlParameter(props, "type")} />
-                    <Control {...getControlParameter(props, "cutoff", "slider", "")} />
-                    <Control {...getControlParameter(props, "resonance", "slider", "")} />
-                    <Control {...getControlParameter(props, "eg1_intensity", "slider", "")} />
-                    <Control {...getControlParameter(props, "lfo1_mod_int", "slider", "")} />
-                    <Control {...getControlParameter(props, "lfo1_js-y", "slider", "")} />
-                    <Control {...getControlParameter(props, "keyboard_track", "slider", "")} />
-                    <Control {...getControlParameter(props, "velocity_sens", "slider", "")} />
+                    <Control disabled={disabled} {...getControlParameter(props, "type")} />
+                    <Control disabled={disabled} {...getControlParameter(props, "cutoff", "slider", "")} />
+                    <Control disabled={disabled} {...getControlParameter(props, "resonance", "slider", "")} />
+                    <Control disabled={disabled} {...getControlParameter(props, "eg1_intensity", "slider", "")} />
+                    <Control disabled={disabled} {...getControlParameter(props, "lfo1_mod_int", "slider", "")} />
+                    <Control disabled={disabled} {...getControlParameter(props, "lfo1_js-y", "slider", "")} />
+                    <Control disabled={disabled} {...getControlParameter(props, "keyboard_track", "slider", "")} />
+                    <Control disabled={disabled} {...getControlParameter(props, "velocity_sens", "slider", "")} />
                   </div>
                   <div className="timbre__block">
                     <h4 className="timbre__block-title">Mixer</h4>
-                    <Control {...getControlParameter(props, "osc1_level", "slider", "")} />
-                    <Control {...getControlParameter(props, "osc2_level", "slider", "")} />
-                    <Control {...getControlParameter(props, "osc3_level", "slider", "")} />
+                    <Control disabled={disabled} {...getControlParameter(props, "osc1_level", "slider", "")} />
+                    <Control disabled={disabled} {...getControlParameter(props, "osc2_level", "slider", "")} />
+                    <Control disabled={disabled} {...getControlParameter(props, "osc3_level", "slider", "")} />
                   </div>
                   <div className="timbre__block">
                     <h4 className="timbre__block-title">Amp</h4>
-                    <Control {...getControlParameter(props, "level", "slider", "")} />
-                    <Control {...getControlParameter(props, "panpot", "slider", "")} />
-                    <Control {...getControlParameter(props, "punch_level", "slider", "")} />
-                    <Control {...getControlParameter(props, "key_track", "slider", "")} />
+                    <Control disabled={disabled} {...getControlParameter(props, "level", "slider", "")} />
+                    <Control disabled={disabled} {...getControlParameter(props, "panpot", "slider", "")} />
+                    <Control disabled={disabled} {...getControlParameter(props, "punch_level", "slider", "")} />
+                    <Control disabled={disabled} {...getControlParameter(props, "key_track", "slider", "")} />
                   </div>
                 </div>
               </div>
@@ -123,7 +123,12 @@ class Timbre extends React.Component {
 };
 
 Timbre.propTypes = {
-  onChange: React.PropTypes.func.isRequired
+  onChange: React.PropTypes.func.isRequired,
+  disabled: React.PropTypes.bool
+};
+
+Timbre.defaultProps = {
+  disabled: false
 };
 
 export default Timbre;

@@ -8,6 +8,7 @@ import Control from 'components/program/Control';
 import FX from 'components/program/FX';
 import VPatches from 'components/program/VPatches';
 import Arpeggio from 'components/program/Arpeggio';
+import Vocoder from 'components/program/Vocoder';
 import KingKORGMidi, { CURRENT_PROGRAM_DATA_DUMP, PROGRAM_PARAMETER_CHANGE } from 'midi/KingKORG';
 import programParameters from 'data/programParameters';
 import { getControlParameter } from 'util/component-helpers';
@@ -44,7 +45,7 @@ class CurrentProgram extends React.Component {
   }
 
   componentDidMount()    {
-    // this.props.dispatch(loadCurrentProgram(this.state.exampleData[0]));
+    this.props.dispatch(loadCurrentProgram(this.state.exampleData[1]));
   }
 
   onKKChange(newState, oldState) {
@@ -151,10 +152,35 @@ class CurrentProgram extends React.Component {
     return getControlParameter({ parameter: programParameters, data, onChange: this.handleChange.bind(this)}, id, type)
   }
 
-  handleChange(offset, value, midiId, midiSubId) {
-    this.props.dispatch(updateCurrentProgramParam(offset, value));
+  handleChange(parameter, value) {
 
-    console.log(this.state.channel, midiId, midiSubId, value);
+    // TODO: handle value different depending on type of value
+    let offset = parameter.getOffset();
+    let { midiId, midiSubId } = parameter.getMidiId();
+
+    let values;
+
+
+
+    if (parameter.length === 1) {
+
+      values = [value & 0xff];
+
+    } else if (parameter.length === 2) {
+
+      // TODO: handle this in action creator or or reducer?
+      let lsb = value & 0x00ff;
+      let msb = (value & 0xff00) >> 8;
+
+      values = [lsb, msb];
+    } else {
+      // expect an array
+      values = value;
+    }
+
+    this.props.dispatch(updateCurrentProgramParam(offset, values));
+
+    // TODO: probably handle negative values here as well
     this.midi.parameterChange(this.state.channel, midiId, midiSubId, value);
   }
 
@@ -215,13 +241,12 @@ class CurrentProgram extends React.Component {
               <VPatches {...getControlParameter(props, "vpatch_b")} />
             </Col>
           </Row>
+
+          <Vocoder {...getControlParameter(props, "vocoder")} />
         </Grid>
       </div>
     );
-
-
   }
-
 }
 
 

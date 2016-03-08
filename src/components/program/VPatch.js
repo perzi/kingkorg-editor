@@ -22,9 +22,9 @@ class VPatch extends React.Component {
 
     return (
       <tr>
-        <td><Control {...getControlParameter(props, "patch_source", "select", "")} /></td>
-        <td><Control {...getControlParameter(props, "patch_destination", "select", "")} /></td>
-        <td><Control {...getControlParameter(props, "patch_intensity", "slider", "")} /></td>
+        <td className="vpatch__source"><Control {...getControlParameter(props, "patch_source", "select", "")} /></td>
+        <td className="vpatch__destination"><Control {...getControlParameter(props, "patch_destination", "select", "")} /></td>
+        <td className="vpatch__intensity"><Control {...getControlParameter(props, "patch_intensity", "slider", "")} /></td>
       </tr>
     );
   }
