@@ -7,7 +7,7 @@ import Simple       from 'components/ui/Simple';
 import Select       from 'components/ui/Select';
 import Slider       from 'components/ui/Slider';
 import PushButtons  from 'components/ui/PushButtons';
-import { willParametersChange } from 'util/component-helpers';
+import { willParametersChange } from 'util/component-helpers';
 
 
 
