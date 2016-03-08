@@ -134,6 +134,9 @@ class Parameter {
         } else {
            text = mapping[0].text;
         }
+      } else {
+        // no mapping just calculate value string
+        text = `${value}${lookup.type}`;
       }
     }
 

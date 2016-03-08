@@ -8,6 +8,7 @@ import Control from 'components/program/Control';
 import FX from 'components/program/FX';
 import VPatches from 'components/program/VPatches';
 import Arpeggio from 'components/program/Arpeggio';
+import Vocoder from 'components/program/Vocoder';
 import KingKORGMidi, { CURRENT_PROGRAM_DATA_DUMP, PROGRAM_PARAMETER_CHANGE } from 'midi/KingKORG';
 import programParameters from 'data/programParameters';
 import { getControlParameter } from 'util/component-helpers';
@@ -240,13 +241,12 @@ class CurrentProgram extends React.Component {
               <VPatches {...getControlParameter(props, "vpatch_b")} />
             </Col>
           </Row>
+
+          <Vocoder {...getControlParameter(props, "vocoder")} />
         </Grid>
       </div>
     );
-
-
   }
-
 }
 
 
