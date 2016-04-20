@@ -109,7 +109,7 @@ class Parameter {
     // TODO: handle 2 byte values
 
     let value = this.getValue(programData);
-    let lookup = this.lookup;
+    let lookup = this.getLookup(programData);
     let text = "";
 
     if (value === undefined) {
@@ -167,10 +167,11 @@ class Parameter {
 
   getProps(data) {
 
-    let text = this.getValueAsText(data);
-    let value = this.getValue(data);
+    const text = this.getValueAsText(data);
+    const value = this.getValue(data);
+    const lookup = this.getLookup(data);
+    const name = this.getName(data)
 
-    // TODO: handle lookup that depends on actual data value
     // TODO: offset is static should not be computed every time
     return {
       id: this.id,
@@ -179,11 +180,28 @@ class Parameter {
       category: this.category,
       min: this.lookup.min,
       max: this.lookup.max,
-      lookup: this.lookup,
+      lookup: this.getLookup(data),
       value: value,
       text: text,
     }
+  }
 
+  getName(data) {
+    if (this.lookup.getName) {
+      let name = this.lookup.getName(this, data);
+      console.log("getName", name);
+      return name;
+    } else {
+      return this.name;
+    }
+  }
+
+  getLookup(data) {
+    if (this.lookup.selectLookup) {
+      return this.lookup.selectLookup(this, data);
+    } else {
+      return this.lookup;
+    }
   }
 }
 
