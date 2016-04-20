@@ -21,6 +21,7 @@ class Slider extends React.Component {
     let rangeListId = `slider_list__${props.id}`;
     let centerOption = props.center !== undefined ? <option>{props.center}</option> : null;
     let labelDisabledClassName = props.disabled ? "slider__label--disabled" : "";
+    let inputClassName = props.max - props.min > 128 ? "slider__range--double" : "slider__range";
 
     return (
       <div className={`slider ${props.className}`}>
@@ -28,7 +29,7 @@ class Slider extends React.Component {
 
         <input
           id={rangeId}
-          className="slider__range"
+          className={inputClassName}
           type="range"
           value={props.value}
           min={props.min}
