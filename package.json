@@ -9,7 +9,7 @@
   "scripts": {
     "build": "webpack --progress --profile --colors",
     "start": "webpack-dev-server --hot --inline --progress --colors",
-    "test": "./node_modules/.bin/mocha --compilers js:babel-core/register --recursive --throw-deprecation --slow 50 -G -w test"
+    "test": "mocha --compilers js:babel-core/register --recursive --throw-deprecation --slow 50 -G -w test"
   },
   "repository": {
     "type": "git",
