@@ -41,7 +41,7 @@ class Control extends React.Component {
 
     let props = Object.assign(paramProps,
       {
-        name: name || parameter.name,
+        name: name || paramProps.name,
         onChange: (value) => {
           onChange(parameter, value);
         },

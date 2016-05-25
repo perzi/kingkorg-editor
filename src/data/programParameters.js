@@ -68,8 +68,112 @@ refs["0,1~64~127:L63,L63~CNT~R63"] = (() => {
   }
 })();
 
+//
+// Lookup functions
+//
+function preFxLookup() {
 
+  const masterParameterId = "prefx_type";
 
+  // When PREFX Type is "Distortion" "EP.AMP" "GT.AMP"
+  //      Drive 00~7F:0~127
+  //
+  //      When PREFX Type is "Decimator" "Ring Mod"
+  //      Freq 00~7F:0~127
+  //
+  //      When PREFX Type is "Tone"
+  //      Drive 00,01~40~7F:L63,L63~Flat~R63
+  //            00~07 : L63,L63,L62,L61,L60,L59,L58,L57
+  //            08~0F : L56,L55,L54,L53,L52,L51,L50,L49
+  //            10~17 : L48,L47,L46,L45,L44,L43,L42,L41
+  //            18~1F : L40,L39,L38,L37,L36,L35,L34,L33
+  //            20~27 : L32,L31,L30,L29,L28,L27,L26,L25
+  //            28~2F : L24,L23,L22,L21,L20,L19,L18,L17
+  //            30~37 : L16,L15,L14,L13,L12,L11,L10,L09
+  //            38~3F : L08,L07,L06,L05,L04,L03,L02,L01
+  //            40~47 : Flat,R01,R02,R03,R04,R05,R06,R07
+  //            48~4F : R08,R09,R10,R11,R12,R13,R14,R15
+  //            50~57 : R16,R17,R18,R19,R20,R21,R22,R23
+  //            58~5F : R24,R25,R26,R27,R28,R29,R30,R31
+  //            60~67 : R32,R33,R34,R35,R36,R37,R38,R39
+  //            68~6F : R40,R41,R42,R43,R44,R45,R46,R47
+  //            70~77 : R48,R49,R50,R51,R52,R53,R54,R55
+  //            78~7F : R56,R57,R58,R59,R60,R61,R62,R63
+  //  0: DISTORTION   3: EP.AMP
+  //  1: DECIMATOR    4: GT.AMP
+  //  2: RING MOD     5: TONE
+
+   const DISTORTION = 0;
+   const DECIMATOR = 1;
+   const RING_MOD = 2;
+   const EP_AMP = 3;
+   const GT_AMP = 4;
+   const TONE = 5;
+
+  function getMasterParameterValue(parameter, data) {
+    const masterParamater = parameter.parent.getParameter(masterParameterId);
+    return masterParamater.getValue(data);
+  }
+
+  return {
+    min: 0,
+    max: 127,
+    type: "",
+    getName: (parameter, data) => {
+      const masterParamaterValue = getMasterParameterValue(parameter, data);
+
+      switch (masterParamaterValue) {
+        case DISTORTION:
+        case EP_AMP:
+        case GT_AMP:
+        case TONE:
+          return "Drive"
+          break;
+        case DECIMATOR:
+        case RING_MOD:
+          return "Freq"
+          break;
+        default:
+          return "UNKOWN VALUE"
+      }
+
+    }
+  }
+}
+
+function revDelFxLookup() {
+
+ // *4-10: When Rev/Dly Type is "Hall" "Room" "Plate" "Tape Echo"
+ //        Time 00~7F:0~127
+ //
+ //        When Rev/Delay Type is "Mod Delay" "BPM Delay"
+ //        Time 00~7F:1/32~1/2
+ //             00~09 : 1/32
+ //             0A~1B : 1/16
+ //             1C~2D : 1/8
+ //             2E~3F : 1/6
+ //             40~51 : 3/16
+ //             52~63 : 1/4
+ //             64~75 : 3/8
+ //             76~7F : 1/2
+
+  const masterParameterId = "revdly_type";
+
+      //  0: HALL         3: TAPE ECHO
+      //  1: ROOM         4: MOD DELAY
+      //  2: PLATE        5: BPM DELAY
+
+  function getMasterParameterValue(parameter, data) {
+    const masterParamater = parameter.parent.getParameter(masterParameterId);
+    return masterParamater.getValue(data);
+  }
+
+  return {
+    min: 0,
+    max: 127,
+    type: "",
+  }
+}
 
 // Value string parser
 let parseValueString = (s) => {
@@ -308,7 +412,8 @@ let fxParameters = () => [
 
   // TODO: implement dynamic naming + range of control
   // createParam("| +2        | PreFX Drive/Freq  | 0~127                           *4-9 | 06:02    |", "FX"),
-  createParam("| +2        | PreFX Drive/Freq  | 0~127                                | 06:02    |", "FX"),
+  createParam("", 2, "PreFX Drive/Freq"    , 0x06, 0x02, preFxLookup(), `FX`,   "prefx_drivefreq"),
+//  createParam("| +2        | PreFX Drive/Freq  | 0~127                                | 06:02    |", "FX"),
 
   createParam("| +3        | ModFX Type        | 0~5:FLANGER~ROTARY            *T04-2 | 06:03    |", "FX"),
   createParam("| +4        | ModFX SW          | 0~3:Off,TimbreA,TimbreB,TimbreA+B    | 06:04    |", "FX"),
@@ -319,8 +424,8 @@ let fxParameters = () => [
   createParam("| +9        | Rev/Dly Depth     | 0~127                                | 06:09    |", "FX"),
 
   // TODO: implement dynamic naming + range of control
-  // createParam("| +10       | Rev/Dly Time      | 0~127                          *4-10 | 06:0A    |", "FX")
-  createParam("| +10       | Rev/Dly Time      | 0~127                                | 06:0A    |", "FX")
+  createParam("", 10, "Rev/Dly Time"    , 0x06, 0x0A, revDelFxLookup(), `FX`,   "revdly_time"),
+  // createParam("| +10       | Rev/Dly Time      | 0~127                                | 06:0A    |", "FX")
 ];
 
 let vocoderParameters = () => [

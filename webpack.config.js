@@ -17,20 +17,25 @@ module.exports = {
   target: 'web',
   cache: true,
   entry: {
-    module: path.join(srcPath, 'module.js'),
-    common: ['react', 'react-router', 'alt']
+    module: ['./src/module.js'],
+    common: [
+      'react', 'react-dom', 'react-addons-pure-render-mixin',
+      'react-router',
+      'react-bootstrap',
+      'redux', 'react-redux',
+    ]
   },
   resolve: {
     root: srcPath,
     extensions: ['', '.js', '.sass'],
-    modulesDirectories: ['node_modules', 'src']
+    // modulesDirectories: ['node_modules', 'src']
   },
   output: {
     path: path.join(__dirname, 'tmp'),
     publicPath: '',
     filename: '[name].js',
-    library: ['Example', '[name]'],
-    pathInfo: true,
+    // library: ['Example', '[name]'],
+    // pathInfo: true,
     sourceMapFilename: '[file].map'
   },
 
@@ -42,6 +47,7 @@ module.exports = {
         loader: 'babel-loader',
         query: {
           presets: ['es2015']
+          // TODO: add object spread
         }
       },
       {
