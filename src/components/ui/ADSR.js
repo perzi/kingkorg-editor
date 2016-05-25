@@ -1,49 +1,51 @@
 import React from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
+import { shouldComponentUpdate } from 'react-addons-pure-render-mixin';
 
 
 class ADSR extends React.Component {
   constructor(props) {
     super(props);
-    let { shouldComponentUpdate } = PureRenderMixin;
-    this.shouldComponentUpdate    = shouldComponentUpdate.bind(this);
+    this.shouldComponentUpdate = shouldComponentUpdate.bind(this);
   }
 
   calculatePoints() {
 
-    let { A, D, S, R, width, height, strokeWidth } = this.props;
-    let offset = strokeWidth * 2;
-    let w = width - offset * 2;
-    let h = height - offset * 2;
-    let w3 = Math.round(w / 3);
+    const { A, D, S, R, width, height, strokeWidth } = this.props;
+    const offset = strokeWidth * 2;
+    const w = width - offset * 2;
+    const h = height - offset * 2;
+    const w3 = Math.round(w / 3);
 
-    let x0 = 0;
-    let y0 = 0;
-    let x1 = A;
-    let y1 = 1.0;
-    let x2 = D + A;
-    let y2 = S;
-    let x3 = 2.0;
-    let y3 = S;
-    let x4 = 2.0 + R;
-    let y4 = 0;
-
-    return [
+    const x0 = 0;
+    const y0 = 0;
+    const x1 = A;
+    const y1 = 1.0;
+    const x2 = D + A;
+    const y2 = S;
+    const x3 = 2.0;
+    const y3 = S;
+    const x4 = 2.0 + R;
+    const y4 = 0;
+    const normalizedPoints = [
       [x0, y0],
       [x1, y1],
       [x2, y2],
       [x3, y3],
       [x4, y4]
-    ].map(([x, y]) => [Math.round(x * w3) + offset, height - Math.round(y * h) - offset]);
+    ];
+
+    const scaledPoints = normalizedPoints.map(([x, y]) => [Math.round(x * w3) + offset, height - Math.round(y * h) - offset])
+
+    return scaledPoints;
   }
 
   render() {
 
-    let { width, height, strokeWidth, backgroundColor, foregroundColor } = this.props;
-    let cpoints = this.calculatePoints();
-    let [[x0, y0], [x1, y1], [x2, y2], [x3, y3], [x4, y4]] = cpoints;
+    const { width, height, strokeWidth, backgroundColor, foregroundColor } = this.props;
+    const cpoints = this.calculatePoints();
+    const [[x0, y0], [x1, y1], [x2, y2], [x3, y3], [x4, y4]] = cpoints;
 
-    let d = `M ${x0} ${y0}
+    const d = `M ${x0} ${y0}
       Q ${x0} ${y1} ${x1} ${y1}
       Q ${x1} ${y2} ${x2} ${y2}
       L ${x3} ${y3}
